@@ -22,6 +22,11 @@ class DAgger(object):
         self.dataset = []
     
     def updateAgent(self, epochs=10, batch_size=32):
+        if len(self.dataset) == 0:
+            import pdb; pdb.set_trace()
+            print("WARNING: No data available to train")
+            return 0
+        
         for ep in range(epochs):
             random.shuffle(self.dataset)
             total_loss = 0.
@@ -55,6 +60,7 @@ class DAgger(object):
         total_reward = 0
         state = self.env.reset()
         done = False
+        expert_samples = 0
         while not done:
             # Mix policies by randomly choosing between them
             if random.random() >= self.mixing:
@@ -69,12 +75,13 @@ class DAgger(object):
             self.dataset.append(store)
             state, reward, done, _ = self.env.step(action)
             
+            expert_samples += 1
             total_reward += reward
         
         self.mixing += mixing_decay
         if self.mixing > 1.0: self.mixing = 1.0
         
-        return state, reward, done
+        return state, reward, done, expert_samples
         
     def trainAgent(self, episodes=100, mixing_decay=0.1):
         
@@ -86,17 +93,19 @@ class DAgger(object):
             valid_reward += self.runEpisode(self.learner)
         validation.append(valid_reward/100.)
         
+        stats = []
         for ep in range(episodes):
-            self.generateExpertSamples(mixing_decay)
+            _, _, _, expert_samples = self.generateExpertSamples(mixing_decay=mixing_decay)
             self.updateAgent()
             
             valid_reward = 0
             for i in range(100):
-                valid_reward += self.runEpisode(self.learner)
-            validation.append(valid_reward/100.)
-            print("Episode {} reward {}".format(ep, valid_reward/100.0))
+                valid_reward += self.runEpisode(self.learner)/100.0
+            validation.append(valid_reward)
+            print("Episode: {} reward: {} expert_samples: {}".format(ep, valid_reward, expert_samples))
+            stats.append([ep, valid_reward, expert_samples])
         
-        return validation
+        return validation, stats
 
 
 if __name__ == "__main__":
