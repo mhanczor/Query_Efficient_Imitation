@@ -3,21 +3,23 @@ import numpy as np
 import tensorflow as tf
 import gym
 from dagger import DAgger
-from efficient_dagger import Efficient_DAgger
-from experts import CartPole_SubExpert, CartPole_iLQR, LunarLander_Expert
+from efficient_dagger import Efficient_DAgger, Entropy_DAgger, Random_DAgger
+from hindsight_DAgger import Hindsight_DAgger
+from active_imitation.experts import CartPole_SubExpert, CartPole_iLQR, LunarLander_Expert
+
+from scipy import stats
 
 import matplotlib
 
 # Build a learner model
 
-class CartPoleAgent(object):
+class GymAgent(object):
     
-    def __init__(self, sess, env, lr=0.001, filepath='tmp/'):
+    def __init__(self, sess, env, lr=0.001, dropout_rate=0.1, filepath='tmp/'):
         
         self.sess = sess
         input_size = (None,) + env.observation_space.shape
         output_size = env.action_space.n
-        dropout_rate = 0.2
         
         with tf.name_scope("Inputs"):
             self.state = tf.placeholder(tf.float32, input_size, name='State')
@@ -41,15 +43,36 @@ class CartPoleAgent(object):
         self.sess.run(tf.global_variables_initializer())
         self.saver = tf.train.Saver(max_to_keep=10)
         self.writer = tf.summary.FileWriter(filepath+'events/', self.sess.graph)
+        
     
-    def selectAction(self, state, training=False):
+    def update(self, batch):
+        state = batch[:, :-1]
+        expert_action = batch[:,-1]
+        feed_dict = {self.state: state, self.expert_action: expert_action, self.training : True}
+        _, loss = self.sess.run([self.opt, self.loss], feed_dict=feed_dict)
+        return loss
+    
+    def samplePolicy(self, state, training=False):
         state = np.atleast_2d(state)
         feed_dict = {self.state : state, self.training : training}
-        policy = self.sess.run(self.policy, feed_dict=feed_dict)
+        return self.sess.run(self.policy, feed_dict=feed_dict)
+        
+    def selectAction(self, state, training=False):
+        state = np.atleast_2d(state)
+        policy = self.samplePolicy(state, training)
         # Could either sample actions or take max action
         # For now take max
         action  = np.argmax(policy)
         return action
+    
+    def dropoutSample(self, state, batch=32):
+        # import pdb; pdb.set_trace()
+        state = np.atleast_2d(state)
+        state = np.repeat(state, batch, axis=0)
+        policy = self.samplePolicy(state, training=True)
+        
+        return policy
+
     
     def uncertainAction(self, state, training=True, batch=32):
         """
@@ -59,8 +82,7 @@ class CartPoleAgent(object):
         # import pdb; pdb.set_trace()
         state = np.atleast_2d(state)
         state = np.repeat(state, batch, axis=0)
-        feed_dict = {self.state : state, self.training : training}
-        policy = self.sess.run(self.policy, feed_dict=feed_dict)
+        policy = self.samplePolicy(state, training)
         # Could either sample actions or take max action
         # For now take max
         policy_avg = np.mean(policy, axis=0, keepdims=True)
@@ -79,12 +101,25 @@ class CartPoleAgent(object):
         
         return action, action_var
     
-    def update(self, batch):
-        state = batch[:, :-1]
-        expert_action = batch[:,-1]
-        feed_dict = {self.state: state, self.expert_action: expert_action, self.training : True}
-        _, loss = self.sess.run([self.opt, self.loss], feed_dict=feed_dict)
-        return loss
+    def QBCAction(self, state, training=True, batch=32):
+        """
+        Uses query by committee to select the next action
+        """
+        # import pdb; pdb.set_trace()
+        state = np.atleast_2d(state)
+        state = np.repeat(state, batch, axis=0)
+        policy = self.samplePolicy(state, training)
+        # Could either sample actions or take max action
+        # For now take max
+        all_actions = np.argmax(policy, axis=1)
+        action, _ = stats.mode(all_actions)
+        action = action[0]
+        disagree = 0
+        for act in all_actions:
+            if act != action: 
+                disagree +=1
+        
+        return action, disagree        
         
     def save_model_weights(self, filepath):
         self.saver.save(self.sess, filepath + 'checkpoints/model.ckpt', global_step=tf.train.global_step(self.sess, self.global_step))
@@ -145,19 +180,51 @@ def main(args):
         
     filepath = 'experiments/' + env_name + '/'+filename+'/'
     
+    mixing = 1.0
+    mixing_decay = 1.0
+    train_epochs = 10
+    dropout_rate = 0.01
+    random_sample = False    
+    
     env = gym.make(env_name)
     sess = tf.Session()
-    learner = CartPoleAgent(sess, env, lr=0.001, filepath=filepath)
+    agent = GymAgent(sess, env, lr=0.001, dropout_rate=dropout_rate, filepath=filepath)
     
     # expert = CartPole_SubExpert()
-    # expert = CartPole_iLQR(env.env)
-    expert = LunarLander_Expert()
+    if env_name[:-3] == 'CartPole':
+        expert = CartPole_iLQR(env.env)
+    elif env_name[:-3] == 'LunarLander':
+        expert = LunarLander_Expert()
+    else:
+        raise ValueError
     
-    # dagger = DAgger(env, learner, expert, mixing=0.0)
-    dagger = Efficient_DAgger(env, learner, expert, mixing=0.0, certainty_thresh=var_thresh)
+    # learner = DAgger(env, agent, expert, mixing=0.0)
+    # learner = Efficient_DAgger(env, 
+    #                           agent, 
+    #                           expert, 
+    #                           mixing=1.0, 
+    #                           certainty_thresh=var_thresh)
+    # learner = Entropy_DAgger(env, 
+    #                         agent, 
+    #                         expert, 
+    #                         mixing=0.0, 
+    #                         certainty_thresh=var_thresh)
+    # learner = Random_DAgger(env,
+    #                         agent,
+    #                         expert,
+    #                         mixing=1.0,
+    #                         certainty_thresh=var_thresh)
+    learner = Hindsight_DAgger(env,
+                                agent,
+                                expert,
+                                mixing=mixing,
+                                random_samp=random_sample)
     
-    
-    rewards, stats = dagger.trainAgent(episodes=episodes, mixing_decay=1.0)
+    rewards, stats = learner.trainAgent(episodes=episodes, 
+                                        mixing_decay=mixing_decay,
+                                        train_epochs=train_epochs,
+                                        save_images=False,
+                                        image_filepath=filepath+'images/')
     
     with open(filepath + 'stats.csv', 'a') as f:
         for line in stats:
@@ -165,9 +232,49 @@ def main(args):
             f.write(', '.join(line) + '\n')
     
     for i in range(5):
-        # dagger.runEpisode(expert, render=True)
-        dagger.runEpisode(learner, render=True)
+        # learner.runEpisode(expert, render=True)
+        learner.runEpisode(agent, render=True)
     
+
+def sampleRun():
+    episodes = 10
+    filename = 'NA'
+    env_name = 'LunarLander-v2'
+    var_thresh = 0.5
+        
+    filepath = 'tmp/' + env_name + '/'+filename+'/'
+    
+    mixing = 1.0
+    mixing_decay = 1.0
+    train_epochs = 10
+    dropout_rate = 0.01
+    random_sample = False    
+    
+    env = gym.make(env_name)
+    sess = tf.Session()
+    agent = GymAgent(sess, env, lr=0.001, dropout_rate=dropout_rate, filepath=filepath)
+    
+    # expert = CartPole_SubExpert()
+    if env_name[:-3] == 'CartPole':
+        expert = CartPole_iLQR(env.env)
+    elif env_name[:-3] == 'LunarLander':
+        expert = LunarLander_Expert()
+    else:
+        raise ValueError
+        
+    learner = Hindsight_DAgger(env,
+                                agent,
+                                expert,
+                                mixing=mixing,
+                                random_samp=random_sample)
+    
+    rewards, stats = learner.trainAgent(episodes=episodes, 
+                                        mixing_decay=mixing_decay,
+                                        train_epochs=train_epochs,
+                                        save_images=False,
+                                        image_filepath=filepath+'images/')
+    return rewards, stats
+
 
 if __name__ == "__main__":
     main(sys.argv)
