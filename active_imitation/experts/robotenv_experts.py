@@ -10,12 +10,12 @@ class RoboticEnv_Expert(object):
             self.policy = pickle.load(f)
         pass
     
-    def selectAction(self, state):
+    def sampleAction(self, state):
         """ 
         Action selecton for fetch tasks
         state - a dictionary of [observations, achieved_goal, desired_goal]
         """
-        
+        # import ipdb; ipdb.set_trace()
         o = state['observation']
         ag = state['achieved_goal']
         g = state['desired_goal']
@@ -36,10 +36,10 @@ if __name__ == '__main__':
     import gym, gym.spaces
     policy_file = '/tmp/openai-2018-07-03-17-00-07-524061/policy_best.pkl'
     env = gym.make('FetchReach-v1')
-    expert = FetchReach_Expert(policy_file)
+    expert = RoboticEnv_Expert(policy_file)
     state = env.reset()
     for i in range(10):
-        action = expert.selectAction(state)
+        action = expert.sampleAction(state)
         print('Step {}'.format(i))
         print(action)
         state = env.step(action)

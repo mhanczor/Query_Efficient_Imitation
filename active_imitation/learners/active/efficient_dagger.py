@@ -1,5 +1,5 @@
 import numpy as np
-from dagger import DAgger
+from active_imitation.learners import DAgger
 # from DeepQ import DQNetwork
 import random
 

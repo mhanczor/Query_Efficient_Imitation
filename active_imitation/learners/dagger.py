@@ -1,8 +1,6 @@
 import numpy as np
 import tensorflow as tf
 import os
-
-# from DeepQ import DQNetwork
 import random
 
 
@@ -15,45 +13,54 @@ Be able to revert to last best weights if validation is lower than previous?
 
 class DAgger(object):
     
-    def __init__(self, env, learner, expert, mixing=0.0):
+    def __init__(self, env, learner, expert, agg_buffer, mixing=0.0, continuous=False):
         self.env = env
         self.expert = expert
         self.learner = learner
         self.mixing = mixing
+        self.continuous = continuous
         
-        self.dataset = []
+        self.dataset = agg_buffer
     
     def updateAgent(self, epochs=10, batch_size=32):
-        if len(self.dataset) == 0:
+        """
+        Perform batch updating of the learner network
+        """
+                
+        samples = self.dataset.size
+        if samples == 0:
             import pdb; pdb.set_trace()
             print("WARNING: No data available to train")
             return 0
         
+        indices = list(range(samples))
         for ep in range(epochs):
-            random.shuffle(self.dataset)
+            random.shuffle(indices)
             total_loss = 0.
             i = 0
-            while i < len(self.dataset):
-                # import pdb; pdb.set_trace()
-                batch = self.dataset[i:i+batch_size]
-                loss = self.learner.update(np.array(batch))
+            while i < samples:
+                batch = self.dataset.sample(indices[i:i+batch_size])
+                loss = self.learner.update(batch)
                 total_loss += loss
                 i += batch_size
-            average_loss = total_loss / len(self.dataset)
+            #TODO make sure this average math works out, what loss does TF return with batches?
+            average_loss = total_loss / samples
             # print("\t Epoch {} loss {}".format(ep, average_loss))
         return average_loss
     
     def runEpisode(self, agent, render=False):
+        # TODO will need a continuous action version of validation? 
         total_reward = 0
         state = self.env.reset()
         done = False
         episode_length = 0
         correct_labels = 0
         while not done:
-            action = agent.selectAction(state)
-            expert_action = self.expert.selectAction(state)
-            if action == expert_action:
-                correct_labels += 1
+            action = agent.sampleAction(state).flatten() # sampleAction returns 2d arrays, need 1D
+            expert_action = self.expert.sampleAction(state)
+            if not self.continuous:
+                if action == expert_action:
+                    correct_labels += 1
             state, reward, done, _ = self.env.step(action)
             total_reward += reward
             episode_length += 1
@@ -63,20 +70,20 @@ class DAgger(object):
         return total_reward, correct_labels, episode_length
     
     def generateExpertSamples(self, mixing_decay=0.1):
-        
         # Initialize environment and run a mixed trajectory
         total_reward = 0
         state = self.env.reset()
         done = False
         expert_samples = 0
+        # import ipdb; ipdb.set_trace()
         while not done:
             # Mix policies by randomly choosing between them
             if random.random() >= self.mixing:
-                action = self.expert.selectAction(state)
+                action = self.expert.sampleAction(state)
                 expert_action = action
             else:
-                action = self.learner.selectAction(state)
-                expert_action = self.expert.selectAction(state)
+                action = self.learner.sampleAction(state)
+                expert_action = self.expert.sampleAction(state)
             #Aggregate expert data
             store = state.tolist()
             store.append(expert_action)
@@ -103,25 +110,28 @@ class DAgger(object):
         
         return valid_reward, valid_acc
     
-    def trainAgent(self, episodes=100, mixing_decay=0.1, train_epochs=10, 
+    def train(self, episodes=100, mixing_decay=0.1, train_epochs=10, 
                     save_images=False, image_filepath='./'):
-        # import ipdb; ipdb.set_trace()
-        validation = []
+        
+        
         total_expert_samples = 0
         # Run an initial validation to get starting agent reward
+        validation = []
         valid_runs = 10
-        # import ipdb; ipdb.set_trace()
         valid_reward, valid_acc = self.validateAgent(valid_runs)
-        
         validation.append(valid_reward)
+        
         reward_per_samples  = tf.Summary(value=[tf.Summary.Value(tag='Reward_per_Expert_Samples', simple_value=valid_reward)])
         self.learner.writer.add_summary(reward_per_samples, global_step=total_expert_samples)
-        accuracy_per_samples  = tf.Summary(value=[tf.Summary.Value(tag='Accuracy_per_Expert_Samples', simple_value=valid_acc)])
-        self.learner.writer.add_summary(accuracy_per_samples, global_step=total_expert_samples)
-        
+        if not self.continuous:
+            accuracy_per_samples  = tf.Summary(value=[tf.Summary.Value(tag='Accuracy_per_Expert_Samples', simple_value=valid_acc)])
+            self.learner.writer.add_summary(accuracy_per_samples, global_step=total_expert_samples)
         stats = []
+        
         for ep in range(episodes):
+            
             if save_images:
+                # Save an image of the environment at every expert query
                 if not os.path.isdir(image_filepath):
                     os.mkdir(image_filepath)
                 from scipy.misc import imsave
@@ -131,24 +141,34 @@ class DAgger(object):
                     imsave(filename, image)
             else:
                 expert_samples, _ = self.generateExpertSamples(mixing_decay=mixing_decay)
-            # import ipdb; ipdb.set_trace()
+
             final_loss = self.updateAgent(epochs=train_epochs)
             total_expert_samples += expert_samples
             
             valid_reward, valid_acc = self.validateAgent(valid_runs)
             validation.append(valid_reward)
             
+            # Is there a good way to clean this up?
             reward_per_samples = tf.Summary(value=[tf.Summary.Value(tag='Reward_per_Expert_Samples', simple_value=valid_reward)])
             self.learner.writer.add_summary(reward_per_samples, global_step=total_expert_samples)
             samples_per_episode = tf.Summary(value=[tf.Summary.Value(tag='Expert_Samples_per_Episode', simple_value=expert_samples)])
             self.learner.writer.add_summary(samples_per_episode, global_step=ep)
             loss_summary = tf.Summary(value=[tf.Summary.Value(tag='Final_Training_Loss_per_Episode', simple_value=final_loss)])
             self.learner.writer.add_summary(loss_summary, global_step=ep)
-            accuracy_per_samples  = tf.Summary(value=[tf.Summary.Value(tag='Accuracy_per_Expert_Samples', simple_value=valid_acc)])
-            self.learner.writer.add_summary(accuracy_per_samples, global_step=total_expert_samples)
+            
+            if not self.continuous:
+                accuracy_per_samples  = tf.Summary(value=[tf.Summary.Value(tag='Accuracy_per_Expert_Samples', simple_value=valid_acc)])
+                self.learner.writer.add_summary(accuracy_per_samples, global_step=total_expert_samples)
             
             print("Episode: {} reward: {} expert_samples: {}".format(ep, valid_reward, expert_samples))
             stats.append([ep, valid_reward, expert_samples])
+        
+        
+        valid_reward, valid_acc = self.validateAgent(100)
+        validation.append(valid_reward)
+        print("\n Training Complete")
+        print("Final validation reward: {} total expert samples: {}".format(valid_reward, total_expert_samples))
+        
         
         return validation, stats
 

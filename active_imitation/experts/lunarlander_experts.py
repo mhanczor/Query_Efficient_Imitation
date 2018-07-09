@@ -5,14 +5,14 @@ import tensorflow as tf
 """ Expert Classes """
 """
 Expert classes should have the following:
-selectAction(state): uses the expert to come up with an action given the state
+sampleAction(state): uses the expert to come up with an action given the state
 """
 
 class LunarLander_Expert(object):
     def __init__(self, continuous=False):
         self.continuous = continuous
     
-    def selectAction(self, s):
+    def sampleAction(self, s):
         # Heuristic for:
         # 1. Testing. 
         # 2. Demonstration rollout.

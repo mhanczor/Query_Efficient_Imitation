@@ -1,6 +1,6 @@
 import tensorflow as tf
 
-def denseNet(inputs, layer_sizes, reuse=None, flatten=False, name=""):
+def denseNet(inputs, layer_sizes, dropout, dropout_flag, reuse=None, flatten=False, name=""):
     """
     Create a typical MLP
     Inputs:
@@ -19,6 +19,8 @@ def denseNet(inputs, layer_sizes, reuse=None, flatten=False, name=""):
                                 name=name + '_' + str(i))
         if activation:
             inputs = activation(inputs)
+        inputs = tf.layers.dropout(inputs, rate=dropout, training=dropout_flag)
+        
     if flatten:
         assert layers_sizes[-1] == 1
         inputs = tf.reshape(inputs, [-1])

@@ -1,6 +1,13 @@
 import gym
 import gym.spaces
 import pickle
+import tensorflow as tf
+import os
+
+from active_imitation.experts import RoboticEnv_Expert
+from active_imitation.agents import GymRobotAgent
+from active_imitation.utils import configure
+from active_imitation.agents.mujoco_robot import DEFAULT_PARAMS
 
 """
 Use this script for training on the Fetch robot environments
@@ -14,25 +21,73 @@ FetchPush-v1
 
 May extend this for HandManipulation tasks
 """
-policy_file = '/tmp/openai-2018-07-03-17-00-07-524061/policy_best.pkl'
 
-env = gym.make('FetchReach-v1')
-state = env.reset()
-o = state['observation']
-ag = state['achieved_goal']
-g = state['desired_goal']
+prefix = '/home/hades/Research/Active_Imitation/active_imitation/experts/trained_models/'
+policy_files = {'FetchReach-v1': os.path.join(prefix, 'FetchReach-v1/policy_best.pkl'),
+                'FetchSlide-v1': os.path.join(prefix, 'FetchSlide-v1/policy_best.pkl'),
+                'FetchPickAndPlace-v1': os.path.join(prefix, 'FetchPickAndPlace-v1/policy_best.pkl'),
+                'FetchPush-v1': os.path.join(prefix, 'FetchPush-v1/policy_best.pkl')}
 
-with open(policy_file, 'rb') as f:
-    policy = pickle.load(f)
+#######
+# Assorted training variables
+mixing = 1.0
+mixing_decay = 1.0
+random_sample = False
+episodes = 20
+train_epochs = 10
+filepath = '~/Research/Active_Imitation/active_imitation/tests/FetchReach-v1/First_Test/'
+#######
+
+def main(save_path):
+    mode = 'pool'
+    env_name = 'FetchReach-v1'
+    env = gym.make(env_name)
+    sess = tf.Session()
     
-policy_output = policy.get_actions(o, ag, g, compute_Q=True)
-action, Q_val = policy_output
+    # Need the spaces dimensions to initialize the NN agent    
+    action_size = env.action_space.shape[0]
+    observation_size = env.observation_space.spaces['observation'].shape[0]
+    goal_size = env.observation_space.spaces['desired_goal'].shape[0]
+    env_dims = {'observation':observation_size, 'goal':goal_size, 'action':action_size}
+    
+    # Change the dimensions of the nn layers
+    params = DEFAULT_PARAMS
+    params['layers'] = [256, 256, 256]
+    params['dropout_rate'] = 0.1
 
-env.step(action)
+    agent = GymRobotAgent(sess, env_dims, **DEFAULT_PARAMS)
+    expert = RoboticEnv_Expert(policy_files[env_name])
+    
+    learning_mode = configure.configure_robot(env, env_dims, agent, expert, mode)                        
+    rewards, stats = learning_mode.train(episodes=episodes, 
+                                        mixing_decay=mixing_decay,
+                                        train_epochs=train_epochs,
+                                        save_images=False,
+                                        image_filepath=filepath+'images/')
+    # Try saving the agent
+    with open(save_path, 'wb') as f:
+        import ipdb; ipdb.set_trace()
+        pickle.dump(agent, f)
+        print('Saved file to {}'.format(save_path))
+    
+    print('Closing TensorFlow Session')
+    sess.close()
+    return
 
-# This should be everything that is needed to get a learner up to speed.
+def play(save_path):
+    # sess = tf.Session()
+    import ipdb; ipdb.set_trace()
+    print('Loading Saved Policy')
+    with open(save_path, 'rb') as f:
+        policy = pickle.load(f)
+    
+    env = gym.make('FetchReach-v1')
+    state = env.reset()
+    action = policy.samplePolicy(state, True)
+    print(action)
+    return
 
-
-# How are we gonna handle multiple actions in an action space?
-# In the actor crtitic approach, actions are output using a tanh nonlinearity
-# and then scaled by a max value multiplier
+if __name__ == "__main__":
+    save_path = './test.pkl'
+    main(save_path)
+    play(save_path)

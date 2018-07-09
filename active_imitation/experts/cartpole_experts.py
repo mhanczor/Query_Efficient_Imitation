@@ -16,7 +16,7 @@ class CartPole_iLQR(object):
         self.q_avail = False
         self.env = env
     
-    def selectAction(self, x):
+    def sampleAction(self, x):
         
         # x, xdot, theta, thetadot
 
@@ -120,7 +120,7 @@ class CartPole_SubExpert(object):
         feed_dict = {self.x:state}
         return self.sess.run(self.y, feed_dict)
     
-    def selectAction(self, state):
+    def sampleAction(self, state):
         # Returns an expert action
         q_vals = self._predict(state)
         action = np.argmax(q_vals)
