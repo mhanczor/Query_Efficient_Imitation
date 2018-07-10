@@ -4,7 +4,7 @@ tmp*
 #Directory for experiments
 tests/
 #Directory for trained expert models
-trained_models/
+#trained_models/
 
 #Old files
 zzz_old/

@@ -1,0 +1,679 @@
+Logging to /home/ubuntu/saved_experts/FetchReach-v1
+T: 50
+_Q_lr: 0.001
+_action_l2: 1.0
+_batch_size: 256
+_buffer_size: 1000000
+_clip_obs: 200.0
+_hidden: 256
+_layers: 3
+_max_u: 1.0
+_network_class: baselines.her.actor_critic:ActorCritic
+_norm_clip: 5
+_norm_eps: 0.01
+_pi_lr: 0.001
+_polyak: 0.95
+_relative_goals: False
+_scope: ddpg
+ddpg_params: {'buffer_size': 1000000, 'hidden': 256, 'layers': 3, 'network_class': 'baselines.her.actor_critic:ActorCritic', 'polyak': 0.95, 'batch_size': 256, 'Q_lr': 0.001, 'pi_lr': 0.001, 'norm_eps': 0.01, 'norm_clip': 5, 'max_u': 1.0, 'action_l2': 1.0, 'clip_obs': 200.0, 'scope': 'ddpg', 'relative_goals': False}
+env_name: FetchPush-v1
+gamma: 0.98
+make_env: <function prepare_params.<locals>.make_env at 0x7f624eee0f28>
+n_batches: 40
+n_cycles: 50
+n_test_rollouts: 10
+noise_eps: 0.2
+random_eps: 0.3
+replay_k: 4
+replay_strategy: future
+rollout_batch_size: 2
+test_with_polyak: False
+Creating a DDPG agent with action space 4 x 1.0...
+Training...
+---------------------------------------------
+| epoch              | 0                    |
+| stats_g/mean       | 0.83624977           |
+| stats_g/std        | 0.07259473           |
+| stats_o/mean       | 0.20077696           |
+| stats_o/std        | 0.047061965          |
+| test/episode       | 20.0                 |
+| test/mean_Q        | -2.8431416           |
+| test/success_rate  | 0.058333333333333334 |
+| train/episode      | 100.0                |
+| train/success_rate | 0.05777777777777778  |
+---------------------------------------------
+New best success rate: 0.058333333333333334. Saving policy to /home/ubuntu/saved_experts/FetchReach-v1/policy_best.pkl ...
+Saving periodic policy to /home/ubuntu/saved_experts/FetchReach-v1/policy_0.pkl ...
+---------------------------------------------
+| epoch              | 1                    |
+| stats_g/mean       | 0.8368652            |
+| stats_g/std        | 0.07160204           |
+| stats_o/mean       | 0.20084181           |
+| stats_o/std        | 0.046254892          |
+| test/episode       | 40.0                 |
+| test/mean_Q        | -4.8121724           |
+| test/success_rate  | 0.058333333333333334 |
+| train/episode      | 200.0                |
+| train/success_rate | 0.07722222222222223  |
+---------------------------------------------
+New best success rate: 0.058333333333333334. Saving policy to /home/ubuntu/saved_experts/FetchReach-v1/policy_best.pkl ...
+--------------------------------------------
+| epoch              | 2                   |
+| stats_g/mean       | 0.8373078           |
+| stats_g/std        | 0.070892215         |
+| stats_o/mean       | 0.20095293          |
+| stats_o/std        | 0.04574278          |
+| test/episode       | 60.0                |
+| test/mean_Q        | -6.8786335          |
+| test/success_rate  | 0.03888888888888889 |
+| train/episode      | 300.0               |
+| train/success_rate | 0.05888888888888889 |
+--------------------------------------------
+--------------------------------------------
+| epoch              | 3                   |
+| stats_g/mean       | 0.83766556          |
+| stats_g/std        | 0.07156035          |
+| stats_o/mean       | 0.20108098          |
+| stats_o/std        | 0.04699239          |
+| test/episode       | 80.0                |
+| test/mean_Q        | -8.465441           |
+| test/success_rate  | 0.07500000000000001 |
+| train/episode      | 400.0               |
+| train/success_rate | 0.07444444444444445 |
+--------------------------------------------
+New best success rate: 0.07500000000000001. Saving policy to /home/ubuntu/saved_experts/FetchReach-v1/policy_best.pkl ...
+--------------------------------------------
+| epoch              | 4                   |
+| stats_g/mean       | 0.83815503          |
+| stats_g/std        | 0.07329661          |
+| stats_o/mean       | 0.2012652           |
+| stats_o/std        | 0.0485465           |
+| test/episode       | 100.0               |
+| test/mean_Q        | -10.031569          |
+| test/success_rate  | 0.08611111111111111 |
+| train/episode      | 500.0               |
+| train/success_rate | 0.08888888888888889 |
+--------------------------------------------
+New best success rate: 0.08611111111111111. Saving policy to /home/ubuntu/saved_experts/FetchReach-v1/policy_best.pkl ...
+--------------------------------------------
+| epoch              | 5                   |
+| stats_g/mean       | 0.8383162           |
+| stats_g/std        | 0.07367739          |
+| stats_o/mean       | 0.20141187          |
+| stats_o/std        | 0.04956223          |
+| test/episode       | 120.0               |
+| test/mean_Q        | -11.179768          |
+| test/success_rate  | 0.11944444444444446 |
+| train/episode      | 600.0               |
+| train/success_rate | 0.10166666666666667 |
+--------------------------------------------
+New best success rate: 0.11944444444444446. Saving policy to /home/ubuntu/saved_experts/FetchReach-v1/policy_best.pkl ...
+Saving periodic policy to /home/ubuntu/saved_experts/FetchReach-v1/policy_5.pkl ...
+--------------------------------------------
+| epoch              | 6                   |
+| stats_g/mean       | 0.8384177           |
+| stats_g/std        | 0.07383956          |
+| stats_o/mean       | 0.20146765          |
+| stats_o/std        | 0.05061903          |
+| test/episode       | 140.0               |
+| test/mean_Q        | -11.881355          |
+| test/success_rate  | 0.17500000000000002 |
+| train/episode      | 700.0               |
+| train/success_rate | 0.12666666666666668 |
+--------------------------------------------
+New best success rate: 0.17500000000000002. Saving policy to /home/ubuntu/saved_experts/FetchReach-v1/policy_best.pkl ...
+--------------------------------------------
+| epoch              | 7                   |
+| stats_g/mean       | 0.8386094           |
+| stats_g/std        | 0.07441351          |
+| stats_o/mean       | 0.2015214           |
+| stats_o/std        | 0.052881703         |
+| test/episode       | 160.0               |
+| test/mean_Q        | -12.142869          |
+| test/success_rate  | 0.2555555555555556  |
+| train/episode      | 800.0               |
+| train/success_rate | 0.18944444444444444 |
+--------------------------------------------
+New best success rate: 0.2555555555555556. Saving policy to /home/ubuntu/saved_experts/FetchReach-v1/policy_best.pkl ...
+--------------------------------------------
+| epoch              | 8                   |
+| stats_g/mean       | 0.8386861           |
+| stats_g/std        | 0.07462637          |
+| stats_o/mean       | 0.20147341          |
+| stats_o/std        | 0.05691152          |
+| test/episode       | 180.0               |
+| test/mean_Q        | -10.6383505         |
+| test/success_rate  | 0.4166666666666667  |
+| train/episode      | 900.0               |
+| train/success_rate | 0.33888888888888885 |
+--------------------------------------------
+New best success rate: 0.4166666666666667. Saving policy to /home/ubuntu/saved_experts/FetchReach-v1/policy_best.pkl ...
+-------------------------------------------
+| epoch              | 9                  |
+| stats_g/mean       | 0.83890384         |
+| stats_g/std        | 0.074858375        |
+| stats_o/mean       | 0.20159572         |
+| stats_o/std        | 0.061824813        |
+| test/episode       | 200.0              |
+| test/mean_Q        | -6.230177          |
+| test/success_rate  | 0.7111111111111111 |
+| train/episode      | 1000.0             |
+| train/success_rate | 0.5249999999999999 |
+-------------------------------------------
+New best success rate: 0.7111111111111111. Saving policy to /home/ubuntu/saved_experts/FetchReach-v1/policy_best.pkl ...
+-------------------------------------------
+| epoch              | 10                 |
+| stats_g/mean       | 0.8392015          |
+| stats_g/std        | 0.074628204        |
+| stats_o/mean       | 0.2017191          |
+| stats_o/std        | 0.066928044        |
+| test/episode       | 220.0              |
+| test/mean_Q        | -3.2357588         |
+| test/success_rate  | 0.8666666666666667 |
+| train/episode      | 1100.0             |
+| train/success_rate | 0.7227777777777777 |
+-------------------------------------------
+New best success rate: 0.8666666666666667. Saving policy to /home/ubuntu/saved_experts/FetchReach-v1/policy_best.pkl ...
+Saving periodic policy to /home/ubuntu/saved_experts/FetchReach-v1/policy_10.pkl ...
+-------------------------------------------
+| epoch              | 11                 |
+| stats_g/mean       | 0.83927387         |
+| stats_g/std        | 0.074742585        |
+| stats_o/mean       | 0.20183218         |
+| stats_o/std        | 0.07232025         |
+| test/episode       | 240.0              |
+| test/mean_Q        | -1.6409065         |
+| test/success_rate  | 0.9499999999999998 |
+| train/episode      | 1200.0             |
+| train/success_rate | 0.8205555555555555 |
+-------------------------------------------
+New best success rate: 0.9499999999999998. Saving policy to /home/ubuntu/saved_experts/FetchReach-v1/policy_best.pkl ...
+-------------------------------------------
+| epoch              | 12                 |
+| stats_g/mean       | 0.8391895          |
+| stats_g/std        | 0.074443206        |
+| stats_o/mean       | 0.20178346         |
+| stats_o/std        | 0.07630685         |
+| test/episode       | 260.0              |
+| test/mean_Q        | -1.3315642         |
+| test/success_rate  | 0.9833333333333335 |
+| train/episode      | 1300.0             |
+| train/success_rate | 0.9005555555555556 |
+-------------------------------------------
+New best success rate: 0.9833333333333335. Saving policy to /home/ubuntu/saved_experts/FetchReach-v1/policy_best.pkl ...
+-------------------------------------------
+| epoch              | 13                 |
+| stats_g/mean       | 0.8391229          |
+| stats_g/std        | 0.07391807         |
+| stats_o/mean       | 0.20194691         |
+| stats_o/std        | 0.078894034        |
+| test/episode       | 280.0              |
+| test/mean_Q        | -1.293677          |
+| test/success_rate  | 0.9944444444444444 |
+| train/episode      | 1400.0             |
+| train/success_rate | 0.9338888888888888 |
+-------------------------------------------
+New best success rate: 0.9944444444444444. Saving policy to /home/ubuntu/saved_experts/FetchReach-v1/policy_best.pkl ...
+-------------------------------------------
+| epoch              | 14                 |
+| stats_g/mean       | 0.8390609          |
+| stats_g/std        | 0.0734145          |
+| stats_o/mean       | 0.20203286         |
+| stats_o/std        | 0.08103542         |
+| test/episode       | 300.0              |
+| test/mean_Q        | -1.169255          |
+| test/success_rate  | 0.9944444444444444 |
+| train/episode      | 1500.0             |
+| train/success_rate | 0.9549999999999998 |
+-------------------------------------------
+New best success rate: 0.9944444444444444. Saving policy to /home/ubuntu/saved_experts/FetchReach-v1/policy_best.pkl ...
+-------------------------------------------
+| epoch              | 15                 |
+| stats_g/mean       | 0.8390219          |
+| stats_g/std        | 0.07312507         |
+| stats_o/mean       | 0.20198601         |
+| stats_o/std        | 0.0832227          |
+| test/episode       | 320.0              |
+| test/mean_Q        | -1.183773          |
+| test/success_rate  | 0.9972222222222222 |
+| train/episode      | 1600.0             |
+| train/success_rate | 0.9499999999999998 |
+-------------------------------------------
+New best success rate: 0.9972222222222222. Saving policy to /home/ubuntu/saved_experts/FetchReach-v1/policy_best.pkl ...
+Saving periodic policy to /home/ubuntu/saved_experts/FetchReach-v1/policy_15.pkl ...
+-------------------------------------------
+| epoch              | 16                 |
+| stats_g/mean       | 0.8390627          |
+| stats_g/std        | 0.07283482         |
+| stats_o/mean       | 0.20198564         |
+| stats_o/std        | 0.085169524        |
+| test/episode       | 340.0              |
+| test/mean_Q        | -1.0369129         |
+| test/success_rate  | 1.0                |
+| train/episode      | 1700.0             |
+| train/success_rate | 0.9522222222222223 |
+-------------------------------------------
+New best success rate: 1.0. Saving policy to /home/ubuntu/saved_experts/FetchReach-v1/policy_best.pkl ...
+------------------------------------------
+| epoch              | 17                |
+| stats_g/mean       | 0.83908534        |
+| stats_g/std        | 0.07264292        |
+| stats_o/mean       | 0.20196936        |
+| stats_o/std        | 0.08680018        |
+| test/episode       | 360.0             |
+| test/mean_Q        | -1.0867053        |
+| test/success_rate  | 1.0               |
+| train/episode      | 1800.0            |
+| train/success_rate | 0.953888888888889 |
+------------------------------------------
+New best success rate: 1.0. Saving policy to /home/ubuntu/saved_experts/FetchReach-v1/policy_best.pkl ...
+-------------------------------------------
+| epoch              | 18                 |
+| stats_g/mean       | 0.83907604         |
+| stats_g/std        | 0.0723701          |
+| stats_o/mean       | 0.20192774         |
+| stats_o/std        | 0.088047706        |
+| test/episode       | 380.0              |
+| test/mean_Q        | -1.1447797         |
+| test/success_rate  | 0.9972222222222222 |
+| train/episode      | 1900.0             |
+| train/success_rate | 0.9583333333333334 |
+-------------------------------------------
+-------------------------------------------
+| epoch              | 19                 |
+| stats_g/mean       | 0.83906704         |
+| stats_g/std        | 0.07214524         |
+| stats_o/mean       | 0.20189217         |
+| stats_o/std        | 0.08918828         |
+| test/episode       | 400.0              |
+| test/mean_Q        | -1.0000254         |
+| test/success_rate  | 0.9972222222222222 |
+| train/episode      | 2000.0             |
+| train/success_rate | 0.958888888888889  |
+-------------------------------------------
+-------------------------------------------
+| epoch              | 20                 |
+| stats_g/mean       | 0.83905077         |
+| stats_g/std        | 0.0719635          |
+| stats_o/mean       | 0.20194046         |
+| stats_o/std        | 0.090172976        |
+| test/episode       | 420.0              |
+| test/mean_Q        | -0.93067294        |
+| test/success_rate  | 1.0                |
+| train/episode      | 2100.0             |
+| train/success_rate | 0.9605555555555555 |
+-------------------------------------------
+New best success rate: 1.0. Saving policy to /home/ubuntu/saved_experts/FetchReach-v1/policy_best.pkl ...
+Saving periodic policy to /home/ubuntu/saved_experts/FetchReach-v1/policy_20.pkl ...
+-------------------------------------------
+| epoch              | 21                 |
+| stats_g/mean       | 0.83903503         |
+| stats_g/std        | 0.07181617         |
+| stats_o/mean       | 0.20198624         |
+| stats_o/std        | 0.09121173         |
+| test/episode       | 440.0              |
+| test/mean_Q        | -0.9587457         |
+| test/success_rate  | 1.0                |
+| train/episode      | 2200.0             |
+| train/success_rate | 0.9605555555555555 |
+-------------------------------------------
+New best success rate: 1.0. Saving policy to /home/ubuntu/saved_experts/FetchReach-v1/policy_best.pkl ...
+-------------------------------------------
+| epoch              | 22                 |
+| stats_g/mean       | 0.83901703         |
+| stats_g/std        | 0.071609534        |
+| stats_o/mean       | 0.20201719         |
+| stats_o/std        | 0.09196227         |
+| test/episode       | 460.0              |
+| test/mean_Q        | -1.0248945         |
+| test/success_rate  | 1.0                |
+| train/episode      | 2300.0             |
+| train/success_rate | 0.9500000000000001 |
+-------------------------------------------
+New best success rate: 1.0. Saving policy to /home/ubuntu/saved_experts/FetchReach-v1/policy_best.pkl ...
+-------------------------------------------
+| epoch              | 23                 |
+| stats_g/mean       | 0.83902574         |
+| stats_g/std        | 0.071435265        |
+| stats_o/mean       | 0.20203736         |
+| stats_o/std        | 0.09277757         |
+| test/episode       | 480.0              |
+| test/mean_Q        | -1.0777593         |
+| test/success_rate  | 0.9888888888888889 |
+| train/episode      | 2400.0             |
+| train/success_rate | 0.9516666666666667 |
+-------------------------------------------
+-------------------------------------------
+| epoch              | 24                 |
+| stats_g/mean       | 0.8389971          |
+| stats_g/std        | 0.07127452         |
+| stats_o/mean       | 0.20208393         |
+| stats_o/std        | 0.09362146         |
+| test/episode       | 500.0              |
+| test/mean_Q        | -1.0241269         |
+| test/success_rate  | 1.0                |
+| train/episode      | 2500.0             |
+| train/success_rate | 0.9605555555555555 |
+-------------------------------------------
+New best success rate: 1.0. Saving policy to /home/ubuntu/saved_experts/FetchReach-v1/policy_best.pkl ...
+-------------------------------------------
+| epoch              | 25                 |
+| stats_g/mean       | 0.83901566         |
+| stats_g/std        | 0.07116474         |
+| stats_o/mean       | 0.20213087         |
+| stats_o/std        | 0.09437231         |
+| test/episode       | 520.0              |
+| test/mean_Q        | -1.0055966         |
+| test/success_rate  | 1.0                |
+| train/episode      | 2600.0             |
+| train/success_rate | 0.9622222222222222 |
+-------------------------------------------
+New best success rate: 1.0. Saving policy to /home/ubuntu/saved_experts/FetchReach-v1/policy_best.pkl ...
+Saving periodic policy to /home/ubuntu/saved_experts/FetchReach-v1/policy_25.pkl ...
+-------------------------------------------
+| epoch              | 26                 |
+| stats_g/mean       | 0.839005           |
+| stats_g/std        | 0.07110463         |
+| stats_o/mean       | 0.20213085         |
+| stats_o/std        | 0.09487261         |
+| test/episode       | 540.0              |
+| test/mean_Q        | -0.9774703         |
+| test/success_rate  | 0.9972222222222222 |
+| train/episode      | 2700.0             |
+| train/success_rate | 0.9616666666666666 |
+-------------------------------------------
+-------------------------------------------
+| epoch              | 27                 |
+| stats_g/mean       | 0.8390421          |
+| stats_g/std        | 0.0710266          |
+| stats_o/mean       | 0.20216542         |
+| stats_o/std        | 0.095448           |
+| test/episode       | 560.0              |
+| test/mean_Q        | -0.89253986        |
+| test/success_rate  | 1.0                |
+| train/episode      | 2800.0             |
+| train/success_rate | 0.9627777777777777 |
+-------------------------------------------
+New best success rate: 1.0. Saving policy to /home/ubuntu/saved_experts/FetchReach-v1/policy_best.pkl ...
+-------------------------------------------
+| epoch              | 28                 |
+| stats_g/mean       | 0.8390525          |
+| stats_g/std        | 0.07090685         |
+| stats_o/mean       | 0.20220563         |
+| stats_o/std        | 0.09590247         |
+| test/episode       | 580.0              |
+| test/mean_Q        | -0.94538105        |
+| test/success_rate  | 1.0                |
+| train/episode      | 2900.0             |
+| train/success_rate | 0.9655555555555555 |
+-------------------------------------------
+New best success rate: 1.0. Saving policy to /home/ubuntu/saved_experts/FetchReach-v1/policy_best.pkl ...
+-------------------------------------------
+| epoch              | 29                 |
+| stats_g/mean       | 0.839041           |
+| stats_g/std        | 0.070777506        |
+| stats_o/mean       | 0.20222193         |
+| stats_o/std        | 0.096280605        |
+| test/episode       | 600.0              |
+| test/mean_Q        | -0.98450744        |
+| test/success_rate  | 1.0                |
+| train/episode      | 3000.0             |
+| train/success_rate | 0.9672222222222222 |
+-------------------------------------------
+New best success rate: 1.0. Saving policy to /home/ubuntu/saved_experts/FetchReach-v1/policy_best.pkl ...
+-------------------------------------------
+| epoch              | 30                 |
+| stats_g/mean       | 0.83905935         |
+| stats_g/std        | 0.07076219         |
+| stats_o/mean       | 0.20224127         |
+| stats_o/std        | 0.096677914        |
+| test/episode       | 620.0              |
+| test/mean_Q        | -0.9365857         |
+| test/success_rate  | 0.9972222222222222 |
+| train/episode      | 3100.0             |
+| train/success_rate | 0.9522222222222223 |
+-------------------------------------------
+Saving periodic policy to /home/ubuntu/saved_experts/FetchReach-v1/policy_30.pkl ...
+-------------------------------------------
+| epoch              | 31                 |
+| stats_g/mean       | 0.83904004         |
+| stats_g/std        | 0.070673384        |
+| stats_o/mean       | 0.20224237         |
+| stats_o/std        | 0.09708745         |
+| test/episode       | 640.0              |
+| test/mean_Q        | -0.98655045        |
+| test/success_rate  | 0.9972222222222222 |
+| train/episode      | 3200.0             |
+| train/success_rate | 0.9561111111111111 |
+-------------------------------------------
+-------------------------------------------
+| epoch              | 32                 |
+| stats_g/mean       | 0.8390548          |
+| stats_g/std        | 0.070503324        |
+| stats_o/mean       | 0.20225775         |
+| stats_o/std        | 0.09740349         |
+| test/episode       | 660.0              |
+| test/mean_Q        | -0.95258427        |
+| test/success_rate  | 1.0                |
+| train/episode      | 3300.0             |
+| train/success_rate | 0.9677777777777776 |
+-------------------------------------------
+New best success rate: 1.0. Saving policy to /home/ubuntu/saved_experts/FetchReach-v1/policy_best.pkl ...
+-------------------------------------------
+| epoch              | 33                 |
+| stats_g/mean       | 0.8390397          |
+| stats_g/std        | 0.07036474         |
+| stats_o/mean       | 0.20227584         |
+| stats_o/std        | 0.097845584        |
+| test/episode       | 680.0              |
+| test/mean_Q        | -0.9682986         |
+| test/success_rate  | 0.9944444444444444 |
+| train/episode      | 3400.0             |
+| train/success_rate | 0.9644444444444444 |
+-------------------------------------------
+-------------------------------------------
+| epoch              | 34                 |
+| stats_g/mean       | 0.83905244         |
+| stats_g/std        | 0.07024014         |
+| stats_o/mean       | 0.20231028         |
+| stats_o/std        | 0.09813413         |
+| test/episode       | 700.0              |
+| test/mean_Q        | -0.8792966         |
+| test/success_rate  | 1.0                |
+| train/episode      | 3500.0             |
+| train/success_rate | 0.9655555555555555 |
+-------------------------------------------
+New best success rate: 1.0. Saving policy to /home/ubuntu/saved_experts/FetchReach-v1/policy_best.pkl ...
+-------------------------------------------
+| epoch              | 35                 |
+| stats_g/mean       | 0.8390409          |
+| stats_g/std        | 0.07022599         |
+| stats_o/mean       | 0.20230016         |
+| stats_o/std        | 0.09847382         |
+| test/episode       | 720.0              |
+| test/mean_Q        | -0.9470527         |
+| test/success_rate  | 0.9972222222222222 |
+| train/episode      | 3600.0             |
+| train/success_rate | 0.9544444444444444 |
+-------------------------------------------
+Saving periodic policy to /home/ubuntu/saved_experts/FetchReach-v1/policy_35.pkl ...
+-------------------------------------------
+| epoch              | 36                 |
+| stats_g/mean       | 0.8390523          |
+| stats_g/std        | 0.07013626         |
+| stats_o/mean       | 0.20230895         |
+| stats_o/std        | 0.09881013         |
+| test/episode       | 740.0              |
+| test/mean_Q        | -0.92588085        |
+| test/success_rate  | 1.0                |
+| train/episode      | 3700.0             |
+| train/success_rate | 0.9611111111111109 |
+-------------------------------------------
+New best success rate: 1.0. Saving policy to /home/ubuntu/saved_experts/FetchReach-v1/policy_best.pkl ...
+-------------------------------------------
+| epoch              | 37                 |
+| stats_g/mean       | 0.839031           |
+| stats_g/std        | 0.07004206         |
+| stats_o/mean       | 0.20232469         |
+| stats_o/std        | 0.099118575        |
+| test/episode       | 760.0              |
+| test/mean_Q        | -0.965339          |
+| test/success_rate  | 1.0                |
+| train/episode      | 3800.0             |
+| train/success_rate | 0.9605555555555555 |
+-------------------------------------------
+New best success rate: 1.0. Saving policy to /home/ubuntu/saved_experts/FetchReach-v1/policy_best.pkl ...
+-------------------------------------------
+| epoch              | 38                 |
+| stats_g/mean       | 0.8390105          |
+| stats_g/std        | 0.06996335         |
+| stats_o/mean       | 0.2023389          |
+| stats_o/std        | 0.09937739         |
+| test/episode       | 780.0              |
+| test/mean_Q        | -0.90894806        |
+| test/success_rate  | 1.0                |
+| train/episode      | 3900.0             |
+| train/success_rate | 0.9666666666666666 |
+-------------------------------------------
+New best success rate: 1.0. Saving policy to /home/ubuntu/saved_experts/FetchReach-v1/policy_best.pkl ...
+------------------------------------------
+| epoch              | 39                |
+| stats_g/mean       | 0.83901334        |
+| stats_g/std        | 0.069882646       |
+| stats_o/mean       | 0.2023626         |
+| stats_o/std        | 0.09970829        |
+| test/episode       | 800.0             |
+| test/mean_Q        | -0.91682583       |
+| test/success_rate  | 1.0               |
+| train/episode      | 4000.0            |
+| train/success_rate | 0.967222222222222 |
+------------------------------------------
+New best success rate: 1.0. Saving policy to /home/ubuntu/saved_experts/FetchReach-v1/policy_best.pkl ...
+-------------------------------------------
+| epoch              | 40                 |
+| stats_g/mean       | 0.8389882          |
+| stats_g/std        | 0.06980545         |
+| stats_o/mean       | 0.2023929          |
+| stats_o/std        | 0.09994462         |
+| test/episode       | 820.0              |
+| test/mean_Q        | -0.9160457         |
+| test/success_rate  | 1.0                |
+| train/episode      | 4100.0             |
+| train/success_rate | 0.9550000000000001 |
+-------------------------------------------
+New best success rate: 1.0. Saving policy to /home/ubuntu/saved_experts/FetchReach-v1/policy_best.pkl ...
+Saving periodic policy to /home/ubuntu/saved_experts/FetchReach-v1/policy_40.pkl ...
+-------------------------------------------
+| epoch              | 41                 |
+| stats_g/mean       | 0.8390239          |
+| stats_g/std        | 0.06981054         |
+| stats_o/mean       | 0.20241396         |
+| stats_o/std        | 0.100190654        |
+| test/episode       | 840.0              |
+| test/mean_Q        | -0.9334256         |
+| test/success_rate  | 1.0                |
+| train/episode      | 4200.0             |
+| train/success_rate | 0.9600000000000001 |
+-------------------------------------------
+New best success rate: 1.0. Saving policy to /home/ubuntu/saved_experts/FetchReach-v1/policy_best.pkl ...
+-------------------------------------------
+| epoch              | 42                 |
+| stats_g/mean       | 0.839012           |
+| stats_g/std        | 0.069707304        |
+| stats_o/mean       | 0.20240542         |
+| stats_o/std        | 0.100476064        |
+| test/episode       | 860.0              |
+| test/mean_Q        | -0.84233665        |
+| test/success_rate  | 1.0                |
+| train/episode      | 4300.0             |
+| train/success_rate | 0.9661111111111111 |
+-------------------------------------------
+New best success rate: 1.0. Saving policy to /home/ubuntu/saved_experts/FetchReach-v1/policy_best.pkl ...
+-------------------------------------------
+| epoch              | 43                 |
+| stats_g/mean       | 0.8390093          |
+| stats_g/std        | 0.0696247          |
+| stats_o/mean       | 0.20241183         |
+| stats_o/std        | 0.10067075         |
+| test/episode       | 880.0              |
+| test/mean_Q        | -0.9095741         |
+| test/success_rate  | 1.0                |
+| train/episode      | 4400.0             |
+| train/success_rate | 0.9611111111111111 |
+-------------------------------------------
+New best success rate: 1.0. Saving policy to /home/ubuntu/saved_experts/FetchReach-v1/policy_best.pkl ...
+-------------------------------------------
+| epoch              | 44                 |
+| stats_g/mean       | 0.8389819          |
+| stats_g/std        | 0.069545254        |
+| stats_o/mean       | 0.20242473         |
+| stats_o/std        | 0.10091979         |
+| test/episode       | 900.0              |
+| test/mean_Q        | -0.85728           |
+| test/success_rate  | 1.0                |
+| train/episode      | 4500.0             |
+| train/success_rate | 0.9549999999999998 |
+-------------------------------------------
+New best success rate: 1.0. Saving policy to /home/ubuntu/saved_experts/FetchReach-v1/policy_best.pkl ...
+-------------------------------------------
+| epoch              | 45                 |
+| stats_g/mean       | 0.8389605          |
+| stats_g/std        | 0.06949285         |
+| stats_o/mean       | 0.20241967         |
+| stats_o/std        | 0.10111125         |
+| test/episode       | 920.0              |
+| test/mean_Q        | -0.9033451         |
+| test/success_rate  | 1.0                |
+| train/episode      | 4600.0             |
+| train/success_rate | 0.9583333333333334 |
+-------------------------------------------
+New best success rate: 1.0. Saving policy to /home/ubuntu/saved_experts/FetchReach-v1/policy_best.pkl ...
+Saving periodic policy to /home/ubuntu/saved_experts/FetchReach-v1/policy_45.pkl ...
+-------------------------------------------
+| epoch              | 46                 |
+| stats_g/mean       | 0.838907           |
+| stats_g/std        | 0.06950549         |
+| stats_o/mean       | 0.20239994         |
+| stats_o/std        | 0.10145183         |
+| test/episode       | 940.0              |
+| test/mean_Q        | -0.9084463         |
+| test/success_rate  | 0.9972222222222222 |
+| train/episode      | 4700.0             |
+| train/success_rate | 0.9577777777777778 |
+-------------------------------------------
+-------------------------------------------
+| epoch              | 47                 |
+| stats_g/mean       | 0.83891845         |
+| stats_g/std        | 0.06950787         |
+| stats_o/mean       | 0.20240575         |
+| stats_o/std        | 0.10172334         |
+| test/episode       | 960.0              |
+| test/mean_Q        | -1.0145143         |
+| test/success_rate  | 0.9972222222222222 |
+| train/episode      | 4800.0             |
+| train/success_rate | 0.9566666666666666 |
+-------------------------------------------
+-------------------------------------------
+| epoch              | 48                 |
+| stats_g/mean       | 0.8388906          |
+| stats_g/std        | 0.069435254        |
+| stats_o/mean       | 0.202425           |
+| stats_o/std        | 0.10202094         |
+| test/episode       | 980.0              |
+| test/mean_Q        | -0.90496254        |
+| test/success_rate  | 0.9972222222222222 |
+| train/episode      | 4900.0             |
+| train/success_rate | 0.9577777777777777 |
+-------------------------------------------
+-------------------------------------------
+| epoch              | 49                 |
+| stats_g/mean       | 0.8389067          |
+| stats_g/std        | 0.069371566        |
+| stats_o/mean       | 0.20243984         |
+| stats_o/std        | 0.10222879         |
+| test/episode       | 1000.0             |
+| test/mean_Q        | -0.91073227        |
+| test/success_rate  | 0.9972222222222222 |
+| train/episode      | 5000.0             |
+| train/success_rate | 0.9672222222222222 |
+-------------------------------------------

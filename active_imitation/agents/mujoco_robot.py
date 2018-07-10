@@ -1,21 +1,21 @@
 import numpy as np
 import tensorflow as tf
 from active_imitation.utils import denseNet
+import os
 
 
 DEFAULT_PARAMS = {
     'layers': [16, 16, 16], # Layers and hidden units in network
     'lr': 0.001, # Learning rate
     'max_a': 1., # max absolute value of actions
-    'batch_size': 32, # Batches to use for updating network
     'dropout_rate': 0.1, # Dropout rate during training and forward samples
     'filepath': '~/Research/experiments/tmp/'
 }
 
 class GymRobotAgent(object):
     
-    def __init__ (self, sess, env_dims, layers, max_a, batch_size, 
-                    lr=0.1, dropout_rate=0.1, filepath='tmp/'):
+    def __init__ (self, env_dims, layers, max_a, lr=0.1, 
+                    dropout_rate=0.1, filepath='tmp/', load=False):
         """
         Agent that learns via imitation to perform an OpenAI Robotic Task
             
@@ -31,20 +31,38 @@ class GymRobotAgent(object):
             filepath[str]: policy and data save location 
         """
                 
-        o_dim = env_dims['observation']
-        g_dim = env_dims['goal']
-        a_dim = env_dims['action']
+        self.env_dims = env_dims
+        self.layers = layers
+        self.max_a = max_a
+        self.lr = lr
+        self.dropout_rate = dropout_rate
+        self.filepath = filepath
         
-        self.sess = sess
+        self.sess = tf.get_default_session()
+        if self.sess is None:
+            self.sess = tf.InteractiveSession()
         
-        self.dropout = tf.Variable(dropout_rate, name='Dropout_Rate')
+        self._build_network()
+        
+        if load:
+            self._load_model()
+        else:
+            self.writer = tf.summary.FileWriter(self.filepath+'events/', self.sess.graph)
+    
+    def _build_network(self):
+                    
+        o_dim = self.env_dims['observation']
+        g_dim = self.env_dims['goal']
+        a_dim = self.env_dims['action']
+
+        self.dropout = tf.Variable(self.dropout_rate, name='Dropout_Rate')
         self.apply_dropout = tf.placeholder(tf.bool)
         
         self.o = tf.placeholder(tf.float32, [None, o_dim])
         self.g = tf.placeholder(tf.float32, [None, g_dim])
         policy_input = tf.concat(axis=1, values=[self.o, self.g]) # Concatenate observations and goals as a single network input
-        network = denseNet(policy_input, layers, self.dropout, self.apply_dropout, name='Model')
-        self.policy = max_a * tf.layers.dense(inputs=network, units=a_dim, activation=tf.tanh)
+        network = denseNet(policy_input, self.layers, self.dropout, self.apply_dropout, name='Model')
+        self.policy = self.max_a * tf.layers.dense(inputs=network, units=a_dim, activation=tf.tanh)
         
         with tf.name_scope("Loss"):
             # Continuous action spaces, MSE loss
@@ -52,11 +70,16 @@ class GymRobotAgent(object):
             self.loss = tf.losses.mean_squared_error(self.expert_action, self.policy)
         with tf.name_scope("Opt"):
             # Adam optimzer with a fixed lr
-            self.opt = tf.train.AdamOptimizer(lr).minimize(self.loss)
+            self.opt = tf.train.AdamOptimizer(self.lr).minimize(self.loss)
         
+        # initialize vars
+        # tf.variables_initializer(self._global_vars('')).run()
         self.sess.run(tf.global_variables_initializer())
         self.saver = tf.train.Saver(max_to_keep=10)
-        self.writer = tf.summary.FileWriter(filepath+'events/', self.sess.graph)
+    
+    # def _global_vars(self, scope):
+    #     res = tf.get_collection(tf.GraphKeys.GLOBAL_VARIABLES, scope=self.scope + '/' + scope)
+    #     return res
         
     def update(self, batch):
         """
@@ -79,7 +102,7 @@ class GymRobotAgent(object):
         """
         raise NotImplementedError
     
-    def samplePolicy(self, state, apply_dropout):
+    def _samplePolicy(self, state, apply_dropout):
         """
         Make a forward pass through the policy network
         """
@@ -100,7 +123,7 @@ class GymRobotAgent(object):
         g = np.repeat(g, batch, axis=0)
         state = {'observation':o, 'goal':g}
         
-        action = self.samplePolicy(state, apply_dropout=apply_dropout)
+        action = self._samplePolicy(state, apply_dropout=apply_dropout)
         #TODO may want to flatten batch size 1 here instead of outside?
         return action
         
@@ -118,6 +141,17 @@ class GymRobotAgent(object):
         # Assume independence between actions in the action space, sum variances
         action_var = np.sum(per_action_var)
         return action_avg, action_var
+    
+    def save_model(self):
+        savefile = os.path.join(self.filepath, 'model.ckpt')
+        self.saver.save(self.sess, savefile)
+        print('Saved Model')
+    
+    
+    def _load_model(self):
+        loadfile = os.path.join(self.filepath, 'model.ckpt')
+        self.saver.restore(self.sess, loadfile)
+        print('Model Loaded')
 
 
 

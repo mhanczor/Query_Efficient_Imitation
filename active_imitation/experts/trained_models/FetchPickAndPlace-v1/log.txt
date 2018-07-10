@@ -1,0 +1,2493 @@
+Logging to /home/ubuntu/saved_experts/FetchPickAndPlace-v1
+T: 50
+_Q_lr: 0.001
+_action_l2: 1.0
+_batch_size: 256
+_buffer_size: 1000000
+_clip_obs: 200.0
+_hidden: 256
+_layers: 3
+_max_u: 1.0
+_network_class: baselines.her.actor_critic:ActorCritic
+_norm_clip: 5
+_norm_eps: 0.01
+_pi_lr: 0.001
+_polyak: 0.95
+_relative_goals: False
+_scope: ddpg
+ddpg_params: {'buffer_size': 1000000, 'hidden': 256, 'layers': 3, 'network_class': 'baselines.her.actor_critic:ActorCritic', 'polyak': 0.95, 'batch_size': 256, 'Q_lr': 0.001, 'pi_lr': 0.001, 'norm_eps': 0.01, 'norm_clip': 5, 'max_u': 1.0, 'action_l2': 1.0, 'clip_obs': 200.0, 'scope': 'ddpg', 'relative_goals': False}
+env_name: FetchPickAndPlace-v1
+gamma: 0.98
+make_env: <function prepare_params.<locals>.make_env at 0x7f49ffe4bf28>
+n_batches: 40
+n_cycles: 50
+n_test_rollouts: 10
+noise_eps: 0.2
+random_eps: 0.3
+replay_k: 4
+replay_strategy: future
+rollout_batch_size: 2
+test_with_polyak: False
+Creating a DDPG agent with action space 4 x 1.0...
+Training...
+---------------------------------------------
+| epoch              | 0                    |
+| stats_g/mean       | 0.84343123           |
+| stats_g/std        | 0.09494004           |
+| stats_o/mean       | 0.20337024           |
+| stats_o/std        | 0.053285345          |
+| test/episode       | 20.0                 |
+| test/mean_Q        | -3.025824            |
+| test/success_rate  | 0.03333333333333333  |
+| train/episode      | 100.0                |
+| train/success_rate | 0.037222222222222226 |
+---------------------------------------------
+New best success rate: 0.03333333333333333. Saving policy to /home/ubuntu/saved_experts/FetchPickAndPlace-v1/policy_best.pkl ...
+Saving periodic policy to /home/ubuntu/saved_experts/FetchPickAndPlace-v1/policy_0.pkl ...
+--------------------------------------------
+| epoch              | 1                   |
+| stats_g/mean       | 0.84449315          |
+| stats_g/std        | 0.09486727          |
+| stats_o/mean       | 0.20376748          |
+| stats_o/std        | 0.051458787         |
+| test/episode       | 40.0                |
+| test/mean_Q        | -4.9128714          |
+| test/success_rate  | 0.04722222222222223 |
+| train/episode      | 200.0               |
+| train/success_rate | 0.03833333333333334 |
+--------------------------------------------
+New best success rate: 0.04722222222222223. Saving policy to /home/ubuntu/saved_experts/FetchPickAndPlace-v1/policy_best.pkl ...
+---------------------------------------------
+| epoch              | 2                    |
+| stats_g/mean       | 0.84491295           |
+| stats_g/std        | 0.09452772           |
+| stats_o/mean       | 0.20378768           |
+| stats_o/std        | 0.050910242          |
+| test/episode       | 60.0                 |
+| test/mean_Q        | -6.8767443           |
+| test/success_rate  | 0.041666666666666664 |
+| train/episode      | 300.0                |
+| train/success_rate | 0.03722222222222222  |
+---------------------------------------------
+---------------------------------------------
+| epoch              | 3                    |
+| stats_g/mean       | 0.8454199            |
+| stats_g/std        | 0.094976835          |
+| stats_o/mean       | 0.20388848           |
+| stats_o/std        | 0.052538946          |
+| test/episode       | 80.0                 |
+| test/mean_Q        | -8.601414            |
+| test/success_rate  | 0.05833333333333332  |
+| train/episode      | 400.0                |
+| train/success_rate | 0.043333333333333335 |
+---------------------------------------------
+New best success rate: 0.05833333333333332. Saving policy to /home/ubuntu/saved_experts/FetchPickAndPlace-v1/policy_best.pkl ...
+---------------------------------------------
+| epoch              | 4                    |
+| stats_g/mean       | 0.84542507           |
+| stats_g/std        | 0.09589705           |
+| stats_o/mean       | 0.20387834           |
+| stats_o/std        | 0.055819307          |
+| test/episode       | 100.0                |
+| test/mean_Q        | -10.340276           |
+| test/success_rate  | 0.05555555555555555  |
+| train/episode      | 500.0                |
+| train/success_rate | 0.049444444444444444 |
+---------------------------------------------
+--------------------------------------------
+| epoch              | 5                   |
+| stats_g/mean       | 0.84537864          |
+| stats_g/std        | 0.09702884          |
+| stats_o/mean       | 0.20390749          |
+| stats_o/std        | 0.060795255         |
+| test/episode       | 120.0               |
+| test/mean_Q        | -11.2857685         |
+| test/success_rate  | 0.09722222222222222 |
+| train/episode      | 600.0               |
+| train/success_rate | 0.06444444444444446 |
+--------------------------------------------
+New best success rate: 0.09722222222222222. Saving policy to /home/ubuntu/saved_experts/FetchPickAndPlace-v1/policy_best.pkl ...
+Saving periodic policy to /home/ubuntu/saved_experts/FetchPickAndPlace-v1/policy_5.pkl ...
+--------------------------------------------
+| epoch              | 6                   |
+| stats_g/mean       | 0.8454385           |
+| stats_g/std        | 0.09813412          |
+| stats_o/mean       | 0.20402244          |
+| stats_o/std        | 0.06654279          |
+| test/episode       | 140.0               |
+| test/mean_Q        | -12.054818          |
+| test/success_rate  | 0.14444444444444446 |
+| train/episode      | 700.0               |
+| train/success_rate | 0.09555555555555556 |
+--------------------------------------------
+New best success rate: 0.14444444444444446. Saving policy to /home/ubuntu/saved_experts/FetchPickAndPlace-v1/policy_best.pkl ...
+--------------------------------------------
+| epoch              | 7                   |
+| stats_g/mean       | 0.8454952           |
+| stats_g/std        | 0.09911455          |
+| stats_o/mean       | 0.2040821           |
+| stats_o/std        | 0.072966136         |
+| test/episode       | 160.0               |
+| test/mean_Q        | -11.06447           |
+| test/success_rate  | 0.3111111111111111  |
+| train/episode      | 800.0               |
+| train/success_rate | 0.17555555555555558 |
+--------------------------------------------
+New best success rate: 0.3111111111111111. Saving policy to /home/ubuntu/saved_experts/FetchPickAndPlace-v1/policy_best.pkl ...
+--------------------------------------------
+| epoch              | 8                   |
+| stats_g/mean       | 0.84556365          |
+| stats_g/std        | 0.09964408          |
+| stats_o/mean       | 0.20419319          |
+| stats_o/std        | 0.0786634           |
+| test/episode       | 180.0               |
+| test/mean_Q        | -9.831239           |
+| test/success_rate  | 0.4361111111111111  |
+| train/episode      | 900.0               |
+| train/success_rate | 0.26555555555555554 |
+--------------------------------------------
+New best success rate: 0.4361111111111111. Saving policy to /home/ubuntu/saved_experts/FetchPickAndPlace-v1/policy_best.pkl ...
+--------------------------------------------
+| epoch              | 9                   |
+| stats_g/mean       | 0.84527135          |
+| stats_g/std        | 0.10025271          |
+| stats_o/mean       | 0.20426382          |
+| stats_o/std        | 0.08345643          |
+| test/episode       | 200.0               |
+| test/mean_Q        | -9.8781             |
+| test/success_rate  | 0.4861111111111111  |
+| train/episode      | 1000.0              |
+| train/success_rate | 0.34722222222222215 |
+--------------------------------------------
+New best success rate: 0.4861111111111111. Saving policy to /home/ubuntu/saved_experts/FetchPickAndPlace-v1/policy_best.pkl ...
+--------------------------------------------
+| epoch              | 10                  |
+| stats_g/mean       | 0.8453154           |
+| stats_g/std        | 0.10024974          |
+| stats_o/mean       | 0.20442924          |
+| stats_o/std        | 0.08704457          |
+| test/episode       | 220.0               |
+| test/mean_Q        | -9.783075           |
+| test/success_rate  | 0.5222222222222223  |
+| train/episode      | 1100.0              |
+| train/success_rate | 0.40166666666666667 |
+--------------------------------------------
+New best success rate: 0.5222222222222223. Saving policy to /home/ubuntu/saved_experts/FetchPickAndPlace-v1/policy_best.pkl ...
+Saving periodic policy to /home/ubuntu/saved_experts/FetchPickAndPlace-v1/policy_10.pkl ...
+--------------------------------------------
+| epoch              | 11                  |
+| stats_g/mean       | 0.84530663          |
+| stats_g/std        | 0.100081295         |
+| stats_o/mean       | 0.20433311          |
+| stats_o/std        | 0.08949944          |
+| test/episode       | 240.0               |
+| test/mean_Q        | -10.719918          |
+| test/success_rate  | 0.5361111111111111  |
+| train/episode      | 1200.0              |
+| train/success_rate | 0.44333333333333336 |
+--------------------------------------------
+New best success rate: 0.5361111111111111. Saving policy to /home/ubuntu/saved_experts/FetchPickAndPlace-v1/policy_best.pkl ...
+--------------------------------------------
+| epoch              | 12                  |
+| stats_g/mean       | 0.84520966          |
+| stats_g/std        | 0.10001584          |
+| stats_o/mean       | 0.20421322          |
+| stats_o/std        | 0.09102932          |
+| test/episode       | 260.0               |
+| test/mean_Q        | -9.749516           |
+| test/success_rate  | 0.5861111111111111  |
+| train/episode      | 1300.0              |
+| train/success_rate | 0.45500000000000007 |
+--------------------------------------------
+New best success rate: 0.5861111111111111. Saving policy to /home/ubuntu/saved_experts/FetchPickAndPlace-v1/policy_best.pkl ...
+--------------------------------------------
+| epoch              | 13                  |
+| stats_g/mean       | 0.8452184           |
+| stats_g/std        | 0.09999338          |
+| stats_o/mean       | 0.20420128          |
+| stats_o/std        | 0.092345506         |
+| test/episode       | 280.0               |
+| test/mean_Q        | -8.448822           |
+| test/success_rate  | 0.6805555555555556  |
+| train/episode      | 1400.0              |
+| train/success_rate | 0.48444444444444446 |
+--------------------------------------------
+New best success rate: 0.6805555555555556. Saving policy to /home/ubuntu/saved_experts/FetchPickAndPlace-v1/policy_best.pkl ...
+-------------------------------------------
+| epoch              | 14                 |
+| stats_g/mean       | 0.8453451          |
+| stats_g/std        | 0.10011109         |
+| stats_o/mean       | 0.20415995         |
+| stats_o/std        | 0.09331122         |
+| test/episode       | 300.0              |
+| test/mean_Q        | -9.347955          |
+| test/success_rate  | 0.661111111111111  |
+| train/episode      | 1500.0             |
+| train/success_rate | 0.5177777777777778 |
+-------------------------------------------
+-------------------------------------------
+| epoch              | 15                 |
+| stats_g/mean       | 0.8454766          |
+| stats_g/std        | 0.10038553         |
+| stats_o/mean       | 0.20412071         |
+| stats_o/std        | 0.09430727         |
+| test/episode       | 320.0              |
+| test/mean_Q        | -7.6957974         |
+| test/success_rate  | 0.7416666666666667 |
+| train/episode      | 1600.0             |
+| train/success_rate | 0.543888888888889  |
+-------------------------------------------
+New best success rate: 0.7416666666666667. Saving policy to /home/ubuntu/saved_experts/FetchPickAndPlace-v1/policy_best.pkl ...
+Saving periodic policy to /home/ubuntu/saved_experts/FetchPickAndPlace-v1/policy_15.pkl ...
+-------------------------------------------
+| epoch              | 16                 |
+| stats_g/mean       | 0.84560925         |
+| stats_g/std        | 0.100755006        |
+| stats_o/mean       | 0.20414001         |
+| stats_o/std        | 0.095229164        |
+| test/episode       | 340.0              |
+| test/mean_Q        | -6.181236          |
+| test/success_rate  | 0.75               |
+| train/episode      | 1700.0             |
+| train/success_rate | 0.5461111111111111 |
+-------------------------------------------
+New best success rate: 0.75. Saving policy to /home/ubuntu/saved_experts/FetchPickAndPlace-v1/policy_best.pkl ...
+-------------------------------------------
+| epoch              | 17                 |
+| stats_g/mean       | 0.8455106          |
+| stats_g/std        | 0.10084454         |
+| stats_o/mean       | 0.20405394         |
+| stats_o/std        | 0.09593312         |
+| test/episode       | 360.0              |
+| test/mean_Q        | -6.2252026         |
+| test/success_rate  | 0.7833333333333333 |
+| train/episode      | 1800.0             |
+| train/success_rate | 0.565              |
+-------------------------------------------
+New best success rate: 0.7833333333333333. Saving policy to /home/ubuntu/saved_experts/FetchPickAndPlace-v1/policy_best.pkl ...
+-------------------------------------------
+| epoch              | 18                 |
+| stats_g/mean       | 0.84530365         |
+| stats_g/std        | 0.100913405        |
+| stats_o/mean       | 0.20399795         |
+| stats_o/std        | 0.09664997         |
+| test/episode       | 380.0              |
+| test/mean_Q        | -7.0432887         |
+| test/success_rate  | 0.7916666666666666 |
+| train/episode      | 1900.0             |
+| train/success_rate | 0.5438888888888889 |
+-------------------------------------------
+New best success rate: 0.7916666666666666. Saving policy to /home/ubuntu/saved_experts/FetchPickAndPlace-v1/policy_best.pkl ...
+-------------------------------------------
+| epoch              | 19                 |
+| stats_g/mean       | 0.8453543          |
+| stats_g/std        | 0.10093635         |
+| stats_o/mean       | 0.20404175         |
+| stats_o/std        | 0.09708435         |
+| test/episode       | 400.0              |
+| test/mean_Q        | -7.0840764         |
+| test/success_rate  | 0.7666666666666667 |
+| train/episode      | 2000.0             |
+| train/success_rate | 0.5611111111111112 |
+-------------------------------------------
+-------------------------------------------
+| epoch              | 20                 |
+| stats_g/mean       | 0.84545124         |
+| stats_g/std        | 0.10100463         |
+| stats_o/mean       | 0.20405068         |
+| stats_o/std        | 0.09759311         |
+| test/episode       | 420.0              |
+| test/mean_Q        | -6.127383          |
+| test/success_rate  | 0.8277777777777777 |
+| train/episode      | 2100.0             |
+| train/success_rate | 0.5738888888888889 |
+-------------------------------------------
+New best success rate: 0.8277777777777777. Saving policy to /home/ubuntu/saved_experts/FetchPickAndPlace-v1/policy_best.pkl ...
+Saving periodic policy to /home/ubuntu/saved_experts/FetchPickAndPlace-v1/policy_20.pkl ...
+-------------------------------------------
+| epoch              | 21                 |
+| stats_g/mean       | 0.8455571          |
+| stats_g/std        | 0.101334624        |
+| stats_o/mean       | 0.20412664         |
+| stats_o/std        | 0.09817606         |
+| test/episode       | 440.0              |
+| test/mean_Q        | -7.3721323         |
+| test/success_rate  | 0.7972222222222222 |
+| train/episode      | 2200.0             |
+| train/success_rate | 0.5744444444444444 |
+-------------------------------------------
+-------------------------------------------
+| epoch              | 22                 |
+| stats_g/mean       | 0.8456981          |
+| stats_g/std        | 0.10164744         |
+| stats_o/mean       | 0.20416772         |
+| stats_o/std        | 0.09877413         |
+| test/episode       | 460.0              |
+| test/mean_Q        | -6.367902          |
+| test/success_rate  | 0.8722222222222222 |
+| train/episode      | 2300.0             |
+| train/success_rate | 0.5294444444444445 |
+-------------------------------------------
+New best success rate: 0.8722222222222222. Saving policy to /home/ubuntu/saved_experts/FetchPickAndPlace-v1/policy_best.pkl ...
+-------------------------------------------
+| epoch              | 23                 |
+| stats_g/mean       | 0.8458679          |
+| stats_g/std        | 0.10171601         |
+| stats_o/mean       | 0.2042102          |
+| stats_o/std        | 0.09912399         |
+| test/episode       | 480.0              |
+| test/mean_Q        | -6.3078732         |
+| test/success_rate  | 0.8500000000000001 |
+| train/episode      | 2400.0             |
+| train/success_rate | 0.5472222222222222 |
+-------------------------------------------
+-------------------------------------------
+| epoch              | 24                 |
+| stats_g/mean       | 0.845989           |
+| stats_g/std        | 0.101910055        |
+| stats_o/mean       | 0.20423917         |
+| stats_o/std        | 0.09959206         |
+| test/episode       | 500.0              |
+| test/mean_Q        | -6.1164746         |
+| test/success_rate  | 0.8611111111111112 |
+| train/episode      | 2500.0             |
+| train/success_rate | 0.5499999999999999 |
+-------------------------------------------
+-------------------------------------------
+| epoch              | 25                 |
+| stats_g/mean       | 0.84607875         |
+| stats_g/std        | 0.10196394         |
+| stats_o/mean       | 0.2042707          |
+| stats_o/std        | 0.09990245         |
+| test/episode       | 520.0              |
+| test/mean_Q        | -5.730859          |
+| test/success_rate  | 0.8666666666666667 |
+| train/episode      | 2600.0             |
+| train/success_rate | 0.5644444444444444 |
+-------------------------------------------
+Saving periodic policy to /home/ubuntu/saved_experts/FetchPickAndPlace-v1/policy_25.pkl ...
+-------------------------------------------
+| epoch              | 26                 |
+| stats_g/mean       | 0.8462594          |
+| stats_g/std        | 0.10205218         |
+| stats_o/mean       | 0.20432675         |
+| stats_o/std        | 0.100266784        |
+| test/episode       | 540.0              |
+| test/mean_Q        | -5.779374          |
+| test/success_rate  | 0.8999999999999999 |
+| train/episode      | 2700.0             |
+| train/success_rate | 0.5511111111111111 |
+-------------------------------------------
+New best success rate: 0.8999999999999999. Saving policy to /home/ubuntu/saved_experts/FetchPickAndPlace-v1/policy_best.pkl ...
+-------------------------------------------
+| epoch              | 27                 |
+| stats_g/mean       | 0.8464682          |
+| stats_g/std        | 0.10221091         |
+| stats_o/mean       | 0.20436656         |
+| stats_o/std        | 0.10069272         |
+| test/episode       | 560.0              |
+| test/mean_Q        | -4.81262           |
+| test/success_rate  | 0.9083333333333334 |
+| train/episode      | 2800.0             |
+| train/success_rate | 0.5466666666666666 |
+-------------------------------------------
+New best success rate: 0.9083333333333334. Saving policy to /home/ubuntu/saved_experts/FetchPickAndPlace-v1/policy_best.pkl ...
+-------------------------------------------
+| epoch              | 28                 |
+| stats_g/mean       | 0.84667736         |
+| stats_g/std        | 0.10243102         |
+| stats_o/mean       | 0.20443124         |
+| stats_o/std        | 0.10102892         |
+| test/episode       | 580.0              |
+| test/mean_Q        | -4.826276          |
+| test/success_rate  | 0.838888888888889  |
+| train/episode      | 2900.0             |
+| train/success_rate | 0.5455555555555556 |
+-------------------------------------------
+-------------------------------------------
+| epoch              | 29                 |
+| stats_g/mean       | 0.8469876          |
+| stats_g/std        | 0.10250139         |
+| stats_o/mean       | 0.20447606         |
+| stats_o/std        | 0.101270735        |
+| test/episode       | 600.0              |
+| test/mean_Q        | -4.0960426         |
+| test/success_rate  | 0.8888888888888888 |
+| train/episode      | 3000.0             |
+| train/success_rate | 0.5311111111111111 |
+-------------------------------------------
+-----------------------------------
+| epoch              | 30         |
+| stats_g/mean       | 0.8472364  |
+| stats_g/std        | 0.1026847  |
+| stats_o/mean       | 0.20455188 |
+| stats_o/std        | 0.10158196 |
+| test/episode       | 620.0      |
+| test/mean_Q        | -4.163549  |
+| test/success_rate  | 0.85       |
+| train/episode      | 3100.0     |
+| train/success_rate | 0.5        |
+-----------------------------------
+Saving periodic policy to /home/ubuntu/saved_experts/FetchPickAndPlace-v1/policy_30.pkl ...
+-------------------------------------------
+| epoch              | 31                 |
+| stats_g/mean       | 0.84746635         |
+| stats_g/std        | 0.102861576        |
+| stats_o/mean       | 0.20461607         |
+| stats_o/std        | 0.10185568         |
+| test/episode       | 640.0              |
+| test/mean_Q        | -4.3705363         |
+| test/success_rate  | 0.8472222222222222 |
+| train/episode      | 3200.0             |
+| train/success_rate | 0.5355555555555556 |
+-------------------------------------------
+-------------------------------------------
+| epoch              | 32                 |
+| stats_g/mean       | 0.84761405         |
+| stats_g/std        | 0.10295835         |
+| stats_o/mean       | 0.20462124         |
+| stats_o/std        | 0.102087215        |
+| test/episode       | 660.0              |
+| test/mean_Q        | -3.3000379         |
+| test/success_rate  | 0.8861111111111112 |
+| train/episode      | 3300.0             |
+| train/success_rate | 0.5422222222222222 |
+-------------------------------------------
+-------------------------------------------
+| epoch              | 33                 |
+| stats_g/mean       | 0.8477695          |
+| stats_g/std        | 0.10294195         |
+| stats_o/mean       | 0.20466015         |
+| stats_o/std        | 0.10233745         |
+| test/episode       | 680.0              |
+| test/mean_Q        | -3.7694135         |
+| test/success_rate  | 0.8472222222222222 |
+| train/episode      | 3400.0             |
+| train/success_rate | 0.545              |
+-------------------------------------------
+-------------------------------------------
+| epoch              | 34                 |
+| stats_g/mean       | 0.8478935          |
+| stats_g/std        | 0.10292424         |
+| stats_o/mean       | 0.20470437         |
+| stats_o/std        | 0.10259195         |
+| test/episode       | 700.0              |
+| test/mean_Q        | -3.5609937         |
+| test/success_rate  | 0.8888888888888888 |
+| train/episode      | 3500.0             |
+| train/success_rate | 0.538888888888889  |
+-------------------------------------------
+-------------------------------------------
+| epoch              | 35                 |
+| stats_g/mean       | 0.8480339          |
+| stats_g/std        | 0.10293007         |
+| stats_o/mean       | 0.2047306          |
+| stats_o/std        | 0.102825604        |
+| test/episode       | 720.0              |
+| test/mean_Q        | -4.0082684         |
+| test/success_rate  | 0.8194444444444444 |
+| train/episode      | 3600.0             |
+| train/success_rate | 0.5333333333333333 |
+-------------------------------------------
+Saving periodic policy to /home/ubuntu/saved_experts/FetchPickAndPlace-v1/policy_35.pkl ...
+-------------------------------------------
+| epoch              | 36                 |
+| stats_g/mean       | 0.8481543          |
+| stats_g/std        | 0.10288986         |
+| stats_o/mean       | 0.20474333         |
+| stats_o/std        | 0.103056476        |
+| test/episode       | 740.0              |
+| test/mean_Q        | -2.8369966         |
+| test/success_rate  | 0.8888888888888888 |
+| train/episode      | 3700.0             |
+| train/success_rate | 0.55               |
+-------------------------------------------
+-------------------------------------------
+| epoch              | 37                 |
+| stats_g/mean       | 0.8483167          |
+| stats_g/std        | 0.10285863         |
+| stats_o/mean       | 0.20478398         |
+| stats_o/std        | 0.10330572         |
+| test/episode       | 760.0              |
+| test/mean_Q        | -3.1451836         |
+| test/success_rate  | 0.8750000000000001 |
+| train/episode      | 3800.0             |
+| train/success_rate | 0.5322222222222223 |
+-------------------------------------------
+-------------------------------------------
+| epoch              | 38                 |
+| stats_g/mean       | 0.8484229          |
+| stats_g/std        | 0.10289496         |
+| stats_o/mean       | 0.2048009          |
+| stats_o/std        | 0.10354024         |
+| test/episode       | 780.0              |
+| test/mean_Q        | -2.7857969         |
+| test/success_rate  | 0.875              |
+| train/episode      | 3900.0             |
+| train/success_rate | 0.5327777777777778 |
+-------------------------------------------
+-------------------------------------------
+| epoch              | 39                 |
+| stats_g/mean       | 0.84856635         |
+| stats_g/std        | 0.10291374         |
+| stats_o/mean       | 0.20484546         |
+| stats_o/std        | 0.10366944         |
+| test/episode       | 800.0              |
+| test/mean_Q        | -2.9361665         |
+| test/success_rate  | 0.8583333333333333 |
+| train/episode      | 4000.0             |
+| train/success_rate | 0.535              |
+-------------------------------------------
+-------------------------------------------
+| epoch              | 40                 |
+| stats_g/mean       | 0.8486817          |
+| stats_g/std        | 0.10293573         |
+| stats_o/mean       | 0.20484096         |
+| stats_o/std        | 0.10388139         |
+| test/episode       | 820.0              |
+| test/mean_Q        | -1.8539022         |
+| test/success_rate  | 0.9500000000000001 |
+| train/episode      | 4100.0             |
+| train/success_rate | 0.5194444444444445 |
+-------------------------------------------
+New best success rate: 0.9500000000000001. Saving policy to /home/ubuntu/saved_experts/FetchPickAndPlace-v1/policy_best.pkl ...
+Saving periodic policy to /home/ubuntu/saved_experts/FetchPickAndPlace-v1/policy_40.pkl ...
+-------------------------------------------
+| epoch              | 41                 |
+| stats_g/mean       | 0.8488162          |
+| stats_g/std        | 0.10296041         |
+| stats_o/mean       | 0.20488745         |
+| stats_o/std        | 0.10405551         |
+| test/episode       | 840.0              |
+| test/mean_Q        | -2.3000135         |
+| test/success_rate  | 0.875              |
+| train/episode      | 4200.0             |
+| train/success_rate | 0.5227777777777778 |
+-------------------------------------------
+-------------------------------------------
+| epoch              | 42                 |
+| stats_g/mean       | 0.8489331          |
+| stats_g/std        | 0.10301137         |
+| stats_o/mean       | 0.20493203         |
+| stats_o/std        | 0.104260035        |
+| test/episode       | 860.0              |
+| test/mean_Q        | -2.3135924         |
+| test/success_rate  | 0.9194444444444443 |
+| train/episode      | 4300.0             |
+| train/success_rate | 0.4983333333333333 |
+-------------------------------------------
+-------------------------------------------
+| epoch              | 43                 |
+| stats_g/mean       | 0.84906155         |
+| stats_g/std        | 0.10303846         |
+| stats_o/mean       | 0.20496717         |
+| stats_o/std        | 0.10438445         |
+| test/episode       | 880.0              |
+| test/mean_Q        | -2.0066414         |
+| test/success_rate  | 0.8861111111111112 |
+| train/episode      | 4400.0             |
+| train/success_rate | 0.5355555555555556 |
+-------------------------------------------
+-------------------------------------------
+| epoch              | 44                 |
+| stats_g/mean       | 0.84911036         |
+| stats_g/std        | 0.102983385        |
+| stats_o/mean       | 0.20501894         |
+| stats_o/std        | 0.10451308         |
+| test/episode       | 900.0              |
+| test/mean_Q        | -2.195154          |
+| test/success_rate  | 0.8777777777777778 |
+| train/episode      | 4500.0             |
+| train/success_rate | 0.5122222222222222 |
+-------------------------------------------
+-------------------------------------------
+| epoch              | 45                 |
+| stats_g/mean       | 0.8491628          |
+| stats_g/std        | 0.102981314        |
+| stats_o/mean       | 0.20503518         |
+| stats_o/std        | 0.104689494        |
+| test/episode       | 920.0              |
+| test/mean_Q        | -1.6625216         |
+| test/success_rate  | 0.9138888888888889 |
+| train/episode      | 4600.0             |
+| train/success_rate | 0.536111111111111  |
+-------------------------------------------
+Saving periodic policy to /home/ubuntu/saved_experts/FetchPickAndPlace-v1/policy_45.pkl ...
+-------------------------------------------
+| epoch              | 46                 |
+| stats_g/mean       | 0.8492618          |
+| stats_g/std        | 0.10300821         |
+| stats_o/mean       | 0.20506491         |
+| stats_o/std        | 0.1048713          |
+| test/episode       | 940.0              |
+| test/mean_Q        | -1.7236167         |
+| test/success_rate  | 0.8694444444444446 |
+| train/episode      | 4700.0             |
+| train/success_rate | 0.5155555555555557 |
+-------------------------------------------
+-------------------------------------------
+| epoch              | 47                 |
+| stats_g/mean       | 0.8493631          |
+| stats_g/std        | 0.10303041         |
+| stats_o/mean       | 0.20508185         |
+| stats_o/std        | 0.10500556         |
+| test/episode       | 960.0              |
+| test/mean_Q        | -1.6096745         |
+| test/success_rate  | 0.836111111111111  |
+| train/episode      | 4800.0             |
+| train/success_rate | 0.5194444444444444 |
+-------------------------------------------
+-------------------------------------------
+| epoch              | 48                 |
+| stats_g/mean       | 0.8494483          |
+| stats_g/std        | 0.10303545         |
+| stats_o/mean       | 0.20512468         |
+| stats_o/std        | 0.10519927         |
+| test/episode       | 980.0              |
+| test/mean_Q        | -1.242979          |
+| test/success_rate  | 0.9333333333333333 |
+| train/episode      | 4900.0             |
+| train/success_rate | 0.5244444444444444 |
+-------------------------------------------
+-------------------------------------------
+| epoch              | 49                 |
+| stats_g/mean       | 0.8495488          |
+| stats_g/std        | 0.10303378         |
+| stats_o/mean       | 0.2051564          |
+| stats_o/std        | 0.10532993         |
+| test/episode       | 1000.0             |
+| test/mean_Q        | -1.5487739         |
+| test/success_rate  | 0.8999999999999999 |
+| train/episode      | 5000.0             |
+| train/success_rate | 0.5222222222222223 |
+-------------------------------------------
+-------------------------------------------
+| epoch              | 50                 |
+| stats_g/mean       | 0.84965444         |
+| stats_g/std        | 0.10305764         |
+| stats_o/mean       | 0.20520006         |
+| stats_o/std        | 0.105443686        |
+| test/episode       | 1020.0             |
+| test/mean_Q        | -1.1874502         |
+| test/success_rate  | 0.9222222222222223 |
+| train/episode      | 5100.0             |
+| train/success_rate | 0.5266666666666667 |
+-------------------------------------------
+Saving periodic policy to /home/ubuntu/saved_experts/FetchPickAndPlace-v1/policy_50.pkl ...
+-------------------------------------------
+| epoch              | 51                 |
+| stats_g/mean       | 0.8497045          |
+| stats_g/std        | 0.10308519         |
+| stats_o/mean       | 0.20522493         |
+| stats_o/std        | 0.10554996         |
+| test/episode       | 1040.0             |
+| test/mean_Q        | -1.3375577         |
+| test/success_rate  | 0.8888888888888888 |
+| train/episode      | 5200.0             |
+| train/success_rate | 0.5288888888888889 |
+-------------------------------------------
+-------------------------------------------
+| epoch              | 52                 |
+| stats_g/mean       | 0.84981185         |
+| stats_g/std        | 0.103141084        |
+| stats_o/mean       | 0.20526333         |
+| stats_o/std        | 0.105719164        |
+| test/episode       | 1060.0             |
+| test/mean_Q        | -1.401197          |
+| test/success_rate  | 0.8722222222222222 |
+| train/episode      | 5300.0             |
+| train/success_rate | 0.5066666666666667 |
+-------------------------------------------
+-------------------------------------------
+| epoch              | 53                 |
+| stats_g/mean       | 0.8498903          |
+| stats_g/std        | 0.10313005         |
+| stats_o/mean       | 0.20527928         |
+| stats_o/std        | 0.10578534         |
+| test/episode       | 1080.0             |
+| test/mean_Q        | -1.2692599         |
+| test/success_rate  | 0.8722222222222222 |
+| train/episode      | 5400.0             |
+| train/success_rate | 0.53               |
+-------------------------------------------
+-------------------------------------------
+| epoch              | 54                 |
+| stats_g/mean       | 0.8499434          |
+| stats_g/std        | 0.103162885        |
+| stats_o/mean       | 0.20527753         |
+| stats_o/std        | 0.105934896        |
+| test/episode       | 1100.0             |
+| test/mean_Q        | -1.3728633         |
+| test/success_rate  | 0.875              |
+| train/episode      | 5500.0             |
+| train/success_rate | 0.5105555555555557 |
+-------------------------------------------
+-------------------------------------------
+| epoch              | 55                 |
+| stats_g/mean       | 0.8500116          |
+| stats_g/std        | 0.10317066         |
+| stats_o/mean       | 0.20530373         |
+| stats_o/std        | 0.10604073         |
+| test/episode       | 1120.0             |
+| test/mean_Q        | -1.0843378         |
+| test/success_rate  | 0.9083333333333334 |
+| train/episode      | 5600.0             |
+| train/success_rate | 0.5016666666666666 |
+-------------------------------------------
+Saving periodic policy to /home/ubuntu/saved_experts/FetchPickAndPlace-v1/policy_55.pkl ...
+-------------------------------------------
+| epoch              | 56                 |
+| stats_g/mean       | 0.8500545          |
+| stats_g/std        | 0.10314156         |
+| stats_o/mean       | 0.20531711         |
+| stats_o/std        | 0.10617027         |
+| test/episode       | 1140.0             |
+| test/mean_Q        | -1.1921312         |
+| test/success_rate  | 0.8999999999999999 |
+| train/episode      | 5700.0             |
+| train/success_rate | 0.5155555555555555 |
+-------------------------------------------
+-------------------------------------------
+| epoch              | 57                 |
+| stats_g/mean       | 0.85007834         |
+| stats_g/std        | 0.10318033         |
+| stats_o/mean       | 0.20531672         |
+| stats_o/std        | 0.10626136         |
+| test/episode       | 1160.0             |
+| test/mean_Q        | -1.0733697         |
+| test/success_rate  | 0.9166666666666666 |
+| train/episode      | 5800.0             |
+| train/success_rate | 0.5261111111111112 |
+-------------------------------------------
+-------------------------------------------
+| epoch              | 58                 |
+| stats_g/mean       | 0.8501029          |
+| stats_g/std        | 0.10318893         |
+| stats_o/mean       | 0.20531456         |
+| stats_o/std        | 0.106340505        |
+| test/episode       | 1180.0             |
+| test/mean_Q        | -1.0978951         |
+| test/success_rate  | 0.9166666666666666 |
+| train/episode      | 5900.0             |
+| train/success_rate | 0.5338888888888889 |
+-------------------------------------------
+-------------------------------------------
+| epoch              | 59                 |
+| stats_g/mean       | 0.85015345         |
+| stats_g/std        | 0.103179306        |
+| stats_o/mean       | 0.2053207          |
+| stats_o/std        | 0.10647097         |
+| test/episode       | 1200.0             |
+| test/mean_Q        | -1.1307329         |
+| test/success_rate  | 0.9138888888888889 |
+| train/episode      | 6000.0             |
+| train/success_rate | 0.5122222222222222 |
+-------------------------------------------
+-------------------------------------------
+| epoch              | 60                 |
+| stats_g/mean       | 0.8501744          |
+| stats_g/std        | 0.10318371         |
+| stats_o/mean       | 0.20533293         |
+| stats_o/std        | 0.10657483         |
+| test/episode       | 1220.0             |
+| test/mean_Q        | -1.0846162         |
+| test/success_rate  | 0.9194444444444445 |
+| train/episode      | 6100.0             |
+| train/success_rate | 0.4883333333333333 |
+-------------------------------------------
+Saving periodic policy to /home/ubuntu/saved_experts/FetchPickAndPlace-v1/policy_60.pkl ...
+-------------------------------------------
+| epoch              | 61                 |
+| stats_g/mean       | 0.85020953         |
+| stats_g/std        | 0.10322043         |
+| stats_o/mean       | 0.20536149         |
+| stats_o/std        | 0.1067451          |
+| test/episode       | 1240.0             |
+| test/mean_Q        | -0.99215263        |
+| test/success_rate  | 0.9222222222222223 |
+| train/episode      | 6200.0             |
+| train/success_rate | 0.5094444444444444 |
+-------------------------------------------
+-------------------------------------------
+| epoch              | 62                 |
+| stats_g/mean       | 0.8502535          |
+| stats_g/std        | 0.10319957         |
+| stats_o/mean       | 0.205387           |
+| stats_o/std        | 0.10684046         |
+| test/episode       | 1260.0             |
+| test/mean_Q        | -1.0871092         |
+| test/success_rate  | 0.9083333333333334 |
+| train/episode      | 6300.0             |
+| train/success_rate | 0.5244444444444445 |
+-------------------------------------------
+-------------------------------------------
+| epoch              | 63                 |
+| stats_g/mean       | 0.85027725         |
+| stats_g/std        | 0.10317883         |
+| stats_o/mean       | 0.20539969         |
+| stats_o/std        | 0.10695264         |
+| test/episode       | 1280.0             |
+| test/mean_Q        | -1.032993          |
+| test/success_rate  | 0.9333333333333333 |
+| train/episode      | 6400.0             |
+| train/success_rate | 0.525              |
+-------------------------------------------
+-------------------------------------------
+| epoch              | 64                 |
+| stats_g/mean       | 0.8502979          |
+| stats_g/std        | 0.10321845         |
+| stats_o/mean       | 0.20541057         |
+| stats_o/std        | 0.10705884         |
+| test/episode       | 1300.0             |
+| test/mean_Q        | -1.0990269         |
+| test/success_rate  | 0.911111111111111  |
+| train/episode      | 6500.0             |
+| train/success_rate | 0.5022222222222222 |
+-------------------------------------------
+-------------------------------------------
+| epoch              | 65                 |
+| stats_g/mean       | 0.85032344         |
+| stats_g/std        | 0.103200234        |
+| stats_o/mean       | 0.20541961         |
+| stats_o/std        | 0.10712637         |
+| test/episode       | 1320.0             |
+| test/mean_Q        | -1.2423959         |
+| test/success_rate  | 0.8527777777777777 |
+| train/episode      | 6600.0             |
+| train/success_rate | 0.5111111111111111 |
+-------------------------------------------
+Saving periodic policy to /home/ubuntu/saved_experts/FetchPickAndPlace-v1/policy_65.pkl ...
+-------------------------------------------
+| epoch              | 66                 |
+| stats_g/mean       | 0.8503473          |
+| stats_g/std        | 0.10319218         |
+| stats_o/mean       | 0.20542115         |
+| stats_o/std        | 0.10718022         |
+| test/episode       | 1340.0             |
+| test/mean_Q        | -0.9791014         |
+| test/success_rate  | 0.8888888888888888 |
+| train/episode      | 6700.0             |
+| train/success_rate | 0.5338888888888889 |
+-------------------------------------------
+-------------------------------------------
+| epoch              | 67                 |
+| stats_g/mean       | 0.8503635          |
+| stats_g/std        | 0.10318087         |
+| stats_o/mean       | 0.20542783         |
+| stats_o/std        | 0.10720955         |
+| test/episode       | 1360.0             |
+| test/mean_Q        | -1.1136006         |
+| test/success_rate  | 0.911111111111111  |
+| train/episode      | 6800.0             |
+| train/success_rate | 0.5422222222222222 |
+-------------------------------------------
+-------------------------------------------
+| epoch              | 68                 |
+| stats_g/mean       | 0.85033745         |
+| stats_g/std        | 0.10318577         |
+| stats_o/mean       | 0.20541412         |
+| stats_o/std        | 0.10727535         |
+| test/episode       | 1380.0             |
+| test/mean_Q        | -1.1545451         |
+| test/success_rate  | 0.9083333333333334 |
+| train/episode      | 6900.0             |
+| train/success_rate | 0.5338888888888889 |
+-------------------------------------------
+-------------------------------------------
+| epoch              | 69                 |
+| stats_g/mean       | 0.8503507          |
+| stats_g/std        | 0.10314092         |
+| stats_o/mean       | 0.20541507         |
+| stats_o/std        | 0.10729423         |
+| test/episode       | 1400.0             |
+| test/mean_Q        | -1.2126403         |
+| test/success_rate  | 0.8972222222222221 |
+| train/episode      | 7000.0             |
+| train/success_rate | 0.5027777777777778 |
+-------------------------------------------
+-------------------------------------------
+| epoch              | 70                 |
+| stats_g/mean       | 0.85036784         |
+| stats_g/std        | 0.10307554         |
+| stats_o/mean       | 0.20540245         |
+| stats_o/std        | 0.10732564         |
+| test/episode       | 1420.0             |
+| test/mean_Q        | -1.1435591         |
+| test/success_rate  | 0.8999999999999999 |
+| train/episode      | 7100.0             |
+| train/success_rate | 0.5155555555555554 |
+-------------------------------------------
+Saving periodic policy to /home/ubuntu/saved_experts/FetchPickAndPlace-v1/policy_70.pkl ...
+-------------------------------------------
+| epoch              | 71                 |
+| stats_g/mean       | 0.85036397         |
+| stats_g/std        | 0.1030315          |
+| stats_o/mean       | 0.2054164          |
+| stats_o/std        | 0.10739524         |
+| test/episode       | 1440.0             |
+| test/mean_Q        | -1.0714198         |
+| test/success_rate  | 0.9416666666666667 |
+| train/episode      | 7200.0             |
+| train/success_rate | 0.52               |
+-------------------------------------------
+-------------------------------------------
+| epoch              | 72                 |
+| stats_g/mean       | 0.8503797          |
+| stats_g/std        | 0.10304502         |
+| stats_o/mean       | 0.20542683         |
+| stats_o/std        | 0.10744539         |
+| test/episode       | 1460.0             |
+| test/mean_Q        | -1.2492537         |
+| test/success_rate  | 0.8666666666666667 |
+| train/episode      | 7300.0             |
+| train/success_rate | 0.4961111111111111 |
+-------------------------------------------
+-------------------------------------------
+| epoch              | 73                 |
+| stats_g/mean       | 0.8503832          |
+| stats_g/std        | 0.10300982         |
+| stats_o/mean       | 0.20541874         |
+| stats_o/std        | 0.107503265        |
+| test/episode       | 1480.0             |
+| test/mean_Q        | -1.0263004         |
+| test/success_rate  | 0.9277777777777777 |
+| train/episode      | 7400.0             |
+| train/success_rate | 0.5272222222222223 |
+-------------------------------------------
+-------------------------------------------
+| epoch              | 74                 |
+| stats_g/mean       | 0.8503932          |
+| stats_g/std        | 0.10294574         |
+| stats_o/mean       | 0.20541374         |
+| stats_o/std        | 0.10752842         |
+| test/episode       | 1500.0             |
+| test/mean_Q        | -0.87719035        |
+| test/success_rate  | 0.9361111111111112 |
+| train/episode      | 7500.0             |
+| train/success_rate | 0.51               |
+-------------------------------------------
+-------------------------------------------
+| epoch              | 75                 |
+| stats_g/mean       | 0.850364           |
+| stats_g/std        | 0.10292396         |
+| stats_o/mean       | 0.20540968         |
+| stats_o/std        | 0.10761763         |
+| test/episode       | 1520.0             |
+| test/mean_Q        | -1.1774006         |
+| test/success_rate  | 0.8694444444444444 |
+| train/episode      | 7600.0             |
+| train/success_rate | 0.5372222222222223 |
+-------------------------------------------
+Saving periodic policy to /home/ubuntu/saved_experts/FetchPickAndPlace-v1/policy_75.pkl ...
+-------------------------------------------
+| epoch              | 76                 |
+| stats_g/mean       | 0.85037374         |
+| stats_g/std        | 0.10291591         |
+| stats_o/mean       | 0.20542437         |
+| stats_o/std        | 0.10766509         |
+| test/episode       | 1540.0             |
+| test/mean_Q        | -1.0170168         |
+| test/success_rate  | 0.8999999999999999 |
+| train/episode      | 7700.0             |
+| train/success_rate | 0.5216666666666667 |
+-------------------------------------------
+-------------------------------------------
+| epoch              | 77                 |
+| stats_g/mean       | 0.8503728          |
+| stats_g/std        | 0.10291094         |
+| stats_o/mean       | 0.20541802         |
+| stats_o/std        | 0.10772149         |
+| test/episode       | 1560.0             |
+| test/mean_Q        | -1.1865473         |
+| test/success_rate  | 0.8861111111111112 |
+| train/episode      | 7800.0             |
+| train/success_rate | 0.508888888888889  |
+-------------------------------------------
+-------------------------------------------
+| epoch              | 78                 |
+| stats_g/mean       | 0.850353           |
+| stats_g/std        | 0.102914065        |
+| stats_o/mean       | 0.2054185          |
+| stats_o/std        | 0.10780202         |
+| test/episode       | 1580.0             |
+| test/mean_Q        | -1.1677699         |
+| test/success_rate  | 0.9055555555555556 |
+| train/episode      | 7900.0             |
+| train/success_rate | 0.5005555555555556 |
+-------------------------------------------
+-------------------------------------------
+| epoch              | 79                 |
+| stats_g/mean       | 0.85038304         |
+| stats_g/std        | 0.10287207         |
+| stats_o/mean       | 0.20542046         |
+| stats_o/std        | 0.10783714         |
+| test/episode       | 1600.0             |
+| test/mean_Q        | -1.0541973         |
+| test/success_rate  | 0.9166666666666666 |
+| train/episode      | 8000.0             |
+| train/success_rate | 0.5299999999999999 |
+-------------------------------------------
+-------------------------------------------
+| epoch              | 80                 |
+| stats_g/mean       | 0.8503704          |
+| stats_g/std        | 0.102839746        |
+| stats_o/mean       | 0.20540318         |
+| stats_o/std        | 0.10789126         |
+| test/episode       | 1620.0             |
+| test/mean_Q        | -1.1217            |
+| test/success_rate  | 0.8972222222222224 |
+| train/episode      | 8100.0             |
+| train/success_rate | 0.51               |
+-------------------------------------------
+Saving periodic policy to /home/ubuntu/saved_experts/FetchPickAndPlace-v1/policy_80.pkl ...
+--------------------------------------------
+| epoch              | 81                  |
+| stats_g/mean       | 0.8503794           |
+| stats_g/std        | 0.10282152          |
+| stats_o/mean       | 0.20542711          |
+| stats_o/std        | 0.10793327          |
+| test/episode       | 1640.0              |
+| test/mean_Q        | -1.1526217          |
+| test/success_rate  | 0.875               |
+| train/episode      | 8200.0              |
+| train/success_rate | 0.49388888888888893 |
+--------------------------------------------
+-------------------------------------------
+| epoch              | 82                 |
+| stats_g/mean       | 0.85040146         |
+| stats_g/std        | 0.10284352         |
+| stats_o/mean       | 0.20543364         |
+| stats_o/std        | 0.10800704         |
+| test/episode       | 1660.0             |
+| test/mean_Q        | -0.9310734         |
+| test/success_rate  | 0.9027777777777778 |
+| train/episode      | 8300.0             |
+| train/success_rate | 0.5038888888888889 |
+-------------------------------------------
+-------------------------------------------
+| epoch              | 83                 |
+| stats_g/mean       | 0.8504388          |
+| stats_g/std        | 0.10280994         |
+| stats_o/mean       | 0.20543808         |
+| stats_o/std        | 0.10806699         |
+| test/episode       | 1680.0             |
+| test/mean_Q        | -1.1102549         |
+| test/success_rate  | 0.8833333333333333 |
+| train/episode      | 8400.0             |
+| train/success_rate | 0.5161111111111111 |
+-------------------------------------------
+-------------------------------------------
+| epoch              | 84                 |
+| stats_g/mean       | 0.850446           |
+| stats_g/std        | 0.102800936        |
+| stats_o/mean       | 0.20543928         |
+| stats_o/std        | 0.10809436         |
+| test/episode       | 1700.0             |
+| test/mean_Q        | -1.1412454         |
+| test/success_rate  | 0.8805555555555555 |
+| train/episode      | 8500.0             |
+| train/success_rate | 0.523888888888889  |
+-------------------------------------------
+-------------------------------------------
+| epoch              | 85                 |
+| stats_g/mean       | 0.85046864         |
+| stats_g/std        | 0.10279098         |
+| stats_o/mean       | 0.20543227         |
+| stats_o/std        | 0.108133286        |
+| test/episode       | 1720.0             |
+| test/mean_Q        | -1.0633551         |
+| test/success_rate  | 0.9194444444444445 |
+| train/episode      | 8600.0             |
+| train/success_rate | 0.5255555555555556 |
+-------------------------------------------
+Saving periodic policy to /home/ubuntu/saved_experts/FetchPickAndPlace-v1/policy_85.pkl ...
+-------------------------------------------
+| epoch              | 86                 |
+| stats_g/mean       | 0.8504617          |
+| stats_g/std        | 0.10276291         |
+| stats_o/mean       | 0.205448           |
+| stats_o/std        | 0.10817261         |
+| test/episode       | 1740.0             |
+| test/mean_Q        | -1.0904462         |
+| test/success_rate  | 0.9027777777777778 |
+| train/episode      | 8700.0             |
+| train/success_rate | 0.5444444444444445 |
+-------------------------------------------
+-------------------------------------------
+| epoch              | 87                 |
+| stats_g/mean       | 0.85049087         |
+| stats_g/std        | 0.102733344        |
+| stats_o/mean       | 0.20544821         |
+| stats_o/std        | 0.10821023         |
+| test/episode       | 1760.0             |
+| test/mean_Q        | -1.0676811         |
+| test/success_rate  | 0.8972222222222224 |
+| train/episode      | 8800.0             |
+| train/success_rate | 0.5155555555555555 |
+-------------------------------------------
+-------------------------------------------
+| epoch              | 88                 |
+| stats_g/mean       | 0.8505042          |
+| stats_g/std        | 0.10269548         |
+| stats_o/mean       | 0.20544806         |
+| stats_o/std        | 0.108248785        |
+| test/episode       | 1780.0             |
+| test/mean_Q        | -1.1084743         |
+| test/success_rate  | 0.9222222222222223 |
+| train/episode      | 8900.0             |
+| train/success_rate | 0.5155555555555557 |
+-------------------------------------------
+-------------------------------------------
+| epoch              | 89                 |
+| stats_g/mean       | 0.85052365         |
+| stats_g/std        | 0.10266036         |
+| stats_o/mean       | 0.20545156         |
+| stats_o/std        | 0.10825709         |
+| test/episode       | 1800.0             |
+| test/mean_Q        | -1.1101549         |
+| test/success_rate  | 0.8666666666666667 |
+| train/episode      | 9000.0             |
+| train/success_rate | 0.5150000000000001 |
+-------------------------------------------
+-------------------------------------------
+| epoch              | 90                 |
+| stats_g/mean       | 0.85052747         |
+| stats_g/std        | 0.102656364        |
+| stats_o/mean       | 0.20546871         |
+| stats_o/std        | 0.10831            |
+| test/episode       | 1820.0             |
+| test/mean_Q        | -1.1815622         |
+| test/success_rate  | 0.9000000000000001 |
+| train/episode      | 9100.0             |
+| train/success_rate | 0.52               |
+-------------------------------------------
+Saving periodic policy to /home/ubuntu/saved_experts/FetchPickAndPlace-v1/policy_90.pkl ...
+-------------------------------------------
+| epoch              | 91                 |
+| stats_g/mean       | 0.8505384          |
+| stats_g/std        | 0.10268161         |
+| stats_o/mean       | 0.2054731          |
+| stats_o/std        | 0.10837909         |
+| test/episode       | 1840.0             |
+| test/mean_Q        | -1.0752441         |
+| test/success_rate  | 0.8916666666666667 |
+| train/episode      | 9200.0             |
+| train/success_rate | 0.4933333333333333 |
+-------------------------------------------
+-------------------------------------------
+| epoch              | 92                 |
+| stats_g/mean       | 0.85055244         |
+| stats_g/std        | 0.102675386        |
+| stats_o/mean       | 0.20547828         |
+| stats_o/std        | 0.10844245         |
+| test/episode       | 1860.0             |
+| test/mean_Q        | -1.0879843         |
+| test/success_rate  | 0.8972222222222221 |
+| train/episode      | 9300.0             |
+| train/success_rate | 0.5072222222222222 |
+-------------------------------------------
+-------------------------------------------
+| epoch              | 93                 |
+| stats_g/mean       | 0.8505624          |
+| stats_g/std        | 0.102641664        |
+| stats_o/mean       | 0.20548338         |
+| stats_o/std        | 0.10846177         |
+| test/episode       | 1880.0             |
+| test/mean_Q        | -1.1745003         |
+| test/success_rate  | 0.8972222222222221 |
+| train/episode      | 9400.0             |
+| train/success_rate | 0.5249999999999999 |
+-------------------------------------------
+-------------------------------------------
+| epoch              | 94                 |
+| stats_g/mean       | 0.85056657         |
+| stats_g/std        | 0.10265198         |
+| stats_o/mean       | 0.20548362         |
+| stats_o/std        | 0.108521566        |
+| test/episode       | 1900.0             |
+| test/mean_Q        | -1.1060778         |
+| test/success_rate  | 0.8999999999999999 |
+| train/episode      | 9500.0             |
+| train/success_rate | 0.4972222222222222 |
+-------------------------------------------
+-------------------------------------------
+| epoch              | 95                 |
+| stats_g/mean       | 0.8505802          |
+| stats_g/std        | 0.10262004         |
+| stats_o/mean       | 0.20548473         |
+| stats_o/std        | 0.10855676         |
+| test/episode       | 1920.0             |
+| test/mean_Q        | -1.0300488         |
+| test/success_rate  | 0.9083333333333334 |
+| train/episode      | 9600.0             |
+| train/success_rate | 0.5122222222222221 |
+-------------------------------------------
+Saving periodic policy to /home/ubuntu/saved_experts/FetchPickAndPlace-v1/policy_95.pkl ...
+-------------------------------------------
+| epoch              | 96                 |
+| stats_g/mean       | 0.8505923          |
+| stats_g/std        | 0.10257706         |
+| stats_o/mean       | 0.20548883         |
+| stats_o/std        | 0.10858433         |
+| test/episode       | 1940.0             |
+| test/mean_Q        | -1.0493891         |
+| test/success_rate  | 0.9194444444444445 |
+| train/episode      | 9700.0             |
+| train/success_rate | 0.5166666666666667 |
+-------------------------------------------
+--------------------------------------------
+| epoch              | 97                  |
+| stats_g/mean       | 0.850611            |
+| stats_g/std        | 0.10258475          |
+| stats_o/mean       | 0.20550364          |
+| stats_o/std        | 0.108615816         |
+| test/episode       | 1960.0              |
+| test/mean_Q        | -1.0899487          |
+| test/success_rate  | 0.8888888888888888  |
+| train/episode      | 9800.0              |
+| train/success_rate | 0.49944444444444447 |
+--------------------------------------------
+--------------------------------------------
+| epoch              | 98                  |
+| stats_g/mean       | 0.85062397          |
+| stats_g/std        | 0.10258612          |
+| stats_o/mean       | 0.20551023          |
+| stats_o/std        | 0.10865405          |
+| test/episode       | 1980.0              |
+| test/mean_Q        | -1.0862279          |
+| test/success_rate  | 0.8944444444444445  |
+| train/episode      | 9900.0              |
+| train/success_rate | 0.49222222222222217 |
+--------------------------------------------
+-------------------------------------------
+| epoch              | 99                 |
+| stats_g/mean       | 0.85062957         |
+| stats_g/std        | 0.10260133         |
+| stats_o/mean       | 0.20551234         |
+| stats_o/std        | 0.108684376        |
+| test/episode       | 2000.0             |
+| test/mean_Q        | -1.2463542         |
+| test/success_rate  | 0.8972222222222224 |
+| train/episode      | 10000.0            |
+| train/success_rate | 0.5172222222222221 |
+-------------------------------------------
+-------------------------------------------
+| epoch              | 100                |
+| stats_g/mean       | 0.8506229          |
+| stats_g/std        | 0.10258207         |
+| stats_o/mean       | 0.20550638         |
+| stats_o/std        | 0.108719796        |
+| test/episode       | 2020.0             |
+| test/mean_Q        | -1.030214          |
+| test/success_rate  | 0.9166666666666666 |
+| train/episode      | 10100.0            |
+| train/success_rate | 0.5183333333333333 |
+-------------------------------------------
+Saving periodic policy to /home/ubuntu/saved_experts/FetchPickAndPlace-v1/policy_100.pkl ...
+-------------------------------------------
+| epoch              | 101                |
+| stats_g/mean       | 0.8506236          |
+| stats_g/std        | 0.10255912         |
+| stats_o/mean       | 0.20550033         |
+| stats_o/std        | 0.10877177         |
+| test/episode       | 2040.0             |
+| test/mean_Q        | -0.994915          |
+| test/success_rate  | 0.9055555555555554 |
+| train/episode      | 10200.0            |
+| train/success_rate | 0.5061111111111111 |
+-------------------------------------------
+-------------------------------------------
+| epoch              | 102                |
+| stats_g/mean       | 0.8506267          |
+| stats_g/std        | 0.10254583         |
+| stats_o/mean       | 0.2055003          |
+| stats_o/std        | 0.108823866        |
+| test/episode       | 2060.0             |
+| test/mean_Q        | -1.1936216         |
+| test/success_rate  | 0.8805555555555555 |
+| train/episode      | 10300.0            |
+| train/success_rate | 0.5105555555555555 |
+-------------------------------------------
+--------------------------------------------
+| epoch              | 103                 |
+| stats_g/mean       | 0.8506293           |
+| stats_g/std        | 0.10253925          |
+| stats_o/mean       | 0.2054925           |
+| stats_o/std        | 0.1088582           |
+| test/episode       | 2080.0              |
+| test/mean_Q        | -1.0772057          |
+| test/success_rate  | 0.8861111111111111  |
+| train/episode      | 10400.0             |
+| train/success_rate | 0.49666666666666665 |
+--------------------------------------------
+-------------------------------------------
+| epoch              | 104                |
+| stats_g/mean       | 0.85061526         |
+| stats_g/std        | 0.10254815         |
+| stats_o/mean       | 0.2054877          |
+| stats_o/std        | 0.10889354         |
+| test/episode       | 2100.0             |
+| test/mean_Q        | -0.9924647         |
+| test/success_rate  | 0.9083333333333334 |
+| train/episode      | 10500.0            |
+| train/success_rate | 0.5061111111111111 |
+-------------------------------------------
+-------------------------------------------
+| epoch              | 105                |
+| stats_g/mean       | 0.85062647         |
+| stats_g/std        | 0.10252269         |
+| stats_o/mean       | 0.20548925         |
+| stats_o/std        | 0.10889728         |
+| test/episode       | 2120.0             |
+| test/mean_Q        | -1.1110649         |
+| test/success_rate  | 0.9166666666666666 |
+| train/episode      | 10600.0            |
+| train/success_rate | 0.5038888888888889 |
+-------------------------------------------
+Saving periodic policy to /home/ubuntu/saved_experts/FetchPickAndPlace-v1/policy_105.pkl ...
+-------------------------------------------
+| epoch              | 106                |
+| stats_g/mean       | 0.8506191          |
+| stats_g/std        | 0.102502525        |
+| stats_o/mean       | 0.20549965         |
+| stats_o/std        | 0.10893185         |
+| test/episode       | 2140.0             |
+| test/mean_Q        | -1.121168          |
+| test/success_rate  | 0.8888888888888888 |
+| train/episode      | 10700.0            |
+| train/success_rate | 0.52               |
+-------------------------------------------
+-------------------------------------------
+| epoch              | 107                |
+| stats_g/mean       | 0.8506303          |
+| stats_g/std        | 0.10250117         |
+| stats_o/mean       | 0.20549971         |
+| stats_o/std        | 0.108944505        |
+| test/episode       | 2160.0             |
+| test/mean_Q        | -1.2755159         |
+| test/success_rate  | 0.8555555555555555 |
+| train/episode      | 10800.0            |
+| train/success_rate | 0.5305555555555556 |
+-------------------------------------------
+-------------------------------------------
+| epoch              | 108                |
+| stats_g/mean       | 0.8506169          |
+| stats_g/std        | 0.10251734         |
+| stats_o/mean       | 0.20549338         |
+| stats_o/std        | 0.108991146        |
+| test/episode       | 2180.0             |
+| test/mean_Q        | -1.1911321         |
+| test/success_rate  | 0.8916666666666667 |
+| train/episode      | 10900.0            |
+| train/success_rate | 0.5233333333333333 |
+-------------------------------------------
+-------------------------------------------
+| epoch              | 109                |
+| stats_g/mean       | 0.85062474         |
+| stats_g/std        | 0.102535576        |
+| stats_o/mean       | 0.20549221         |
+| stats_o/std        | 0.10904263         |
+| test/episode       | 2200.0             |
+| test/mean_Q        | -1.1049627         |
+| test/success_rate  | 0.8972222222222221 |
+| train/episode      | 11000.0            |
+| train/success_rate | 0.5288888888888889 |
+-------------------------------------------
+-------------------------------------------
+| epoch              | 110                |
+| stats_g/mean       | 0.850644           |
+| stats_g/std        | 0.10252833         |
+| stats_o/mean       | 0.2055064          |
+| stats_o/std        | 0.1090627          |
+| test/episode       | 2220.0             |
+| test/mean_Q        | -1.0830795         |
+| test/success_rate  | 0.8944444444444445 |
+| train/episode      | 11100.0            |
+| train/success_rate | 0.5161111111111112 |
+-------------------------------------------
+Saving periodic policy to /home/ubuntu/saved_experts/FetchPickAndPlace-v1/policy_110.pkl ...
+-------------------------------------------
+| epoch              | 111                |
+| stats_g/mean       | 0.8506423          |
+| stats_g/std        | 0.10251352         |
+| stats_o/mean       | 0.20550597         |
+| stats_o/std        | 0.10906999         |
+| test/episode       | 2240.0             |
+| test/mean_Q        | -1.0879374         |
+| test/success_rate  | 0.8888888888888888 |
+| train/episode      | 11200.0            |
+| train/success_rate | 0.5122222222222222 |
+-------------------------------------------
+-------------------------------------------
+| epoch              | 112                |
+| stats_g/mean       | 0.8506391          |
+| stats_g/std        | 0.10250119         |
+| stats_o/mean       | 0.20551589         |
+| stats_o/std        | 0.10911948         |
+| test/episode       | 2260.0             |
+| test/mean_Q        | -1.1136782         |
+| test/success_rate  | 0.9083333333333334 |
+| train/episode      | 11300.0            |
+| train/success_rate | 0.5272222222222223 |
+-------------------------------------------
+-------------------------------------------
+| epoch              | 113                |
+| stats_g/mean       | 0.85064274         |
+| stats_g/std        | 0.10248811         |
+| stats_o/mean       | 0.2055138          |
+| stats_o/std        | 0.109145895        |
+| test/episode       | 2280.0             |
+| test/mean_Q        | -1.2283295         |
+| test/success_rate  | 0.8611111111111112 |
+| train/episode      | 11400.0            |
+| train/success_rate | 0.5183333333333332 |
+-------------------------------------------
+-------------------------------------------
+| epoch              | 114                |
+| stats_g/mean       | 0.8506558          |
+| stats_g/std        | 0.10245901         |
+| stats_o/mean       | 0.20551546         |
+| stats_o/std        | 0.10917929         |
+| test/episode       | 2300.0             |
+| test/mean_Q        | -1.1819763         |
+| test/success_rate  | 0.8722222222222222 |
+| train/episode      | 11500.0            |
+| train/success_rate | 0.5233333333333332 |
+-------------------------------------------
+-------------------------------------------
+| epoch              | 115                |
+| stats_g/mean       | 0.85065913         |
+| stats_g/std        | 0.102449834        |
+| stats_o/mean       | 0.20551838         |
+| stats_o/std        | 0.109215215        |
+| test/episode       | 2320.0             |
+| test/mean_Q        | -1.0164549         |
+| test/success_rate  | 0.8999999999999999 |
+| train/episode      | 11600.0            |
+| train/success_rate | 0.5266666666666667 |
+-------------------------------------------
+Saving periodic policy to /home/ubuntu/saved_experts/FetchPickAndPlace-v1/policy_115.pkl ...
+-------------------------------------------
+| epoch              | 116                |
+| stats_g/mean       | 0.8506527          |
+| stats_g/std        | 0.10243568         |
+| stats_o/mean       | 0.2055171          |
+| stats_o/std        | 0.10926001         |
+| test/episode       | 2340.0             |
+| test/mean_Q        | -1.125361          |
+| test/success_rate  | 0.8972222222222221 |
+| train/episode      | 11700.0            |
+| train/success_rate | 0.515              |
+-------------------------------------------
+-------------------------------------------
+| epoch              | 117                |
+| stats_g/mean       | 0.85065734         |
+| stats_g/std        | 0.10240196         |
+| stats_o/mean       | 0.20551199         |
+| stats_o/std        | 0.10928866         |
+| test/episode       | 2360.0             |
+| test/mean_Q        | -1.3010981         |
+| test/success_rate  | 0.8694444444444444 |
+| train/episode      | 11800.0            |
+| train/success_rate | 0.5188888888888888 |
+-------------------------------------------
+-------------------------------------------
+| epoch              | 118                |
+| stats_g/mean       | 0.8506524          |
+| stats_g/std        | 0.1024025          |
+| stats_o/mean       | 0.20550859         |
+| stats_o/std        | 0.10932623         |
+| test/episode       | 2380.0             |
+| test/mean_Q        | -1.0500283         |
+| test/success_rate  | 0.9333333333333333 |
+| train/episode      | 11900.0            |
+| train/success_rate | 0.4983333333333333 |
+-------------------------------------------
+-------------------------------------------
+| epoch              | 119                |
+| stats_g/mean       | 0.85065913         |
+| stats_g/std        | 0.102401346        |
+| stats_o/mean       | 0.20550469         |
+| stats_o/std        | 0.10934486         |
+| test/episode       | 2400.0             |
+| test/mean_Q        | -1.2319999         |
+| test/success_rate  | 0.8833333333333333 |
+| train/episode      | 12000.0            |
+| train/success_rate | 0.5172222222222222 |
+-------------------------------------------
+-------------------------------------------
+| epoch              | 120                |
+| stats_g/mean       | 0.85065484         |
+| stats_g/std        | 0.10240537         |
+| stats_o/mean       | 0.20549433         |
+| stats_o/std        | 0.109388724        |
+| test/episode       | 2420.0             |
+| test/mean_Q        | -1.0248661         |
+| test/success_rate  | 0.911111111111111  |
+| train/episode      | 12100.0            |
+| train/success_rate | 0.5083333333333333 |
+-------------------------------------------
+Saving periodic policy to /home/ubuntu/saved_experts/FetchPickAndPlace-v1/policy_120.pkl ...
+-------------------------------------------
+| epoch              | 121                |
+| stats_g/mean       | 0.85065717         |
+| stats_g/std        | 0.102395624        |
+| stats_o/mean       | 0.20550394         |
+| stats_o/std        | 0.10944823         |
+| test/episode       | 2440.0             |
+| test/mean_Q        | -1.2118212         |
+| test/success_rate  | 0.8333333333333334 |
+| train/episode      | 12200.0            |
+| train/success_rate | 0.5227777777777778 |
+-------------------------------------------
+-------------------------------------------
+| epoch              | 122                |
+| stats_g/mean       | 0.8506478          |
+| stats_g/std        | 0.10239339         |
+| stats_o/mean       | 0.20549294         |
+| stats_o/std        | 0.109476596        |
+| test/episode       | 2460.0             |
+| test/mean_Q        | -1.0961621         |
+| test/success_rate  | 0.8805555555555555 |
+| train/episode      | 12300.0            |
+| train/success_rate | 0.5322222222222222 |
+-------------------------------------------
+-------------------------------------------
+| epoch              | 123                |
+| stats_g/mean       | 0.85065866         |
+| stats_g/std        | 0.10240339         |
+| stats_o/mean       | 0.20549291         |
+| stats_o/std        | 0.10951772         |
+| test/episode       | 2480.0             |
+| test/mean_Q        | -1.0938216         |
+| test/success_rate  | 0.8861111111111112 |
+| train/episode      | 12400.0            |
+| train/success_rate | 0.5172222222222221 |
+-------------------------------------------
+-------------------------------------------
+| epoch              | 124                |
+| stats_g/mean       | 0.85067284         |
+| stats_g/std        | 0.10239874         |
+| stats_o/mean       | 0.20549843         |
+| stats_o/std        | 0.10954338         |
+| test/episode       | 2500.0             |
+| test/mean_Q        | -1.1455572         |
+| test/success_rate  | 0.875              |
+| train/episode      | 12500.0            |
+| train/success_rate | 0.5216666666666667 |
+-------------------------------------------
+-------------------------------------------
+| epoch              | 125                |
+| stats_g/mean       | 0.85069036         |
+| stats_g/std        | 0.102399796        |
+| stats_o/mean       | 0.20549509         |
+| stats_o/std        | 0.109586015        |
+| test/episode       | 2520.0             |
+| test/mean_Q        | -1.15278           |
+| test/success_rate  | 0.8722222222222222 |
+| train/episode      | 12600.0            |
+| train/success_rate | 0.5133333333333332 |
+-------------------------------------------
+Saving periodic policy to /home/ubuntu/saved_experts/FetchPickAndPlace-v1/policy_125.pkl ...
+-------------------------------------------
+| epoch              | 126                |
+| stats_g/mean       | 0.85068566         |
+| stats_g/std        | 0.10239042         |
+| stats_o/mean       | 0.20549385         |
+| stats_o/std        | 0.10962361         |
+| test/episode       | 2540.0             |
+| test/mean_Q        | -1.1225648         |
+| test/success_rate  | 0.9083333333333334 |
+| train/episode      | 12700.0            |
+| train/success_rate | 0.52               |
+-------------------------------------------
+--------------------------------------------
+| epoch              | 127                 |
+| stats_g/mean       | 0.85069436          |
+| stats_g/std        | 0.10240075          |
+| stats_o/mean       | 0.20549496          |
+| stats_o/std        | 0.109664604         |
+| test/episode       | 2560.0              |
+| test/mean_Q        | -1.1188155          |
+| test/success_rate  | 0.8916666666666667  |
+| train/episode      | 12800.0             |
+| train/success_rate | 0.47333333333333333 |
+--------------------------------------------
+-------------------------------------------
+| epoch              | 128                |
+| stats_g/mean       | 0.8506954          |
+| stats_g/std        | 0.1023796          |
+| stats_o/mean       | 0.20549834         |
+| stats_o/std        | 0.10969798         |
+| test/episode       | 2580.0             |
+| test/mean_Q        | -1.1744883         |
+| test/success_rate  | 0.8861111111111111 |
+| train/episode      | 12900.0            |
+| train/success_rate | 0.5222222222222223 |
+-------------------------------------------
+-------------------------------------------
+| epoch              | 129                |
+| stats_g/mean       | 0.8506948          |
+| stats_g/std        | 0.10240294         |
+| stats_o/mean       | 0.20549856         |
+| stats_o/std        | 0.10972953         |
+| test/episode       | 2600.0             |
+| test/mean_Q        | -1.1802095         |
+| test/success_rate  | 0.9083333333333334 |
+| train/episode      | 13000.0            |
+| train/success_rate | 0.5044444444444444 |
+-------------------------------------------
+-------------------------------------------
+| epoch              | 130                |
+| stats_g/mean       | 0.8506885          |
+| stats_g/std        | 0.10241042         |
+| stats_o/mean       | 0.205501           |
+| stats_o/std        | 0.10977605         |
+| test/episode       | 2620.0             |
+| test/mean_Q        | -1.1074224         |
+| test/success_rate  | 0.8999999999999999 |
+| train/episode      | 13100.0            |
+| train/success_rate | 0.4961111111111111 |
+-------------------------------------------
+Saving periodic policy to /home/ubuntu/saved_experts/FetchPickAndPlace-v1/policy_130.pkl ...
+-------------------------------------------
+| epoch              | 131                |
+| stats_g/mean       | 0.8506808          |
+| stats_g/std        | 0.10244519         |
+| stats_o/mean       | 0.20551494         |
+| stats_o/std        | 0.1098198          |
+| test/episode       | 2640.0             |
+| test/mean_Q        | -1.0586177         |
+| test/success_rate  | 0.8944444444444444 |
+| train/episode      | 13200.0            |
+| train/success_rate | 0.5033333333333333 |
+-------------------------------------------
+-------------------------------------------
+| epoch              | 132                |
+| stats_g/mean       | 0.85067            |
+| stats_g/std        | 0.10245086         |
+| stats_o/mean       | 0.20551567         |
+| stats_o/std        | 0.10985596         |
+| test/episode       | 2660.0             |
+| test/mean_Q        | -1.2167827         |
+| test/success_rate  | 0.8833333333333334 |
+| train/episode      | 13300.0            |
+| train/success_rate | 0.5294444444444445 |
+-------------------------------------------
+-------------------------------------------
+| epoch              | 133                |
+| stats_g/mean       | 0.8506614          |
+| stats_g/std        | 0.10245804         |
+| stats_o/mean       | 0.20552097         |
+| stats_o/std        | 0.10987959         |
+| test/episode       | 2680.0             |
+| test/mean_Q        | -1.2111547         |
+| test/success_rate  | 0.8500000000000001 |
+| train/episode      | 13400.0            |
+| train/success_rate | 0.52               |
+-------------------------------------------
+-------------------------------------------
+| epoch              | 134                |
+| stats_g/mean       | 0.85066086         |
+| stats_g/std        | 0.10245317         |
+| stats_o/mean       | 0.20552379         |
+| stats_o/std        | 0.10991123         |
+| test/episode       | 2700.0             |
+| test/mean_Q        | -1.1597974         |
+| test/success_rate  | 0.8638888888888888 |
+| train/episode      | 13500.0            |
+| train/success_rate | 0.5194444444444444 |
+-------------------------------------------
+-------------------------------------------
+| epoch              | 135                |
+| stats_g/mean       | 0.8506711          |
+| stats_g/std        | 0.10245056         |
+| stats_o/mean       | 0.20552829         |
+| stats_o/std        | 0.10993457         |
+| test/episode       | 2720.0             |
+| test/mean_Q        | -1.0457882         |
+| test/success_rate  | 0.9277777777777779 |
+| train/episode      | 13600.0            |
+| train/success_rate | 0.5077777777777778 |
+-------------------------------------------
+Saving periodic policy to /home/ubuntu/saved_experts/FetchPickAndPlace-v1/policy_135.pkl ...
+-------------------------------------------
+| epoch              | 136                |
+| stats_g/mean       | 0.8506744          |
+| stats_g/std        | 0.10241655         |
+| stats_o/mean       | 0.20553371         |
+| stats_o/std        | 0.109940335        |
+| test/episode       | 2740.0             |
+| test/mean_Q        | -1.0514036         |
+| test/success_rate  | 0.8805555555555556 |
+| train/episode      | 13700.0            |
+| train/success_rate | 0.5255555555555556 |
+-------------------------------------------
+-------------------------------------------
+| epoch              | 137                |
+| stats_g/mean       | 0.85067916         |
+| stats_g/std        | 0.10243109         |
+| stats_o/mean       | 0.20553905         |
+| stats_o/std        | 0.10997273         |
+| test/episode       | 2760.0             |
+| test/mean_Q        | -1.1425109         |
+| test/success_rate  | 0.8944444444444445 |
+| train/episode      | 13800.0            |
+| train/success_rate | 0.515              |
+-------------------------------------------
+-------------------------------------------
+| epoch              | 138                |
+| stats_g/mean       | 0.850685           |
+| stats_g/std        | 0.10241648         |
+| stats_o/mean       | 0.20554535         |
+| stats_o/std        | 0.110005036        |
+| test/episode       | 2780.0             |
+| test/mean_Q        | -1.0678531         |
+| test/success_rate  | 0.9000000000000001 |
+| train/episode      | 13900.0            |
+| train/success_rate | 0.5122222222222222 |
+-------------------------------------------
+-------------------------------------------
+| epoch              | 139                |
+| stats_g/mean       | 0.85069203         |
+| stats_g/std        | 0.10240984         |
+| stats_o/mean       | 0.20554456         |
+| stats_o/std        | 0.110032424        |
+| test/episode       | 2800.0             |
+| test/mean_Q        | -1.0193877         |
+| test/success_rate  | 0.8861111111111111 |
+| train/episode      | 14000.0            |
+| train/success_rate | 0.5161111111111111 |
+-------------------------------------------
+-------------------------------------------
+| epoch              | 140                |
+| stats_g/mean       | 0.8506892          |
+| stats_g/std        | 0.102408424        |
+| stats_o/mean       | 0.20554394         |
+| stats_o/std        | 0.11007872         |
+| test/episode       | 2820.0             |
+| test/mean_Q        | -1.2474499         |
+| test/success_rate  | 0.8944444444444445 |
+| train/episode      | 14100.0            |
+| train/success_rate | 0.5211111111111111 |
+-------------------------------------------
+Saving periodic policy to /home/ubuntu/saved_experts/FetchPickAndPlace-v1/policy_140.pkl ...
+-------------------------------------------
+| epoch              | 141                |
+| stats_g/mean       | 0.8506999          |
+| stats_g/std        | 0.10239789         |
+| stats_o/mean       | 0.20553656         |
+| stats_o/std        | 0.11009492         |
+| test/episode       | 2840.0             |
+| test/mean_Q        | -1.158916          |
+| test/success_rate  | 0.8805555555555556 |
+| train/episode      | 14200.0            |
+| train/success_rate | 0.5105555555555555 |
+-------------------------------------------
+-------------------------------------------
+| epoch              | 142                |
+| stats_g/mean       | 0.85070544         |
+| stats_g/std        | 0.10240033         |
+| stats_o/mean       | 0.2055412          |
+| stats_o/std        | 0.11011318         |
+| test/episode       | 2860.0             |
+| test/mean_Q        | -1.2364264         |
+| test/success_rate  | 0.8694444444444444 |
+| train/episode      | 14300.0            |
+| train/success_rate | 0.5                |
+-------------------------------------------
+-------------------------------------------
+| epoch              | 143                |
+| stats_g/mean       | 0.85071874         |
+| stats_g/std        | 0.10239658         |
+| stats_o/mean       | 0.20554762         |
+| stats_o/std        | 0.11014226         |
+| test/episode       | 2880.0             |
+| test/mean_Q        | -1.2063429         |
+| test/success_rate  | 0.8861111111111111 |
+| train/episode      | 14400.0            |
+| train/success_rate | 0.5177777777777778 |
+-------------------------------------------
+-------------------------------------------
+| epoch              | 144                |
+| stats_g/mean       | 0.85073024         |
+| stats_g/std        | 0.10241064         |
+| stats_o/mean       | 0.20555097         |
+| stats_o/std        | 0.11018286         |
+| test/episode       | 2900.0             |
+| test/mean_Q        | -1.1091583         |
+| test/success_rate  | 0.8666666666666667 |
+| train/episode      | 14500.0            |
+| train/success_rate | 0.5127777777777777 |
+-------------------------------------------
+-------------------------------------------
+| epoch              | 145                |
+| stats_g/mean       | 0.8507459          |
+| stats_g/std        | 0.102413386        |
+| stats_o/mean       | 0.20555931         |
+| stats_o/std        | 0.1102027          |
+| test/episode       | 2920.0             |
+| test/mean_Q        | -1.1095681         |
+| test/success_rate  | 0.8805555555555555 |
+| train/episode      | 14600.0            |
+| train/success_rate | 0.5094444444444445 |
+-------------------------------------------
+Saving periodic policy to /home/ubuntu/saved_experts/FetchPickAndPlace-v1/policy_145.pkl ...
+-------------------------------------------
+| epoch              | 146                |
+| stats_g/mean       | 0.8507354          |
+| stats_g/std        | 0.10242406         |
+| stats_o/mean       | 0.20555578         |
+| stats_o/std        | 0.11024066         |
+| test/episode       | 2940.0             |
+| test/mean_Q        | -1.1852291         |
+| test/success_rate  | 0.8555555555555556 |
+| train/episode      | 14700.0            |
+| train/success_rate | 0.5283333333333333 |
+-------------------------------------------
+-------------------------------------------
+| epoch              | 147                |
+| stats_g/mean       | 0.8507361          |
+| stats_g/std        | 0.10242886         |
+| stats_o/mean       | 0.20555966         |
+| stats_o/std        | 0.11028272         |
+| test/episode       | 2960.0             |
+| test/mean_Q        | -1.0779614         |
+| test/success_rate  | 0.8805555555555555 |
+| train/episode      | 14800.0            |
+| train/success_rate | 0.5111111111111111 |
+-------------------------------------------
+-------------------------------------------
+| epoch              | 148                |
+| stats_g/mean       | 0.850743           |
+| stats_g/std        | 0.102416635        |
+| stats_o/mean       | 0.20556623         |
+| stats_o/std        | 0.110304974        |
+| test/episode       | 2980.0             |
+| test/mean_Q        | -1.1018933         |
+| test/success_rate  | 0.875              |
+| train/episode      | 14900.0            |
+| train/success_rate | 0.5133333333333333 |
+-------------------------------------------
+-------------------------------------------
+| epoch              | 149                |
+| stats_g/mean       | 0.85073066         |
+| stats_g/std        | 0.10242316         |
+| stats_o/mean       | 0.2055685          |
+| stats_o/std        | 0.11033304         |
+| test/episode       | 3000.0             |
+| test/mean_Q        | -1.2432684         |
+| test/success_rate  | 0.8638888888888889 |
+| train/episode      | 15000.0            |
+| train/success_rate | 0.5077777777777778 |
+-------------------------------------------
+-------------------------------------------
+| epoch              | 150                |
+| stats_g/mean       | 0.8507416          |
+| stats_g/std        | 0.10243645         |
+| stats_o/mean       | 0.20557234         |
+| stats_o/std        | 0.11035058         |
+| test/episode       | 3020.0             |
+| test/mean_Q        | -1.2240548         |
+| test/success_rate  | 0.838888888888889  |
+| train/episode      | 15100.0            |
+| train/success_rate | 0.5133333333333333 |
+-------------------------------------------
+Saving periodic policy to /home/ubuntu/saved_experts/FetchPickAndPlace-v1/policy_150.pkl ...
+-------------------------------------------
+| epoch              | 151                |
+| stats_g/mean       | 0.85073805         |
+| stats_g/std        | 0.10242454         |
+| stats_o/mean       | 0.20557866         |
+| stats_o/std        | 0.11037707         |
+| test/episode       | 3040.0             |
+| test/mean_Q        | -1.0963037         |
+| test/success_rate  | 0.8999999999999999 |
+| train/episode      | 15200.0            |
+| train/success_rate | 0.5094444444444445 |
+-------------------------------------------
+-------------------------------------------
+| epoch              | 152                |
+| stats_g/mean       | 0.85074073         |
+| stats_g/std        | 0.10242307         |
+| stats_o/mean       | 0.20558149         |
+| stats_o/std        | 0.11041066         |
+| test/episode       | 3060.0             |
+| test/mean_Q        | -1.1476784         |
+| test/success_rate  | 0.8666666666666667 |
+| train/episode      | 15300.0            |
+| train/success_rate | 0.5133333333333334 |
+-------------------------------------------
+-------------------------------------------
+| epoch              | 153                |
+| stats_g/mean       | 0.8507524          |
+| stats_g/std        | 0.10242665         |
+| stats_o/mean       | 0.20559046         |
+| stats_o/std        | 0.11043547         |
+| test/episode       | 3080.0             |
+| test/mean_Q        | -1.3656937         |
+| test/success_rate  | 0.8583333333333333 |
+| train/episode      | 15400.0            |
+| train/success_rate | 0.4983333333333333 |
+-------------------------------------------
+-------------------------------------------
+| epoch              | 154                |
+| stats_g/mean       | 0.8507538          |
+| stats_g/std        | 0.1024338          |
+| stats_o/mean       | 0.2055909          |
+| stats_o/std        | 0.110468835        |
+| test/episode       | 3100.0             |
+| test/mean_Q        | -1.234318          |
+| test/success_rate  | 0.8500000000000001 |
+| train/episode      | 15500.0            |
+| train/success_rate | 0.5238888888888888 |
+-------------------------------------------
+-------------------------------------------
+| epoch              | 155                |
+| stats_g/mean       | 0.85076046         |
+| stats_g/std        | 0.10244101         |
+| stats_o/mean       | 0.20559639         |
+| stats_o/std        | 0.11050324         |
+| test/episode       | 3120.0             |
+| test/mean_Q        | -1.0871465         |
+| test/success_rate  | 0.9333333333333331 |
+| train/episode      | 15600.0            |
+| train/success_rate | 0.5033333333333333 |
+-------------------------------------------
+Saving periodic policy to /home/ubuntu/saved_experts/FetchPickAndPlace-v1/policy_155.pkl ...
+-------------------------------------------
+| epoch              | 156                |
+| stats_g/mean       | 0.8507449          |
+| stats_g/std        | 0.102435194        |
+| stats_o/mean       | 0.20559484         |
+| stats_o/std        | 0.11055047         |
+| test/episode       | 3140.0             |
+| test/mean_Q        | -1.1981937         |
+| test/success_rate  | 0.8722222222222222 |
+| train/episode      | 15700.0            |
+| train/success_rate | 0.5166666666666667 |
+-------------------------------------------
+-------------------------------------------
+| epoch              | 157                |
+| stats_g/mean       | 0.8507464          |
+| stats_g/std        | 0.10241161         |
+| stats_o/mean       | 0.20560008         |
+| stats_o/std        | 0.11055279         |
+| test/episode       | 3160.0             |
+| test/mean_Q        | -1.2328314         |
+| test/success_rate  | 0.8833333333333333 |
+| train/episode      | 15800.0            |
+| train/success_rate | 0.5294444444444445 |
+-------------------------------------------
+--------------------------------------------
+| epoch              | 158                 |
+| stats_g/mean       | 0.85074997          |
+| stats_g/std        | 0.10241637          |
+| stats_o/mean       | 0.20560616          |
+| stats_o/std        | 0.11057654          |
+| test/episode       | 3180.0              |
+| test/mean_Q        | -1.1049058          |
+| test/success_rate  | 0.9138888888888891  |
+| train/episode      | 15900.0             |
+| train/success_rate | 0.48777777777777787 |
+--------------------------------------------
+-------------------------------------------
+| epoch              | 159                |
+| stats_g/mean       | 0.8507636          |
+| stats_g/std        | 0.102425486        |
+| stats_o/mean       | 0.20562011         |
+| stats_o/std        | 0.110597506        |
+| test/episode       | 3200.0             |
+| test/mean_Q        | -1.1189631         |
+| test/success_rate  | 0.8722222222222222 |
+| train/episode      | 16000.0            |
+| train/success_rate | 0.515              |
+-------------------------------------------
+--------------------------------------------
+| epoch              | 160                 |
+| stats_g/mean       | 0.85076606          |
+| stats_g/std        | 0.10242789          |
+| stats_o/mean       | 0.20562704          |
+| stats_o/std        | 0.110631645         |
+| test/episode       | 3220.0              |
+| test/mean_Q        | -1.2675023          |
+| test/success_rate  | 0.8527777777777777  |
+| train/episode      | 16100.0             |
+| train/success_rate | 0.49666666666666665 |
+--------------------------------------------
+Saving periodic policy to /home/ubuntu/saved_experts/FetchPickAndPlace-v1/policy_160.pkl ...
+-------------------------------------------
+| epoch              | 161                |
+| stats_g/mean       | 0.8507526          |
+| stats_g/std        | 0.10241327         |
+| stats_o/mean       | 0.20562989         |
+| stats_o/std        | 0.11066274         |
+| test/episode       | 3240.0             |
+| test/mean_Q        | -1.2044983         |
+| test/success_rate  | 0.8694444444444445 |
+| train/episode      | 16200.0            |
+| train/success_rate | 0.5177777777777778 |
+-------------------------------------------
+-------------------------------------------
+| epoch              | 162                |
+| stats_g/mean       | 0.850754           |
+| stats_g/std        | 0.10240117         |
+| stats_o/mean       | 0.20563903         |
+| stats_o/std        | 0.110654384        |
+| test/episode       | 3260.0             |
+| test/mean_Q        | -1.1531627         |
+| test/success_rate  | 0.8861111111111111 |
+| train/episode      | 16300.0            |
+| train/success_rate | 0.5194444444444445 |
+-------------------------------------------
+-------------------------------------------
+| epoch              | 163                |
+| stats_g/mean       | 0.8507674          |
+| stats_g/std        | 0.102406114        |
+| stats_o/mean       | 0.20563948         |
+| stats_o/std        | 0.11067792         |
+| test/episode       | 3280.0             |
+| test/mean_Q        | -1.1649612         |
+| test/success_rate  | 0.8916666666666667 |
+| train/episode      | 16400.0            |
+| train/success_rate | 0.4905555555555556 |
+-------------------------------------------
+-------------------------------------------
+| epoch              | 164                |
+| stats_g/mean       | 0.85078144         |
+| stats_g/std        | 0.102389306        |
+| stats_o/mean       | 0.20563558         |
+| stats_o/std        | 0.11069374         |
+| test/episode       | 3300.0             |
+| test/mean_Q        | -1.1188579         |
+| test/success_rate  | 0.8944444444444445 |
+| train/episode      | 16500.0            |
+| train/success_rate | 0.5155555555555557 |
+-------------------------------------------
+-------------------------------------------
+| epoch              | 165                |
+| stats_g/mean       | 0.85079724         |
+| stats_g/std        | 0.10238272         |
+| stats_o/mean       | 0.20564425         |
+| stats_o/std        | 0.11069135         |
+| test/episode       | 3320.0             |
+| test/mean_Q        | -1.0293753         |
+| test/success_rate  | 0.9249999999999999 |
+| train/episode      | 16600.0            |
+| train/success_rate | 0.5227777777777778 |
+-------------------------------------------
+Saving periodic policy to /home/ubuntu/saved_experts/FetchPickAndPlace-v1/policy_165.pkl ...
+-------------------------------------------
+| epoch              | 166                |
+| stats_g/mean       | 0.8508061          |
+| stats_g/std        | 0.10237542         |
+| stats_o/mean       | 0.20564988         |
+| stats_o/std        | 0.11072217         |
+| test/episode       | 3340.0             |
+| test/mean_Q        | -1.0564009         |
+| test/success_rate  | 0.9000000000000001 |
+| train/episode      | 16700.0            |
+| train/success_rate | 0.5261111111111111 |
+-------------------------------------------
+-------------------------------------------
+| epoch              | 167                |
+| stats_g/mean       | 0.85081834         |
+| stats_g/std        | 0.102371305        |
+| stats_o/mean       | 0.20565587         |
+| stats_o/std        | 0.110752806        |
+| test/episode       | 3360.0             |
+| test/mean_Q        | -1.2247224         |
+| test/success_rate  | 0.8722222222222222 |
+| train/episode      | 16800.0            |
+| train/success_rate | 0.5155555555555557 |
+-------------------------------------------
+------------------------------------------
+| epoch              | 168               |
+| stats_g/mean       | 0.85081744        |
+| stats_g/std        | 0.10238057        |
+| stats_o/mean       | 0.20566212        |
+| stats_o/std        | 0.11077738        |
+| test/episode       | 3380.0            |
+| test/mean_Q        | -1.1295276        |
+| test/success_rate  | 0.875             |
+| train/episode      | 16900.0           |
+| train/success_rate | 0.508888888888889 |
+------------------------------------------
+-------------------------------------------
+| epoch              | 169                |
+| stats_g/mean       | 0.85082436         |
+| stats_g/std        | 0.1023738          |
+| stats_o/mean       | 0.20567325         |
+| stats_o/std        | 0.1107865          |
+| test/episode       | 3400.0             |
+| test/mean_Q        | -1.1283927         |
+| test/success_rate  | 0.8722222222222222 |
+| train/episode      | 17000.0            |
+| train/success_rate | 0.5133333333333333 |
+-------------------------------------------
+--------------------------------------------
+| epoch              | 170                 |
+| stats_g/mean       | 0.8508346           |
+| stats_g/std        | 0.10238555          |
+| stats_o/mean       | 0.20568258          |
+| stats_o/std        | 0.11080674          |
+| test/episode       | 3420.0              |
+| test/mean_Q        | -1.0658584          |
+| test/success_rate  | 0.9027777777777778  |
+| train/episode      | 17100.0             |
+| train/success_rate | 0.48666666666666675 |
+--------------------------------------------
+Saving periodic policy to /home/ubuntu/saved_experts/FetchPickAndPlace-v1/policy_170.pkl ...
+-------------------------------------------
+| epoch              | 171                |
+| stats_g/mean       | 0.85083365         |
+| stats_g/std        | 0.10238642         |
+| stats_o/mean       | 0.20568998         |
+| stats_o/std        | 0.11082508         |
+| test/episode       | 3440.0             |
+| test/mean_Q        | -1.1828676         |
+| test/success_rate  | 0.8972222222222221 |
+| train/episode      | 17200.0            |
+| train/success_rate | 0.5161111111111111 |
+-------------------------------------------
+-------------------------------------------
+| epoch              | 172                |
+| stats_g/mean       | 0.85084015         |
+| stats_g/std        | 0.10237691         |
+| stats_o/mean       | 0.20569009         |
+| stats_o/std        | 0.11084002         |
+| test/episode       | 3460.0             |
+| test/mean_Q        | -1.100365          |
+| test/success_rate  | 0.8805555555555555 |
+| train/episode      | 17300.0            |
+| train/success_rate | 0.5072222222222222 |
+-------------------------------------------
+-------------------------------------------
+| epoch              | 173                |
+| stats_g/mean       | 0.85085636         |
+| stats_g/std        | 0.1023791          |
+| stats_o/mean       | 0.20569214         |
+| stats_o/std        | 0.1108572          |
+| test/episode       | 3480.0             |
+| test/mean_Q        | -1.1574816         |
+| test/success_rate  | 0.8888888888888888 |
+| train/episode      | 17400.0            |
+| train/success_rate | 0.495              |
+-------------------------------------------
+-------------------------------------------
+| epoch              | 174                |
+| stats_g/mean       | 0.85086757         |
+| stats_g/std        | 0.102372564        |
+| stats_o/mean       | 0.20569324         |
+| stats_o/std        | 0.110872075        |
+| test/episode       | 3500.0             |
+| test/mean_Q        | -1.2258438         |
+| test/success_rate  | 0.8638888888888888 |
+| train/episode      | 17500.0            |
+| train/success_rate | 0.5249999999999999 |
+-------------------------------------------
+-------------------------------------------
+| epoch              | 175                |
+| stats_g/mean       | 0.850868           |
+| stats_g/std        | 0.102359295        |
+| stats_o/mean       | 0.20569152         |
+| stats_o/std        | 0.11088139         |
+| test/episode       | 3520.0             |
+| test/mean_Q        | -1.2793399         |
+| test/success_rate  | 0.8777777777777778 |
+| train/episode      | 17600.0            |
+| train/success_rate | 0.5238888888888888 |
+-------------------------------------------
+Saving periodic policy to /home/ubuntu/saved_experts/FetchPickAndPlace-v1/policy_175.pkl ...
+-------------------------------------------
+| epoch              | 176                |
+| stats_g/mean       | 0.8508699          |
+| stats_g/std        | 0.10233995         |
+| stats_o/mean       | 0.20569661         |
+| stats_o/std        | 0.11087707         |
+| test/episode       | 3540.0             |
+| test/mean_Q        | -1.037332          |
+| test/success_rate  | 0.8916666666666667 |
+| train/episode      | 17700.0            |
+| train/success_rate | 0.5327777777777778 |
+-------------------------------------------
+-------------------------------------------
+| epoch              | 177                |
+| stats_g/mean       | 0.85086876         |
+| stats_g/std        | 0.102342695        |
+| stats_o/mean       | 0.20570093         |
+| stats_o/std        | 0.1108986          |
+| test/episode       | 3560.0             |
+| test/mean_Q        | -1.1605276         |
+| test/success_rate  | 0.9083333333333334 |
+| train/episode      | 17800.0            |
+| train/success_rate | 0.5172222222222222 |
+-------------------------------------------
+-------------------------------------------
+| epoch              | 178                |
+| stats_g/mean       | 0.8508737          |
+| stats_g/std        | 0.1023434          |
+| stats_o/mean       | 0.20571062         |
+| stats_o/std        | 0.110904045        |
+| test/episode       | 3580.0             |
+| test/mean_Q        | -1.1793706         |
+| test/success_rate  | 0.9000000000000001 |
+| train/episode      | 17900.0            |
+| train/success_rate | 0.5283333333333334 |
+-------------------------------------------
+--------------------------------------------
+| epoch              | 179                 |
+| stats_g/mean       | 0.8508874           |
+| stats_g/std        | 0.10236164          |
+| stats_o/mean       | 0.2057181           |
+| stats_o/std        | 0.11091573          |
+| test/episode       | 3600.0              |
+| test/mean_Q        | -1.1760638          |
+| test/success_rate  | 0.8972222222222221  |
+| train/episode      | 18000.0             |
+| train/success_rate | 0.49666666666666665 |
+--------------------------------------------
+-------------------------------------------
+| epoch              | 180                |
+| stats_g/mean       | 0.85088784         |
+| stats_g/std        | 0.102372065        |
+| stats_o/mean       | 0.20572084         |
+| stats_o/std        | 0.11093889         |
+| test/episode       | 3620.0             |
+| test/mean_Q        | -1.1108508         |
+| test/success_rate  | 0.9027777777777778 |
+| train/episode      | 18100.0            |
+| train/success_rate | 0.515              |
+-------------------------------------------
+Saving periodic policy to /home/ubuntu/saved_experts/FetchPickAndPlace-v1/policy_180.pkl ...
+-------------------------------------------
+| epoch              | 181                |
+| stats_g/mean       | 0.8508887          |
+| stats_g/std        | 0.1023853          |
+| stats_o/mean       | 0.20572618         |
+| stats_o/std        | 0.11094743         |
+| test/episode       | 3640.0             |
+| test/mean_Q        | -1.1208905         |
+| test/success_rate  | 0.9166666666666666 |
+| train/episode      | 18200.0            |
+| train/success_rate | 0.5077777777777778 |
+-------------------------------------------
+-------------------------------------------
+| epoch              | 182                |
+| stats_g/mean       | 0.8508937          |
+| stats_g/std        | 0.102383345        |
+| stats_o/mean       | 0.20573646         |
+| stats_o/std        | 0.11095928         |
+| test/episode       | 3660.0             |
+| test/mean_Q        | -1.1555991         |
+| test/success_rate  | 0.8472222222222222 |
+| train/episode      | 18300.0            |
+| train/success_rate | 0.5288888888888889 |
+-------------------------------------------
+-------------------------------------------
+| epoch              | 183                |
+| stats_g/mean       | 0.85089993         |
+| stats_g/std        | 0.10235528         |
+| stats_o/mean       | 0.20574313         |
+| stats_o/std        | 0.11096954         |
+| test/episode       | 3680.0             |
+| test/mean_Q        | -1.1629645         |
+| test/success_rate  | 0.8805555555555555 |
+| train/episode      | 18400.0            |
+| train/success_rate | 0.5211111111111111 |
+-------------------------------------------
+-------------------------------------------
+| epoch              | 184                |
+| stats_g/mean       | 0.8509002          |
+| stats_g/std        | 0.10234848         |
+| stats_o/mean       | 0.20574778         |
+| stats_o/std        | 0.11098756         |
+| test/episode       | 3700.0             |
+| test/mean_Q        | -1.1484413         |
+| test/success_rate  | 0.8722222222222222 |
+| train/episode      | 18500.0            |
+| train/success_rate | 0.5116666666666667 |
+-------------------------------------------
+-------------------------------------------
+| epoch              | 185                |
+| stats_g/mean       | 0.8508961          |
+| stats_g/std        | 0.10236624         |
+| stats_o/mean       | 0.20574398         |
+| stats_o/std        | 0.11102399         |
+| test/episode       | 3720.0             |
+| test/mean_Q        | -1.120537          |
+| test/success_rate  | 0.9083333333333334 |
+| train/episode      | 18600.0            |
+| train/success_rate | 0.5011111111111111 |
+-------------------------------------------
+Saving periodic policy to /home/ubuntu/saved_experts/FetchPickAndPlace-v1/policy_185.pkl ...
+-------------------------------------------
+| epoch              | 186                |
+| stats_g/mean       | 0.8508966          |
+| stats_g/std        | 0.10236332         |
+| stats_o/mean       | 0.20575136         |
+| stats_o/std        | 0.11103719         |
+| test/episode       | 3740.0             |
+| test/mean_Q        | -1.3043046         |
+| test/success_rate  | 0.8888888888888888 |
+| train/episode      | 18700.0            |
+| train/success_rate | 0.5261111111111112 |
+-------------------------------------------
+-------------------------------------------
+| epoch              | 187                |
+| stats_g/mean       | 0.850888           |
+| stats_g/std        | 0.10237466         |
+| stats_o/mean       | 0.20575297         |
+| stats_o/std        | 0.1110597          |
+| test/episode       | 3760.0             |
+| test/mean_Q        | -1.2699829         |
+| test/success_rate  | 0.8694444444444444 |
+| train/episode      | 18800.0            |
+| train/success_rate | 0.5155555555555557 |
+-------------------------------------------
+-------------------------------------------
+| epoch              | 188                |
+| stats_g/mean       | 0.85090095         |
+| stats_g/std        | 0.102365434        |
+| stats_o/mean       | 0.20576124         |
+| stats_o/std        | 0.11106254         |
+| test/episode       | 3780.0             |
+| test/mean_Q        | -1.2199236         |
+| test/success_rate  | 0.8944444444444445 |
+| train/episode      | 18900.0            |
+| train/success_rate | 0.5338888888888889 |
+-------------------------------------------
+-------------------------------------------
+| epoch              | 189                |
+| stats_g/mean       | 0.85089386         |
+| stats_g/std        | 0.102368884        |
+| stats_o/mean       | 0.20576042         |
+| stats_o/std        | 0.111070454        |
+| test/episode       | 3800.0             |
+| test/mean_Q        | -1.1139458         |
+| test/success_rate  | 0.8999999999999999 |
+| train/episode      | 19000.0            |
+| train/success_rate | 0.5083333333333333 |
+-------------------------------------------
+-------------------------------------------
+| epoch              | 190                |
+| stats_g/mean       | 0.85088706         |
+| stats_g/std        | 0.102358595        |
+| stats_o/mean       | 0.205751           |
+| stats_o/std        | 0.11107817         |
+| test/episode       | 3820.0             |
+| test/mean_Q        | -1.1083823         |
+| test/success_rate  | 0.8972222222222221 |
+| train/episode      | 19100.0            |
+| train/success_rate | 0.5283333333333333 |
+-------------------------------------------
+Saving periodic policy to /home/ubuntu/saved_experts/FetchPickAndPlace-v1/policy_190.pkl ...
+-------------------------------------------
+| epoch              | 191                |
+| stats_g/mean       | 0.8508891          |
+| stats_g/std        | 0.10235405         |
+| stats_o/mean       | 0.20575456         |
+| stats_o/std        | 0.111086644        |
+| test/episode       | 3840.0             |
+| test/mean_Q        | -1.2627158         |
+| test/success_rate  | 0.8472222222222222 |
+| train/episode      | 19200.0            |
+| train/success_rate | 0.5105555555555555 |
+-------------------------------------------
+-------------------------------------------
+| epoch              | 192                |
+| stats_g/mean       | 0.85089177         |
+| stats_g/std        | 0.10235439         |
+| stats_o/mean       | 0.20575291         |
+| stats_o/std        | 0.11109431         |
+| test/episode       | 3860.0             |
+| test/mean_Q        | -1.1320674         |
+| test/success_rate  | 0.9138888888888889 |
+| train/episode      | 19300.0            |
+| train/success_rate | 0.5183333333333333 |
+-------------------------------------------
+-------------------------------------------
+| epoch              | 193                |
+| stats_g/mean       | 0.85089165         |
+| stats_g/std        | 0.102343746        |
+| stats_o/mean       | 0.20576143         |
+| stats_o/std        | 0.1111034          |
+| test/episode       | 3880.0             |
+| test/mean_Q        | -1.1625915         |
+| test/success_rate  | 0.8972222222222221 |
+| train/episode      | 19400.0            |
+| train/success_rate | 0.5244444444444444 |
+-------------------------------------------
+-------------------------------------------
+| epoch              | 194                |
+| stats_g/mean       | 0.85089546         |
+| stats_g/std        | 0.10234675         |
+| stats_o/mean       | 0.20576558         |
+| stats_o/std        | 0.11111102         |
+| test/episode       | 3900.0             |
+| test/mean_Q        | -1.1914104         |
+| test/success_rate  | 0.8833333333333333 |
+| train/episode      | 19500.0            |
+| train/success_rate | 0.5205555555555555 |
+-------------------------------------------
+--------------------------------------------
+| epoch              | 195                 |
+| stats_g/mean       | 0.8509071           |
+| stats_g/std        | 0.10233894          |
+| stats_o/mean       | 0.20576203          |
+| stats_o/std        | 0.111111775         |
+| test/episode       | 3920.0              |
+| test/mean_Q        | -1.1525503          |
+| test/success_rate  | 0.8916666666666667  |
+| train/episode      | 19600.0             |
+| train/success_rate | 0.49888888888888894 |
+--------------------------------------------
+Saving periodic policy to /home/ubuntu/saved_experts/FetchPickAndPlace-v1/policy_195.pkl ...
+-------------------------------------------
+| epoch              | 196                |
+| stats_g/mean       | 0.8509042          |
+| stats_g/std        | 0.10234311         |
+| stats_o/mean       | 0.20576654         |
+| stats_o/std        | 0.11112208         |
+| test/episode       | 3940.0             |
+| test/mean_Q        | -1.1671603         |
+| test/success_rate  | 0.8972222222222221 |
+| train/episode      | 19700.0            |
+| train/success_rate | 0.5083333333333333 |
+-------------------------------------------
+-------------------------------------------
+| epoch              | 197                |
+| stats_g/mean       | 0.85090214         |
+| stats_g/std        | 0.10234049         |
+| stats_o/mean       | 0.20576638         |
+| stats_o/std        | 0.11112767         |
+| test/episode       | 3960.0             |
+| test/mean_Q        | -1.200602          |
+| test/success_rate  | 0.8805555555555556 |
+| train/episode      | 19800.0            |
+| train/success_rate | 0.515              |
+-------------------------------------------
+-------------------------------------------
+| epoch              | 198                |
+| stats_g/mean       | 0.8509039          |
+| stats_g/std        | 0.10234353         |
+| stats_o/mean       | 0.2057727          |
+| stats_o/std        | 0.111139566        |
+| test/episode       | 3980.0             |
+| test/mean_Q        | -1.1509308         |
+| test/success_rate  | 0.9055555555555556 |
+| train/episode      | 19900.0            |
+| train/success_rate | 0.51               |
+-------------------------------------------
+-------------------------------------------
+| epoch              | 199                |
+| stats_g/mean       | 0.8509166          |
+| stats_g/std        | 0.10234054         |
+| stats_o/mean       | 0.20578066         |
+| stats_o/std        | 0.11114989         |
+| test/episode       | 4000.0             |
+| test/mean_Q        | -1.0173936         |
+| test/success_rate  | 0.9249999999999999 |
+| train/episode      | 20000.0            |
+| train/success_rate | 0.5105555555555555 |
+-------------------------------------------

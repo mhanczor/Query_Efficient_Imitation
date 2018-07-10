@@ -3,13 +3,11 @@ import tensorflow as tf
 import os
 import random
 
-
 """
 Running things to fix:
 Be able to revert to last best weights if validation is lower than previous?
     Don't actually need to do this, in practice just assume that the last trained policy is the best
 """
-
 
 class DAgger(object):
     
@@ -55,19 +53,22 @@ class DAgger(object):
         done = False
         episode_length = 0
         correct_labels = 0
+        success = 0.0
         while not done:
             action = agent.sampleAction(state).flatten() # sampleAction returns 2d arrays, need 1D
             expert_action = self.expert.sampleAction(state)
-            if not self.continuous:
+            if not self.continuous: # Can only compare actions in discrete action space
                 if action == expert_action:
                     correct_labels += 1
-            state, reward, done, _ = self.env.step(action)
+            state, reward, done, info = self.env.step(action)
             total_reward += reward
             episode_length += 1
+            if self.continuous: # If using a robot env, check for success
+                success = info['is_success']
             if render:
                 self.env.render()
         
-        return total_reward, correct_labels, episode_length
+        return total_reward, correct_labels, episode_length, success
     
     def generateExpertSamples(self, mixing_decay=0.1):
         # Initialize environment and run a mixed trajectory
@@ -82,12 +83,10 @@ class DAgger(object):
                 action = self.expert.sampleAction(state)
                 expert_action = action
             else:
-                action = self.learner.sampleAction(state)
+                action = self.learner.sampleAction(state).flatten()
                 expert_action = self.expert.sampleAction(state)
             #Aggregate expert data
-            store = state.tolist()
-            store.append(expert_action)
-            self.dataset.append(store)
+            self.dataset.store(state, expert_action)
             state, reward, done, _ = self.env.step(action)
             
             expert_samples += 1
@@ -100,25 +99,27 @@ class DAgger(object):
         
     def validateAgent(self, valid_runs):
         valid_reward = 0
-        total_correct_labels, total_steps = 0, 0
+        total_correct_labels, total_steps, total_success = 0, 0, 0
         for i in range(valid_runs):
-            cur_reward, correct_labels, ep_length = self.runEpisode(self.learner)
+            cur_reward, correct_labels, ep_length, success = self.runEpisode(self.learner)
             valid_reward += cur_reward/valid_runs
             total_correct_labels += correct_labels
             total_steps += ep_length
+            if success:
+                total_success += 1
+        avg_success = total_success / valid_runs
         valid_acc = float(total_correct_labels) / total_steps 
         
-        return valid_reward, valid_acc
+        return valid_reward, valid_acc, avg_success
     
     def train(self, episodes=100, mixing_decay=0.1, train_epochs=10, 
                     save_images=False, image_filepath='./'):
         
-        
         total_expert_samples = 0
         # Run an initial validation to get starting agent reward
         validation = []
-        valid_runs = 10
-        valid_reward, valid_acc = self.validateAgent(valid_runs)
+        valid_runs = 20
+        valid_reward, valid_acc, avg_successes = self.validateAgent(valid_runs)
         validation.append(valid_reward)
         
         reward_per_samples  = tf.Summary(value=[tf.Summary.Value(tag='Reward_per_Expert_Samples', simple_value=valid_reward)])
@@ -126,10 +127,15 @@ class DAgger(object):
         if not self.continuous:
             accuracy_per_samples  = tf.Summary(value=[tf.Summary.Value(tag='Accuracy_per_Expert_Samples', simple_value=valid_acc)])
             self.learner.writer.add_summary(accuracy_per_samples, global_step=total_expert_samples)
-        stats = []
+            variable_stat = valid_acc
+        else:
+            successes_per_sample  = tf.Summary(value=[tf.Summary.Value(tag='Success_per_Expert_Samples', simple_value=avg_successes)])
+            self.learner.writer.add_summary(successes_per_sample, global_step=total_expert_samples)
+            variable_stat = avg_successes
+            
+        stats = [[0, 0, valid_reward, variable_stat]]
         
         for ep in range(episodes):
-            
             if save_images:
                 # Save an image of the environment at every expert query
                 if not os.path.isdir(image_filepath):
@@ -145,7 +151,7 @@ class DAgger(object):
             final_loss = self.updateAgent(epochs=train_epochs)
             total_expert_samples += expert_samples
             
-            valid_reward, valid_acc = self.validateAgent(valid_runs)
+            valid_reward, valid_acc, avg_successes = self.validateAgent(valid_runs)
             validation.append(valid_reward)
             
             # Is there a good way to clean this up?
@@ -159,12 +165,16 @@ class DAgger(object):
             if not self.continuous:
                 accuracy_per_samples  = tf.Summary(value=[tf.Summary.Value(tag='Accuracy_per_Expert_Samples', simple_value=valid_acc)])
                 self.learner.writer.add_summary(accuracy_per_samples, global_step=total_expert_samples)
-            
+                variable_stat = valid_acc
+            else:
+                successes_per_sample  = tf.Summary(value=[tf.Summary.Value(tag='Success_per_Expert_Samples', simple_value=avg_successes)])
+                self.learner.writer.add_summary(successes_per_sample, global_step=total_expert_samples)
+                variable_stat = avg_successes
+                
             print("Episode: {} reward: {} expert_samples: {}".format(ep, valid_reward, expert_samples))
-            stats.append([ep, valid_reward, expert_samples])
+            stats.append([ep+1, expert_samples, valid_reward, variable_stat])
         
-        
-        valid_reward, valid_acc = self.validateAgent(100)
+        valid_reward, valid_acc, avg_successes = self.validateAgent(100)
         validation.append(valid_reward)
         print("\n Training Complete")
         print("Final validation reward: {} total expert samples: {}".format(valid_reward, total_expert_samples))

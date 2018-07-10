@@ -24,6 +24,36 @@ class confidencePlot(object):
                    every other column is a dataset to use for predicting confidence
         """
     
+def interpolateData(data, max_samples=None):
+    """
+    Every run may not have an expert sample at intervals of 1
+    Linearly interpolate the data between expert samples such at every interval
+    there is an expert sample over which confidence bounds can be created
+    
+    Data - Nx2 array, first column is the number of expert samples, 2nd is the plotted value
+    Data is expected to have a value 0 in it's [0,0] position
+    """
+    
+    assert data[0,0] == 0
+    
+    # Set the max number of samples
+    if max_samples == None:
+        max_samples = data[-1, 0] # Largest number of expert samples available
+    assert data[-1,0] <= max_samples # Don't want to extrapolate
+    
+    new_data = np.empty((max_samples+1, 2))
+    
+    i = 0
+    for j in range(new_data.shape[0]):
+        new_data[j, 0] = j # Number of expert samples
+        if data[i, 0] == j: # if the expert samples at the current data is == to the value we want
+            new_data[j, 1] = data[i, 1]
+            i += 1
+        elif:
+            interp = data[i-1, 1] + (j - data[i-1, 0]) * ((data[i, 1] - data[i-1, 1])/(data[i,0] - data[i-1, 0]))
+            new_data[j, 1] = interp
+            
+    return new_data
 
 
 def formatConfidenceData(data, bound='sem'):
@@ -87,8 +117,10 @@ def plotData(data, labels=None):
         x_axis, means, bands = formatConfidenceData(values, bound='sem')
         plt.plot(x_axis, means, lw=2, label=name) # color = ???
         plt.fill_between(x_axis, means - bands, means + bands) # color=???
-    
     plt.show()
+    
+    
+    
     # bbox_inches="tight" removes all the extra whitespace on the edges of your plot.  
     # plt.savefig(filename, bbox_inches="tight") 
   
