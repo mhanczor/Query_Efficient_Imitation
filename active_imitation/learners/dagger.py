@@ -99,7 +99,7 @@ class DAgger(object):
         
     def validateAgent(self, valid_runs):
         valid_reward = 0
-        total_correct_labels, total_steps, total_success = 0, 0, 0
+        total_correct_labels, total_steps, total_success = 0, 0, 0.
         for i in range(valid_runs):
             cur_reward, correct_labels, ep_length, success = self.runEpisode(self.learner)
             valid_reward += cur_reward/valid_runs
@@ -107,7 +107,7 @@ class DAgger(object):
             total_steps += ep_length
             if success:
                 total_success += 1
-        avg_success = total_success / valid_runs
+        avg_success = total_success / float(valid_runs)
         valid_acc = float(total_correct_labels) / total_steps 
         
         return valid_reward, valid_acc, avg_success
@@ -118,7 +118,7 @@ class DAgger(object):
         total_expert_samples = 0
         # Run an initial validation to get starting agent reward
         validation = []
-        valid_runs = 20
+        valid_runs = 15
         valid_reward, valid_acc, avg_successes = self.validateAgent(valid_runs)
         validation.append(valid_reward)
         
@@ -134,6 +134,7 @@ class DAgger(object):
             variable_stat = avg_successes
             
         stats = [[0, 0, valid_reward, variable_stat]]
+        print("Episode: {} reward: {} expert_samples: {}".format(0, valid_reward, 0))
         
         for ep in range(episodes):
             if save_images:
@@ -171,7 +172,7 @@ class DAgger(object):
                 self.learner.writer.add_summary(successes_per_sample, global_step=total_expert_samples)
                 variable_stat = avg_successes
                 
-            print("Episode: {} reward: {} expert_samples: {}".format(ep, valid_reward, expert_samples))
+            print("Episode: {} reward: {} expert_samples: {}".format(ep+1, valid_reward, expert_samples))
             stats.append([ep+1, expert_samples, valid_reward, variable_stat])
         
         valid_reward, valid_acc, avg_successes = self.validateAgent(100)
