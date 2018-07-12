@@ -69,7 +69,7 @@ class GymRobotAgent(object):
             self.expert_action = tf.placeholder(tf.float32, [None, a_dim], name='Expert_Action')
             self.loss = tf.losses.mean_squared_error(self.expert_action, self.policy)
         with tf.name_scope("Opt"):
-            # Adam optimzer with a fixed lr
+            # Adam optimzer with a fixed lrz
             self.opt = tf.train.AdamOptimizer(self.lr).minimize(self.loss)
         
         # initialize vars
@@ -81,6 +81,14 @@ class GymRobotAgent(object):
     #     res = tf.get_collection(tf.GraphKeys.GLOBAL_VARIABLES, scope=self.scope + '/' + scope)
     #     return res
         
+    def _build_concrete_network(self):
+        N = policy_input.shape[0]
+        wd = l**2/N
+        dd = 2./N
+        network = concreteNet(policy_input, self.layers, wd, dd, name='Model')
+        self.policy = self.max_a * ConcreteDropout(tf.layers.Dense(units=a_dim, activation=tf.tanh),
+                                    weight_regularizer=wd, dropout_regularizer=dd)(network, training=True)
+                                
     def update(self, batch):
         """
         Update the parameters of the network using the aggregated dataset of
