@@ -65,6 +65,7 @@ class AggBuffer(object):
         else:
             self.buffer['observation'] = np.append(self.buffer['observation'], state[None,:], axis=0)
             
+        action = np.atleast_1d(action)
         self.buffer['action'] = np.append(self.buffer['action'], action[None,:], axis=0)
         
         if self.store_q:

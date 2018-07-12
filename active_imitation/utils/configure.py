@@ -18,7 +18,7 @@ POOL_DEFAULT = {'random_sample': False,
 STREAM_DEFAULT = {'random_sample': False}
 
 #TODO Don't have env_dims and envs as arguments, gotta be a better way
-def configure_robot(env, env_dims, agent, expert, mode, param_mods=None):
+def configure_robot(env, env_dims, agent, expert, mode, continuous, param_mods=None):
     
     agg_buffer = AggBuffer(env_dims, continuous=True)
     params = DEFAULT_PARAMS
@@ -42,10 +42,24 @@ def configure_robot(env, env_dims, agent, expert, mode, param_mods=None):
                             agent,
                             expert,
                             agg_buffer=agg_buffer,
-                            continuous=True,
+                            continuous=continuous,
                             **params)
     return learning_mode
     
+# def configure_classic(env, env_dims, agent, expert, mode, param_mods=None):
+# 
+# 
+# 
+# 
+#     learning_mode = trainer(env,
+#                             agent,
+#                             expert,
+#                             agg_buffer=agg_buffer,
+#                             continuous=True,
+#                             **params)
+#     return learning_mode
+
+
     # learner = Efficient_DAgger(env, 
     #                           agent, 
     #                           expert, 

@@ -5,28 +5,39 @@ from scipy import stats
 #TODO:
 #   Change env to only pass in the env dimensions required
 
+
+DEFAULT_PARAMS = {
+    # 'layers': [16, 16, 16], # Layers and hidden units in network
+    'lr': 0.001, # Learning rate
+    'dropout_rate': 0.1, # Dropout rate during training and forward samples
+    'filepath': '~/Research/experiments/tmp/'
+}
+
 class GymAgent(object):
     
-    def __init__(self, sess, env, lr=0.001, dropout_rate=0.1, filepath='tmp/'):
+    def __init__(self, env_dims, lr=0.001, dropout_rate=0.1, filepath='tmp/'):
         """
         Learner agent for OpenAI Gym's classic environments like CartPole and LunarLander
         
         Args:
             sess(tf session): current tensorflow session
-            env (gym_env): OpenAI gym environment (WILL CHANGE!)
+            env_dims (dict): Contains the size of the observation and action spaces
             lr (float): learning rate for the network
             dropout_rate[float]: Probability of dropout for any node, in range [0,1],
                                 a value of 0 would lead to no dropout
             filepath[str]: policy and data save location        
         """
         
-        self.sess = sess
-        input_size = (None,) + env.observation_space.shape
-        output_size = env.action_space.n
+        self.sess = tf.get_default_session()
+        if self.sess is None:
+            self.sess = tf.InteractiveSession()
+            
+        input_size = (None,) + (env_dims['observation'],)
+        output_size = env_dims['action_space']
         
         with tf.name_scope("Inputs"):
             self.state = tf.placeholder(tf.float32, input_size, name='State')
-            self.expert_action = tf.placeholder(tf.int32, [None], name='Expert_Action')
+            self.expert_action = tf.placeholder(tf.int32, [None, ], name='Expert_Action')
             self.apply_dropout = tf.placeholder(tf.bool)
         with tf.name_scope("Model"):
             fc_1 = tf.layers.dense(inputs=self.state, units=16, activation=tf.nn.relu)
@@ -49,9 +60,8 @@ class GymAgent(object):
         
     
     def update(self, batch):
-        state = batch[:, :-1]
-        expert_action = batch[:,-1]
-        feed_dict = {self.state: state, self.expert_action:expert_action, self.apply_dropout:True}
+        feed_dict = {self.state:batch['observation'], self.expert_action:batch['action'].flatten(), 
+                    self.apply_dropout:True}
         _, loss = self.sess.run([self.opt, self.loss], feed_dict=feed_dict)
         return loss
     

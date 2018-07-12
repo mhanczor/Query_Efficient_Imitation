@@ -9,7 +9,7 @@ sampleAction(state): uses the expert to come up with an action given the state
 """
 
 class LunarLander_Expert(object):
-    def __init__(self, continuous=False):
+    def __init__(self, env, continuous=False):
         self.continuous = continuous
     
     def sampleAction(self, s):

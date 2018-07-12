@@ -55,7 +55,7 @@ class DAgger(object):
         correct_labels = 0
         success = 0.0
         while not done:
-            action = agent.sampleAction(state).flatten() # sampleAction returns 2d arrays, need 1D
+            action = agent.sampleAction(state).squeeze() # sampleAction returns 2d arrays, need 1D
             expert_action = self.expert.sampleAction(state)
             if not self.continuous: # Can only compare actions in discrete action space
                 if action == expert_action:
@@ -83,7 +83,7 @@ class DAgger(object):
                 action = self.expert.sampleAction(state)
                 expert_action = action
             else:
-                action = self.learner.sampleAction(state).flatten()
+                action = self.learner.sampleAction(state).squeeze()
                 expert_action = self.expert.sampleAction(state)
             #Aggregate expert data
             self.dataset.store(state, expert_action)
@@ -118,7 +118,7 @@ class DAgger(object):
         total_expert_samples = 0
         # Run an initial validation to get starting agent reward
         validation = []
-        valid_runs = 15
+        valid_runs = 5
         valid_reward, valid_acc, avg_successes = self.validateAgent(valid_runs)
         validation.append(valid_reward)
         
@@ -133,7 +133,7 @@ class DAgger(object):
             self.learner.writer.add_summary(successes_per_sample, global_step=total_expert_samples)
             variable_stat = avg_successes
             
-        stats = [[0, 0, valid_reward, variable_stat]]
+        stats = [[0, 0, 0, valid_reward, variable_stat]]
         print("Episode: {} reward: {} expert_samples: {}".format(0, valid_reward, 0))
         
         for ep in range(episodes):
@@ -173,7 +173,7 @@ class DAgger(object):
                 variable_stat = avg_successes
                 
             print("Episode: {} reward: {} expert_samples: {}".format(ep+1, valid_reward, expert_samples))
-            stats.append([ep+1, expert_samples, valid_reward, variable_stat])
+            stats.append([ep+1, total_expert_samples, expert_samples, valid_reward, variable_stat])
         
         valid_reward, valid_acc, avg_successes = self.validateAgent(100)
         validation.append(valid_reward)

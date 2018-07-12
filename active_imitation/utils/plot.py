@@ -1,7 +1,8 @@
 import numpy as np
 import matplotlib.pyplot as plt
+import matplotlib.cm as cm
 from scipy.stats import sem
-from active_imitation import gym_dagger
+import os
 
 
 class confidencePlot(object):
@@ -15,7 +16,7 @@ class confidencePlot(object):
         self.ax.spines["top"].set_visible(False)
         self.ax.spines["right"].set_visible(False)
         
-    def addSample(data, ):
+    def addSample(data):
         """
         This produces a line plot with confidence intervals as specified
         Uses the standard error of the mean as confidence intervals
@@ -23,6 +24,7 @@ class confidencePlot(object):
             data - N+1xM array of columns where the first column is the x-axis, and 
                    every other column is a dataset to use for predicting confidence
         """
+        pass
     
 def interpolateData(data, max_samples=None):
     """
@@ -49,39 +51,43 @@ def interpolateData(data, max_samples=None):
         if data[i, 0] == j: # if the expert samples at the current data is == to the value we want
             new_data[j, 1] = data[i, 1]
             i += 1
-        elif:
+        else:
             interp = data[i-1, 1] + (j - data[i-1, 0]) * ((data[i, 1] - data[i-1, 1])/(data[i,0] - data[i-1, 0]))
             new_data[j, 1] = interp
             
     return new_data
 
 
-def formatConfidenceData(data, bound='sem'):
+def formatConfidenceData(data, bound='std', data_axis=4):
     """
-    data - first column is the x-axis, 
+    data - episode_len X 4 X num_of_runs numpy array with columns:
+            [episode, expert_samples, validation_reward, variable stat]
+            where variable stat is either the classifcation accuracy or avg successes per episode
     """    
     
-    x_axis = data[:,0]    
-    mean = np.mean(data[:, 1:], axis=1)
+    x_axis = data[:,1, 0]  #TODO This assumes that all the x-axis is the same, which it should be
+    mean = np.mean(data[:,data_axis, :], axis=1, keepdims=False)
     
     if bound == 'sem':
-        confidence_bound = sem(data[:, 1:], axis=1)
+        confidence_bound = sem(data[:, data_axis,:], axis=1)
     elif bound == 'std':
-        confidence_bound = np.std(data[:, 1:], axis=1) * 2
+        confidence_bound = np.std(data[:, data_axis, :], axis=1) * 1 #TODO change back to 2
     else:
         raise ValueError
     
     return x_axis, mean, confidence_bound
     
-def plotData(data, labels=None):
+def plotData(data, labels=None, xlims=None, ylims=None):
     """
     This produces a line plot with confidence intervals as specified
     Uses the standard error of the mean as confidence intervals
-    Inputs:
-        data - Dictionary of N+1xM array of columns where the first column is the x-axis, and 
-               every other column is a dataset to use for predicting confidence
-               Keys of the dictionary are the labels
+    Args:
+        data[dict] - Dict of multi_dim array of N+1xM array of columns where the 
+            second column is the x-axis, and every other column is a dataset 
+        labels[list] - String list of [x-axis, y-axis, title]
     """
+    assert len(data.keys()) < 8 # Only 8 colors available in this set, don't expect this to be a problem
+
     # Set up the plot
     plt.figure(figsize=(12,9))
     
@@ -95,45 +101,40 @@ def plotData(data, labels=None):
     ax.get_yaxis().tick_left()
     
     # Limit the range of the plot to the data
-    plt.ylim(63, 85)
+    # plt.ylim(-60, 0)
+    if xlims != None:
+        plt.xlim(xlims[0], xlims[1])
+    if ylims != None:
+        plt.ylim(ylims[0], ylims[1])
     
     # Increase axis tick marks
     # TODO set these tick marks to reflect the actual data, or let this be a keyword arg
-    plt.xticks(range(0, 300, 10), fontsize=14)
-    plt.yticks(range(-200, 250, 10), fontsize=14)
+    # plt.xticks(range(0, 100, 10), fontsize=14)
+    # plt.yticks(range(-60, 0, 10), fontsize=14)
     
     # Axis and title labels with increased size
     if labels == None:
         labels = ['X-Axis', 'Y-Axis', 'Title']
     plt.xlabel(labels[0], fontsize=16)
     plt.ylabel(labels[1], fontsize=16)
-    plt.title(labels[2], fontszie=22)
+    plt.title(labels[2], fontsize=22)
     
     # Pastel2 and Dark2 should be the colormaps used for confidence and mean resp.
     cmap = ['Dark2', 'Pastel2'] 
-    
     # Iterate over the recorded datasets
-    for name, values in data.iteritems():
-        x_axis, means, bands = formatConfidenceData(values, bound='sem')
-        plt.plot(x_axis, means, lw=2, label=name) # color = ???
-        plt.fill_between(x_axis, means - bands, means + bands) # color=???
+    i = 0
+    for name, values in data.items():
+        x_axis, means, bands = formatConfidenceData(values, bound='std')
+        plt.plot(x_axis, means, lw=2, label=name, color=cm.Dark2(i)) # color = ???
+        plt.fill_between(x_axis, means - bands, means + bands, color=cm.Pastel2(i)) # color=???
+        i += 0.126
+    plt.legend(loc=4, prop={'size':20}) # There are up to 10 positions, 0 is best, 1 upper right, 4, lower right
     plt.show()
     
     
     
     # bbox_inches="tight" removes all the extra whitespace on the edges of your plot.  
     # plt.savefig(filename, bbox_inches="tight") 
-  
-# Always include your data source(s) and copyright notice! And for your  
-# data sources, tell your viewers exactly where the data came from,  
-# preferably with a direct link to the data. Just telling your viewers  
-# that you used data from the "U.S. Census Bureau" is completely useless:  
-# the U.S. Census Bureau provides all kinds of data, so how are your  
-# viewers supposed to know which data set you used?  
-# plt.xlabel("\nData source: www.ChessGames.com | "  
-#            "Author: Randy Olson (randalolson.com / @randal_olson)", fontsize=10)  
-
-    
         
 """
 Want to be able to plot the data by passing in an arbitrary number of runs
@@ -146,10 +147,15 @@ Don't need to make this too general, it's going to be used to plot
         
 if __name__ == "__main__":
     
-    import ipdb; ipbd.set_trace()
-    for i in range(10):
-        rewards, stats = gym_dagger.sampleRun()
+    # import ipdb; ipdb.set_trace()
+    prefix = '/home/hades/Research/Active_Imitation/active_imitation/tests/FetchReach-v1/Baselines'
+    fp = 'FetchReach-v1-classic-multi-DAgger.npy'
+    fp = os.path.join(prefix, fp)    
+    dag_dat = np.load(fp)
+    data = {'DAgger':dag_dat}
+    labels = ['Expert Samples', 'Episode Return', 'FetchReach-v1']
     
+    plotData(data, labels)
     
     
     

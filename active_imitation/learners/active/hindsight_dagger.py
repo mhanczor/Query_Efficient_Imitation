@@ -39,7 +39,7 @@ class Hindsight_DAgger(DAgger):
                 self.dataset.store(state, action)
                 expert_samples += 1
             else:
-                action = learner_action.flatten()
+                action = learner_action.squeeze()
                 trajectory_belief.append(action_uncertainty)
                 trajectory_states.append(state)
             
