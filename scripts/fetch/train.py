@@ -34,7 +34,6 @@ policy_files = {'FetchReach-v1': os.path.join(prefix, 'FetchReach-v1/policy_best
 mixing = 1.0
 mixing_decay = 1.0
 train_epochs = 10
-seed = random.randint(0, 1e6)
 #######
 
 def main(env_name, mode, episodes, random_sample, save_path, expert_first=False, save_model=True):
@@ -47,6 +46,7 @@ def main(env_name, mode, episodes, random_sample, save_path, expert_first=False,
     expert_first - Should the expert have control for the first episode or no
     """
 
+    seed = random.randint(0, 1e6)
     env = gym.make(env_name)
     env.seed(seed)
     
@@ -69,7 +69,8 @@ def main(env_name, mode, episodes, random_sample, save_path, expert_first=False,
     agent = GymRobotAgent(env_dims, **DEFAULT_PARAMS)
     expert = RoboticEnv_Expert(policy_files[env_name])
     
-    learning_mode = configure.configure_robot(env, env_dims, agent, expert, mode, param_mods=param_mods)                        
+    learning_mode = configure.configure_robot(env, env_dims, agent, expert, mode,
+                                              continuous=True, param_mods=param_mods)                        
     rewards, stats = learning_mode.train(episodes=episodes, 
                                         mixing_decay=mixing_decay,
                                         train_epochs=train_epochs,
