@@ -11,18 +11,17 @@ FetchPush-v1
 
 env_name = 'FetchPush-v1'
 mode = 'classic'
-episodes = 2
+episodes = 100
 random_sample = False
 
-data_savefile = './tmp/trained_data/'
-save_path = './tmp/' + env_name + '/'
+data_savefile = './tmp/' + env_name + '/'
 
-samples = 2
+samples = 20
 saved_stats = np.empty((episodes+1, 5, 0))
 for i in range(samples):
     print('Starting run {}'.format(i+1))
     rewards, stats = train.main(env_name, mode, episodes, random_sample, 
-                                save_path, expert_first=False, save_model=True)
+                                data_savefile, expert_first=False, save_model=True)
     stats = np.array(stats)
     saved_stats = np.append(saved_stats, stats[:,:, None], axis=2)
 
