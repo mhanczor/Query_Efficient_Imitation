@@ -1,6 +1,7 @@
 import numpy as np
 import tensorflow as tf
 from scipy import stats
+import os
 
 #TODO:
 #   Change env to only pass in the env dimensions required
@@ -31,7 +32,10 @@ class GymAgent(object):
         self.sess = tf.get_default_session()
         if self.sess is None:
             self.sess = tf.InteractiveSession()
-            
+        
+        self.dropout_rate = dropout_rate
+        
+        self.filepath = filepath
         input_size = (None,) + (env_dims['observation'],)
         output_size = env_dims['action_space']
         
@@ -41,9 +45,9 @@ class GymAgent(object):
             self.apply_dropout = tf.placeholder(tf.bool)
         with tf.name_scope("Model"):
             fc_1 = tf.layers.dense(inputs=self.state, units=16, activation=tf.nn.relu)
-            dropout_1 = tf.layers.dropout(inputs=fc_1, rate=dropout_rate, training=self.apply_dropout)
+            dropout_1 = tf.layers.dropout(inputs=fc_1, rate=self.dropout_rate, training=self.apply_dropout)
             fc_2 = tf.layers.dense(inputs=dropout_1, units=16, activation=tf.nn.relu)
-            dropout_2 = tf.layers.dropout(inputs=fc_2, rate=dropout_rate, training=self.apply_dropout)
+            dropout_2 = tf.layers.dropout(inputs=fc_2, rate=self.dropout_rate, training=self.apply_dropout)
             logits = tf.layers.dense(inputs=dropout_2, units=output_size, activation=None)
             self.policy = tf.nn.softmax(logits, name="Policy_Output")
         with tf.name_scope("Loss"):
@@ -65,26 +69,26 @@ class GymAgent(object):
         _, loss = self.sess.run([self.opt, self.loss], feed_dict=feed_dict)
         return loss
     
-    def samplePolicy(self, state, apply_dropout=False):
+    def _samplePolicy(self, state, apply_dropout=False):
         state = np.atleast_2d(state)
         feed_dict = {self.state : state, self.apply_dropout:apply_dropout}
         return self.sess.run(self.policy, feed_dict=feed_dict)
         
     def sampleAction(self, state, batch=1, apply_dropout=False):
         state = np.atleast_2d(state)
-        policy = self.samplePolicy(state, apply_dropout)
+        policy = self._samplePolicy(state, apply_dropout)
         # Could either sample actions or take max action
         # For now take max
         action  = np.argmax(policy)
         return action
     
-    # def dropoutSample(self, state, batch=32):
-    #     # import pdb; pdb.set_trace()
-    #     state = np.atleast_2d(state)
-    #     state = np.repeat(state, batch, axis=0)
-    #     policy = self.samplePolicy(state, apply_dropout=True)
-    # 
-    #     return policy
+    def samplePolicy(self, state, batch=32, apply_dropout=True):
+        # import pdb; pdb.set_trace()
+        state = np.atleast_2d(state)
+        state = np.repeat(state, batch, axis=0)
+        policy = self._samplePolicy(state, apply_dropout=apply_dropout)
+    
+        return policy
 
     
     def uncertainAction(self, state, training=True, batch=32):
@@ -95,7 +99,7 @@ class GymAgent(object):
         # import pdb; pdb.set_trace()
         state = np.atleast_2d(state)
         state = np.repeat(state, batch, axis=0)
-        policy = self.samplePolicy(state, training)
+        policy = self._samplePolicy(state, training)
         # Could either sample actions or take max action
         # For now take max
         policy_avg = np.mean(policy, axis=0, keepdims=True)
@@ -121,7 +125,7 @@ class GymAgent(object):
         # import pdb; pdb.set_trace()
         state = np.atleast_2d(state)
         state = np.repeat(state, batch, axis=0)
-        policy = self.samplePolicy(state, training)
+        policy = self._samplePolicy(state, training)
         # Could either sample actions or take max action
         # For now take max
         all_actions = np.argmax(policy, axis=1)
@@ -134,6 +138,18 @@ class GymAgent(object):
         
         return action, disagree        
         
-    def save_model_weights(self, filepath):
-        self.saver.save(self.sess, filepath + 'checkpoints/model.ckpt', global_step=tf.train.global_step(self.sess, self.global_step))
+    def save_model(self, expert_samples=-1):
+        savefile = os.path.join(self.filepath, 'checkpoints/model-'+ str(expert_samples) + '_samples.ckpt')
+        self.saver.save(self.sess, savefile)
+        # self.saver.save(self.sess, savefile, global_step=tf.train.global_step(self.sess, self.global_step))
+        print('Saved Model as {}'.format(savefile))
+        
+        
+        
+        
+        
+        
+        
+        
+
         

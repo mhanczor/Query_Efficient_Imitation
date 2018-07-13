@@ -32,7 +32,6 @@ class Hindsight_DAgger(DAgger):
         # Generate an episode, store all the visited states
         while not done:
             learner_action, action_uncertainty = self.learner_predict(self.learner, state)
-            
             mixing_prob = random.random()
             if mixing_prob >= self.mixing:
                 action = self.expert.sampleAction(state)
@@ -46,7 +45,7 @@ class Hindsight_DAgger(DAgger):
             if save_image:
                 arr = self.env.render(mode='rgb_array')
                 img_arr.append(arr)
-                
+            
             state, reward, done, _ = self.env.step(action)
         
         if len(trajectory_belief) > 0:
@@ -68,10 +67,11 @@ class Hindsight_DAgger(DAgger):
             # if num_samples == 1:
             #     sample_metric  = tf.Summary(value=[tf.Summary.Value(tag='Selected_Sample_Metric_Value', simple_value=valid_reward)])
             #     self.learner.writer.add_summary(reward_per_samples, global_step=total_expert_samples)
-            
-            state_imgs = []
-            if save_image:
-                state_imgs = [img_arr[best_ind]]
+        
+        self.mixing += mixing_decay    
+        state_imgs = []
+        if save_image:
+            state_imgs = [img_arr[best_ind]]
 
         return expert_samples, state_imgs #TODO do we actually need to return any of this?
     

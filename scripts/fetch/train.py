@@ -50,9 +50,6 @@ def main(env_name, mode, episodes, random_sample, save_path, expert_first=False,
     env = gym.make(env_name)
     env.seed(seed)
     
-    if expert_first:
-        mixing = 0.0
-    
     # Need the spaces dimensions to initialize the NN agent    
     action_size = env.action_space.shape[0]
     observation_size = env.observation_space.spaces['observation'].shape[0]
@@ -64,7 +61,12 @@ def main(env_name, mode, episodes, random_sample, save_path, expert_first=False,
     params['layers'] = [256, 256, 256]
     params['dropout_rate'] = 0.00
     params['filepath'] = save_path
-    param_mods = {'random_sample': random_sample}
+    
+    if expert_first:
+        mixing = 0.0
+        mixing_decay = 1.0
+        
+    param_mods = {'random_sample': random_sample, 'mixing':mixing}
 
     agent = GymRobotAgent(env_dims, **DEFAULT_PARAMS)
     expert = RoboticEnv_Expert(policy_files[env_name])

@@ -28,16 +28,18 @@ experts = {'CartPole-v1' : CartPole_iLQR,
 mixing = 1.0
 mixing_decay = 1.0
 train_epochs = 10
-seed = random.randint(0, 1e6)
+
 #######
 
-def main(env_name, mode, episodes, random_sample, save_path, expert_first=False, save_model=True):
+def main(env_name, mode, episodes, random_sample, save_path, expert_first=False, save_model=True, dropout=0.05):
     """
     env_name - gym environment [LunarLander-v2, CartPole-v1]
     mode - learning type [pool, stream, classic]
     save_path - where the model and tf loggin data should be saved to
     """
+    seed = random.randint(0, 1e6)
     env = gym.make(env_name)
+    env.seed(seed)
 
     # Need the spaces dimensions to initialize the NN agent    
     action_size = 1 # Single, discrete actions
@@ -48,24 +50,33 @@ def main(env_name, mode, episodes, random_sample, save_path, expert_first=False,
     # Change the dimensions of the nn layers
     params = DEFAULT_PARAMS
     # params['layers'] = [64, 64, 64]
-    params['dropout_rate'] = 0.05
+    params['dropout_rate'] = dropout #[0.05, 0.1, 0.15, 0.2]
     params['filepath'] = save_path
-    param_mods = {'random_sample': random_sample}
+    
+    if expert_first:
+        mixing = 0.0
+        mixing_decay = 1.0
+    else:
+        mixing = 1.0
+        mixing_decay = 1.0
+    
+    param_mods = {'random_sample': random_sample, 'mixing':mixing}
 
     agent = GymAgent(env_dims, **DEFAULT_PARAMS)
     expert = experts[env_name](env.unwrapped)
     
     learning_mode = configure.configure_robot(env, env_dims, agent, expert, 
-                                              mode, continuous=False, param_mods=None)                        
+                                              mode, continuous=False, param_mods=param_mods)                        
     rewards, stats = learning_mode.train(episodes=episodes, 
                                         mixing_decay=mixing_decay,
                                         train_epochs=train_epochs,
                                         save_images=False,
                                         image_filepath=save_path+'images/')
-    agent.save_model()
+    if save_model:
+        agent.save_model()
     agent.sess.close()
     env.close()
-    return
+    return rewards, stats
 
 
 if __name__ == "__main__":

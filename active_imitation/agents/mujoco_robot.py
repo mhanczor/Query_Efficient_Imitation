@@ -150,10 +150,10 @@ class GymRobotAgent(object):
         action_var = np.sum(per_action_var)
         return action_avg, action_var
     
-    def save_model(self):
-        savefile = os.path.join(self.filepath, 'model.ckpt')
+    def save_model(self, expert_samples=-1):
+        savefile = os.path.join(self.filepath, 'checkpoints/model-'+ str(expert_samples) + '_samples.ckpt')
         self.saver.save(self.sess, savefile)
-        print('Saved Model')
+        print('Saved Model as {}'.format(savefile))
     
     
     def _load_model(self):

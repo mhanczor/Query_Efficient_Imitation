@@ -30,6 +30,8 @@ def configure_robot(env, env_dims, agent, expert, mode, continuous, param_mods=N
     
     if mode == 'pool':
         params.update(POOL_DEFAULT)
+        if not continuous:
+            params['action_selection'] = QBC_KL
     elif mode == 'stream':
         params.update(STREAM_DEFAULT)
     

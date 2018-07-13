@@ -31,7 +31,8 @@ def QBC_KL(learner, state):
     """
     #TODO clean this up so there is no concern with shape casting, make it so that
     # for arbitrary number of committee members and state space this works
-    sample = learner.sampleAction(state, batch=32, apply_dropout=True)
+    # import ipdb; ipdb.set_trace()
+    sample = learner.samplePolicy(state, batch=32, apply_dropout=True)
 
     # need the average probability of each action
     # The consensus probability, average probability of each action

@@ -27,10 +27,10 @@ class DAgger(object):
                 
         samples = self.dataset.size
         if samples == 0:
-            import pdb; pdb.set_trace()
+            # import pdb; pdb.set_trace()
             print("WARNING: No data available to train")
             return 0
-        
+            
         indices = list(range(samples))
         for ep in range(epochs):
             random.shuffle(indices)
@@ -113,9 +113,10 @@ class DAgger(object):
         return valid_reward, valid_acc, avg_success
     
     def train(self, episodes=100, mixing_decay=0.1, train_epochs=10, 
-                    save_images=False, image_filepath='./'):
+                    save_images=False, image_filepath='./', save_rate=None):
         
         total_expert_samples = 0
+        prev_samples = 0
         # Run an initial validation to get starting agent reward
         validation = []
         valid_runs = 5
@@ -174,8 +175,10 @@ class DAgger(object):
                 
             print("Episode: {} reward: {} expert_samples: {}".format(ep+1, valid_reward, expert_samples))
             stats.append([ep+1, total_expert_samples, expert_samples, valid_reward, variable_stat])
-        
-        valid_reward, valid_acc, avg_successes = self.validateAgent(100)
+            
+            # if # we have crossed the threshold of expert samples
+            
+        valid_reward, valid_acc, avg_successes = self.validateAgent(50)
         validation.append(valid_reward)
         print("\n Training Complete")
         print("Final validation reward: {} total expert samples: {}".format(valid_reward, total_expert_samples))
