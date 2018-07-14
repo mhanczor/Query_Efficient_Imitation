@@ -36,7 +36,7 @@ mixing_decay = 1.0
 train_epochs = 10
 #######
 
-def main(env_name, mode, episodes, random_sample, save_path, expert_first=False, save_model=True):
+def main(env_name, mode, episodes, random_sample, save_path, expert_first=False, save_model=True, dropout=0.05):
     """
     env_name - gym environment
     mode - learning type [pool, stream, classic]
@@ -59,11 +59,14 @@ def main(env_name, mode, episodes, random_sample, save_path, expert_first=False,
     # Change the dimensions of the nn layers
     params = DEFAULT_PARAMS
     params['layers'] = [256, 256, 256]
-    params['dropout_rate'] = 0.00
+    params['dropout_rate'] = dropout
     params['filepath'] = save_path
     
     if expert_first:
         mixing = 0.0
+        mixing_decay = 1.0
+    else:
+        mixing = 1.0
         mixing_decay = 1.0
         
     param_mods = {'random_sample': random_sample, 'mixing':mixing}
