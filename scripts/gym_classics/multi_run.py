@@ -1,6 +1,6 @@
-import train
 import numpy as np
 import os
+from scripts import train
 
 """
 CartPole-v1
@@ -17,7 +17,7 @@ random_sample = True
 data_savefile = './tmp/' + env_name + '/'
 
 samples = 30
-saved_stats = np.empty((episodes+1, 5, 0))
+saved_stats = np.empty((episodes+1, 6, 0))
 
 for i in range(samples):
     print('Starting run {} in {}'.format(i+1, env_name))

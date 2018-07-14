@@ -89,7 +89,7 @@ def plotData(data, labels=None, data_axis=4, expert=None, xlims=None, ylims=None
         labels[list] - String list of [x-axis, y-axis, title]
         expert[scalar] - Value that the expert/demonstrator performed at (horiz line on plot)
     """
-    assert len(data.keys()) < 8 # Only 8 colors available in this set, don't expect this to be a problem
+    assert len(data.keys()) <= 8 # Only 8 colors available in this set, don't expect this to be a problem
 
     # Set up the plot
     plt.figure(figsize=(12,9))

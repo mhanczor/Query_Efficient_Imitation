@@ -55,7 +55,6 @@ def main(env_name, mode, episodes, random_sample, save_path, expert_first=False,
     env = gym.make(env_name)
     env.seed(seed)
     
-    import ipdb; ipdb.set_trace()
     isFetch = env_name[:5] == 'Fetch'
 
     if isFetch: # That's so fetch

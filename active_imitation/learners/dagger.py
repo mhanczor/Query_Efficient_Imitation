@@ -19,6 +19,30 @@ class DAgger(object):
         self.continuous = continuous
         
         self.dataset = agg_buffer
+        
+        self._logParameters()        
+    
+    def _logParameters(self):
+    #     """
+    #     Save all the parameters to a file and print out to the screen to start
+    #     """
+        env_name = str(self.env.unwrapped)
+        learner = str(self.learner)
+        mode = str(self)
+        mixing = self.mixing
+        dropout = self.learner.dropout_rate
+        filepath = self.learner.filepath
+        
+        print("\n \n *** Now training a imitation network with the following parameters: *** \n \
+        Environment Name: {} \n \
+        Learner Type: {} \n \
+        Sample Selection: {} \n \
+        Continuous?: {} \n \
+        Initial Mixing: {} \n \
+        Initial Dropout: {} \n \
+        \n \
+        File Location: {} \n ".format(env_name, learner, mode, 
+        self.continuous, mixing, dropout, filepath))    
     
     def updateAgent(self, epochs=10, batch_size=32):
         """
@@ -134,7 +158,7 @@ class DAgger(object):
             self.learner.writer.add_summary(successes_per_sample, global_step=total_expert_samples)
             variable_stat = avg_successes
             
-        stats = [[0, 0, 0, valid_reward, variable_stat]]
+        stats = [[0, 0, 0, valid_reward, variable_stat, 0.]]
         print("Episode: {} reward: {} expert_samples: {}".format(0, valid_reward, 0))
         
         for ep in range(episodes):
@@ -143,12 +167,12 @@ class DAgger(object):
                 if not os.path.isdir(image_filepath):
                     os.mkdir(image_filepath)
                 from scipy.misc import imsave
-                expert_samples, images = self.generateExpertSamples(mixing_decay=mixing_decay, save_image=True)
+                expert_samples, images, utility_measure = self.generateExpertSamples(mixing_decay=mixing_decay, save_image=True)
                 for num, image in enumerate(images):
                     filename = image_filepath + 'episode_' + str(ep) + '_' + str(num) + '.png'
                     imsave(filename, image)
             else:
-                expert_samples, _ = self.generateExpertSamples(mixing_decay=mixing_decay)
+                expert_samples, _, utility_measure = self.generateExpertSamples(mixing_decay=mixing_decay)
 
             final_loss = self.updateAgent(epochs=train_epochs)
             total_expert_samples += expert_samples
@@ -172,13 +196,15 @@ class DAgger(object):
                 successes_per_sample  = tf.Summary(value=[tf.Summary.Value(tag='Success_per_Expert_Samples', simple_value=avg_successes)])
                 self.learner.writer.add_summary(successes_per_sample, global_step=total_expert_samples)
                 variable_stat = avg_successes
-                
-            print("Episode: {} reward: {} expert_samples: {}".format(ep+1, valid_reward, expert_samples))
-            stats.append([ep+1, total_expert_samples, expert_samples, valid_reward, variable_stat])
             
+            utility_summary = tf.Summary(value=[tf.Summary.Value(tag='Sample_Utility', simple_value=utility_measure)])
+            self.learner.writer.add_summary(utility_summary, global_step=total_expert_samples)
+            
+            print("Episode: {} reward: {} expert_samples: {}".format(ep+1, valid_reward, expert_samples))
+            stats.append([ep+1, total_expert_samples, expert_samples, valid_reward, variable_stat, utility_measure])
             # if # we have crossed the threshold of expert samples
             
-        valid_reward, valid_acc, avg_successes = self.validateAgent(50)
+        valid_reward, valid_acc, avg_successes = self.validateAgent(5)
         validation.append(valid_reward)
         print("\n Training Complete")
         print("Final validation reward: {} total expert samples: {}".format(valid_reward, total_expert_samples))

@@ -13,17 +13,18 @@ env_name = 'FetchReach-v1'
 mode = 'pool'
 expert_first = True
 save_model = True
-episodes = 1000
+episodes = 2
 random_sample = False
+dropout = 0.05
 
 data_savefile = './tmp/' + env_name + '/'
 
-samples = 10
-saved_stats = np.empty((episodes+1, 5, 0))
+samples = 2
+saved_stats = np.empty((episodes+1, 6, 0))
 for i in range(samples):
     print('Starting run {} in {}'.format(i+1, env_name))
     rewards, stats = train.main(env_name, mode, episodes, random_sample, 
-                                data_savefile, expert_first=expert_first, save_model=save_model)
+                                data_savefile, expert_first=expert_first, save_model=save_model, dropout=dropout)
     stats = np.array(stats)
     saved_stats = np.append(saved_stats, stats[:,:, None], axis=2)
 

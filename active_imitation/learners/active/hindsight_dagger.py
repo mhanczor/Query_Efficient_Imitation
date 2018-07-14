@@ -58,7 +58,17 @@ class Hindsight_DAgger(DAgger):
                 best_ind = random.randint(0, len(trajectory_belief)-1)
             else:
                 # Select the state that had the highest uncertainty
-                best_ind = np.argmax(trajectory_belief)
+                # If there are multiple states with the same uncertainty, randomly select between them
+                trajectory_belief = trajectory_belief.squeeze()
+                best_val = np.max(trajectory_belief)
+                val_ind = np.argwhere(trajectory_belief == best_val)
+                if val_ind.shape[0] > 1:
+                    print('WARNING: SELECTING FROM MULTIPLE EQUIVALENT STATES')
+                    best_ind = np.random.choice(val_ind.squeeze())
+                else:
+                    best_ind = val_ind[0,0]
+
+            print(trajectory_belief[best_ind])
             state = trajectory_states[best_ind]
             action = self.expert.sampleAction(state)
             self.dataset.store(state, action)
@@ -67,13 +77,16 @@ class Hindsight_DAgger(DAgger):
             # if num_samples == 1:
             #     sample_metric  = tf.Summary(value=[tf.Summary.Value(tag='Selected_Sample_Metric_Value', simple_value=valid_reward)])
             #     self.learner.writer.add_summary(reward_per_samples, global_step=total_expert_samples)
+            selected_utility = trajectory_belief[best_ind]
+        else:
+            selected_utility = -1. # Don't select examples if the expert is providing them all 
         
         self.mixing += mixing_decay    
         state_imgs = []
         if save_image:
             state_imgs = [img_arr[best_ind]]
 
-        return expert_samples, state_imgs #TODO do we actually need to return any of this?
+        return expert_samples, state_imgs, selected_utility #TODO do we actually need to return any of this?
     
     
     

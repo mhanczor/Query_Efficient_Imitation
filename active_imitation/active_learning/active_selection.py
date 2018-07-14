@@ -29,8 +29,6 @@ def QBC_KL(learner, state):
     The policy should be the probabilities of selecting from discrete actions, 
     calculates the KL divergence between the committee members
     """
-    #TODO clean this up so there is no concern with shape casting, make it so that
-    # for arbitrary number of committee members and state space this works
     # import ipdb; ipdb.set_trace()
     sample = learner.samplePolicy(state, batch=32, apply_dropout=True)
 
@@ -49,15 +47,50 @@ def QBC_KL(learner, state):
         p_consensus = p_consensus / policy_sum
 
     action = np.argmax(p_consensus)
-    # try:
-    #     action = np.random.multinomial(1, p_consensus)
-    #     action = np.argmax(action)
-    # except:
-    #     action = np.argmax(policy)
         
     # Return the average divergence along with the sampled action from the consensus        
     return action, avg_kl
 
+def QBC_JSD(learner, state):
+    """
+    Uses multiple passes through a dropout NN as an approximation for
+    multiple hypotheses sampled from a Gaussian
+    
+    Use Jensen-Shanon Divergence as a metric for determining which samples to select for learning
+    When using log_2, JS Divergence is guaranteed 0 <= JSD <= 1
+    """
+    # import ipdb; ipdb.set_trace()
+    # test_dropout = 0.1
+    # train_dropout = learner.dropout_rate
+    
+    policy = learner.samplePolicy(state, batch=32, apply_dropout=True)
+    n = policy.shape[0]
+    
+    try:
+        policy_entropy = -np.sum(policy*np.log2(policy + 1e-8), axis=1, keepdims=True) # Added for stability
+        
+        weighted_policy = (1./n) * np.sum(policy, axis=0, keepdims=True)
+        weighted_entropy = -np.sum(weighted_policy*np.log2(weighted_policy + 1e-8), axis=1, keepdims=True)
+        
+        JSD =  weighted_entropy - (1./n) * np.sum(policy_entropy, axis=0, keepdims=True)
+        JSD = JSD.squeeze()
+    except:
+        JSD = 0.
+        
+    if JSD < 0:
+        JSD = -1.
+        # import ipdb; ipdb.set_trace()
+    
+    policy_avg = np.mean(policy, axis = 0)
+    policy_sum = np.sum(policy_avg)
+    if policy_sum > 1.0:
+        policy_avg = policy_avg / policy_sum
+
+    action = np.argmax(policy_avg) # Greedily take actions according to the current policy
+
+    # Return the average divergence along with the sampled action from the consensus        
+    return action, JSD
+    
 def varianceAction(learner, state):
     """
     Select an action based on multiple forward passes through the network
