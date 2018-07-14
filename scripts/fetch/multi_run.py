@@ -1,6 +1,6 @@
-import train
 import numpy as np
 import os
+from scripts import train
 
 """
 FetchReach-v1
@@ -9,12 +9,12 @@ FetchPickAndPlace-v1
 FetchPush-v1
 """
 
-env_name = 'FetchPush-v1'
+env_name = 'FetchReach-v1'
 mode = 'pool'
-expert_first = False
+expert_first = True
 save_model = True
 episodes = 1000
-random_sample = True
+random_sample = False
 
 data_savefile = './tmp/' + env_name + '/'
 
