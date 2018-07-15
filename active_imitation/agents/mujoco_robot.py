@@ -71,22 +71,19 @@ class GymRobotAgent(object):
         self.g = tf.placeholder(tf.float32, [None, g_dim])
         policy_input = tf.concat(axis=1, values=[self.o, self.g]) # Concatenate observations and goals as a single network input
         network = denseNet(policy_input, self.layers, self.dropout, self.apply_dropout, name='Model')
-        self.policy = self.max_a * tf.layers.dense(inputs=network, units=a_dim, activation=tf.tanh)
+        self.policy = self.max_a * tf.layers.dense(inputs=network, units=a_dim, activation=tf.tanh, kernel_regularizer=tf.contrib.layers.l2_regularizer(1e-3))
         
         with tf.name_scope("Loss"):
             # Continuous action spaces, MSE loss
             self.expert_action = tf.placeholder(tf.float32, [None, a_dim], name='Expert_Action')
-            self.loss = tf.losses.mean_squared_error(self.expert_action, self.policy)
+            self.reg_losses = tf.reduce_sum(tf.losses.get_regularization_losses())
+            # self.loss = tf.losses.mean_squared_error(self.expert_action, self.policy)
+            self.loss = tf.reduce_sum((self.expert_action - self.policy)**2. + self.reg_losses, -1)
         with tf.name_scope("Opt"):
             # Adam optimzer with a fixed lrz
-            self.opt = tf.train.AdamOptimizer(self.lr).minimize(self.loss)
-        
-        # initialize vars
-        # tf.variables_initializer(self._global_vars('')).run()
-    
-    # def _global_vars(self, scope):
-    #     res = tf.get_collection(tf.GraphKeys.GLOBAL_VARIABLES, scope=self.scope + '/' + scope)
-    #     return res
+            self.opt = tf.train.AdamOptimizer(self.lr).minimize(self.loss)    
+            
+        assert len(tf.losses.get_regularization_losses()) == len(self.layers) + 1, print(len(tf.losses.get_regularization_losses()))
         
     def _build_concrete_network(self):
         
@@ -121,12 +118,13 @@ class GymRobotAgent(object):
             mean = pred[:, :a_dim] # Just separating out the concatenation from above
             log_var = pred[:, a_dim:]
             precision = tf.exp(-log_var)
-            reg_losses = tf.reduce_sum(tf.losses.get_regularization_losses())
-            return tf.reduce_sum(precision * (true - mean)**2. + log_var + reg_losses, -1)                        
+            self.reg_losses = tf.reduce_sum(tf.losses.get_regularization_losses())
+            return tf.reduce_sum(precision * (true - mean)**2. + log_var + self.reg_losses, -1)                        
         
         self.expert_action = tf.placeholder(tf.float32, [None, a_dim], name='Expert_Action')
         self.loss = heteroscedastic_loss(self.expert_action, self.prediction)
         self.opt = tf.train.AdamOptimizer(self.lr).minimize(self.loss)
+        assert len(tf.losses.get_regularization_losses()) == len(self.layers) + 2, print(len(tf.losses.get_regularization_losses()))
         
     def update(self, batch):
         """
@@ -141,7 +139,6 @@ class GymRobotAgent(object):
                     self.expert_action:batch['action'], self.apply_dropout:True}
         if self.concrete: 
             feed_dict[self.N] = self.total_samples
-              
         _,loss = self.sess.run([self.opt, self.loss], feed_dict=feed_dict)
         loss = np.mean(loss) # For concrete
         return loss

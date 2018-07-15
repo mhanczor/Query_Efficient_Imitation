@@ -5,27 +5,6 @@ from scipy.stats import sem
 import os
 
 
-class confidencePlot(object):
-    
-    def __init__(self, y_label='Y-Axis', x_label='X-Axis', title='Confidence Plot'):
-        self.y_label = y_label
-        self.x_label = x_label
-        
-        self.figure = plt.figure(figsize=(12,9))
-        self.ax = plt.subplot(111)
-        self.ax.spines["top"].set_visible(False)
-        self.ax.spines["right"].set_visible(False)
-        
-    def addSample(data):
-        """
-        This produces a line plot with confidence intervals as specified
-        Uses the standard error of the mean as confidence intervals
-        Inputs:
-            data - N+1xM array of columns where the first column is the x-axis, and 
-                   every other column is a dataset to use for predicting confidence
-        """
-        pass
-    
 def interpolateData(data, data_axis=4, max_samples=None):
     """
     Every run may not have an expert sample at intervals of 1

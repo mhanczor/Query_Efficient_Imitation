@@ -13,14 +13,14 @@ env_name = 'FetchReach-v1'
 mode = 'pool'
 expert_first = True
 save_model = True
-episodes = 1000
+episodes = 3
 random_sample = False
 dropout = 0.05
-concrete = True
+concrete = False
 
 data_savepath = './tmp/' + env_name + '/'
 
-samples = 10
+samples = 2
 saved_stats = None
 
 for i in range(samples):
