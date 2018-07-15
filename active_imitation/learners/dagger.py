@@ -32,6 +32,7 @@ class DAgger(object):
         mixing = self.mixing
         dropout = self.learner.dropout_rate
         filepath = self.learner.filepath
+        lr = self.learner.lr
         
         print("\n \n *** Now training a imitation network with the following parameters: *** \n \
         Environment Name: {} \n \
@@ -40,9 +41,10 @@ class DAgger(object):
         Continuous?: {} \n \
         Initial Mixing: {} \n \
         Initial Dropout: {} \n \
+        Learning Rate: {} \n \
         \n \
         File Location: {} \n ".format(env_name, learner, mode, 
-        self.continuous, mixing, dropout, filepath))    
+        self.continuous, mixing, dropout, lr, filepath))    
     
     def updateAgent(self, epochs=10, batch_size=32):
         """
@@ -54,6 +56,9 @@ class DAgger(object):
             # import pdb; pdb.set_trace()
             print("WARNING: No data available to train")
             return 0
+        
+        if self.continuous:
+            self.learner.total_samples = samples
             
         indices = list(range(samples))
         for ep in range(epochs):
@@ -137,7 +142,7 @@ class DAgger(object):
         return valid_reward, valid_acc, avg_success
     
     def train(self, episodes=100, mixing_decay=0.1, train_epochs=10, 
-                    save_images=False, image_filepath='./', save_rate=None):
+                    save_images=False, image_filepath='./', save_rate=50):
         
         total_expert_samples = 0
         prev_samples = 0
@@ -158,7 +163,7 @@ class DAgger(object):
             self.learner.writer.add_summary(successes_per_sample, global_step=total_expert_samples)
             variable_stat = avg_successes
             
-        stats = [[0, 0, 0, valid_reward, variable_stat, 0.]]
+        stats = [[0, 0, 0, valid_reward, variable_stat, 0., 0.]]
         print("Episode: {} reward: {} expert_samples: {}".format(0, valid_reward, 0))
         
         for ep in range(episodes):
@@ -201,14 +206,16 @@ class DAgger(object):
             self.learner.writer.add_summary(utility_summary, global_step=total_expert_samples)
             
             print("Episode: {} reward: {} expert_samples: {}".format(ep+1, valid_reward, expert_samples))
-            stats.append([ep+1, total_expert_samples, expert_samples, valid_reward, variable_stat, utility_measure])
-            # if # we have crossed the threshold of expert samples
+            stats.append([ep+1, total_expert_samples, expert_samples, valid_reward, variable_stat, utility_measure, final_loss])
+            
+            if total_expert_samples % save_rate == 0:
+             # TODO change this so it also logs when we have crossed the threshold of expert samples
+                self.learner.save_model(expert_samples=total_expert_samples)
             
         valid_reward, valid_acc, avg_successes = self.validateAgent(5)
         validation.append(valid_reward)
         print("\n Training Complete")
         print("Final validation reward: {} total expert samples: {}".format(valid_reward, total_expert_samples))
-        
         
         return validation, stats
 

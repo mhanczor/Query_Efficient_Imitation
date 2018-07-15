@@ -45,7 +45,7 @@ train_epochs = 10
 
 #######
 
-def main(env_name, mode, episodes, random_sample, save_path, expert_first=False, save_model=True, dropout=0.05):
+def main(env_name, mode, episodes, random_sample, save_path, expert_first=False, save_model=True, dropout=0.05, concrete=False):
     """
     env_name - gym environment [LunarLander-v2, CartPole-v1]
     mode - learning type [pool, stream, classic]
@@ -79,6 +79,7 @@ def main(env_name, mode, episodes, random_sample, save_path, expert_first=False,
     params['filepath'] = save_path
     if isFetch:
         params['layers'] = [256, 256, 256]
+        params['concrete'] = concrete
     
     if expert_first:
         mixing = 0.0
@@ -90,16 +91,18 @@ def main(env_name, mode, episodes, random_sample, save_path, expert_first=False,
     param_mods = {'random_sample': random_sample, 'mixing':mixing}
 
     if isFetch:
-        agent = GymRobotAgent(env_dims, **DEFAULT_PARAMS)
+        agent = GymRobotAgent(env_dims, **params)
         expert = RoboticEnv_Expert(policy_files[env_name])
         continuous = True
     else:
-        agent = GymAgent(env_dims, **DEFAULT_PARAMS)
+        agent = GymAgent(env_dims, **params)
         expert = experts[env_name](env.unwrapped)
         continuous = False
     
     learning_mode = configure.configure_robot(env, env_dims, agent, expert, 
-                                              mode, continuous=continuous, param_mods=param_mods)                        
+                                              mode, continuous=continuous, 
+                                              concrete=concrete, param_mods=param_mods)  
+                                                                    
     rewards, stats = learning_mode.train(episodes=episodes, 
                                         mixing_decay=mixing_decay,
                                         train_epochs=train_epochs,

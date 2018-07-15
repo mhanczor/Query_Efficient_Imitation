@@ -68,7 +68,6 @@ class Hindsight_DAgger(DAgger):
                 else:
                     best_ind = val_ind[0,0]
 
-            print(trajectory_belief[best_ind])
             state = trajectory_states[best_ind]
             action = self.expert.sampleAction(state)
             self.dataset.store(state, action)

@@ -59,9 +59,6 @@ def QBC_JSD(learner, state):
     Use Jensen-Shanon Divergence as a metric for determining which samples to select for learning
     When using log_2, JS Divergence is guaranteed 0 <= JSD <= 1
     """
-    # import ipdb; ipdb.set_trace()
-    # test_dropout = 0.1
-    # train_dropout = learner.dropout_rate
     
     policy = learner.samplePolicy(state, batch=32, apply_dropout=True)
     n = policy.shape[0]
@@ -79,7 +76,6 @@ def QBC_JSD(learner, state):
         
     if JSD < 0:
         JSD = -1.
-        # import ipdb; ipdb.set_trace()
     
     policy_avg = np.mean(policy, axis = 0)
     policy_sum = np.sum(policy_avg)
@@ -96,7 +92,29 @@ def varianceAction(learner, state):
     Select an action based on multiple forward passes through the network
     Return the variance over the selected action
     """
+    assert not learner.concrete
+    
     batch = 32
-    action, action_var = learner.uncertainAction(state, batch=batch)
+    action, per_action_var = learner.uncertainAction(state, batch=batch)
+    # Assume independence between actions in the action space, sum variances
+    action_var = np.sum(per_action_var)
     return action, action_var  
+    
+def concreteUncertainty(learner, state):
+    """
+    Using concrete dropout, calculate the epistemic uncertainty of the model
+    """
+    assert learner.concrete # Need to be in concrete mode
+    
+    batch = 32
+    action, per_action_var = learner.uncertainAction(state, batch=32)
+    # variance norm #TODO, decite if this is the way to go?
+    action_var = np.linalg.norm(per_action_var)
+    
+    return action, action_var
+    
+    
+    
+    
+    
     

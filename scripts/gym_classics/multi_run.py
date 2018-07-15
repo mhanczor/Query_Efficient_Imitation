@@ -17,14 +17,15 @@ random_sample = True
 data_savefile = './tmp/' + env_name + '/'
 
 samples = 30
-saved_stats = np.empty((episodes+1, 6, 0))
+saved_stats = None
+# saved_stats = np.empty((episodes+1, 6, 0))
 
 for i in range(samples):
     print('Starting run {} in {}'.format(i+1, env_name))
     rewards, stats = train.main(env_name, mode, episodes, random_sample, 
                                 data_savefile, expert_first=expert_first, save_model=save_model)
     stats = np.array(stats)
-    saved_stats = np.append(saved_stats, stats[:,:, None], axis=2)
+    saved_stats = np.atleast_3d(stats) if saved_stats is None else np.append(saved_stats, stats[:,:, None], axis=2)
 
     if not os.path.exists(data_savefile):
         os.makedirs(data_savefile)

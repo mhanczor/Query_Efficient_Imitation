@@ -1,21 +1,21 @@
 import numpy as np
 import tensorflow as tf
-from active_imitation.utils import denseNet
+from active_imitation.utils import denseNet, concreteNet
 import os
 
 
 DEFAULT_PARAMS = {
-    'layers': [16, 16, 16], # Layers and hidden units in network
+    # 'layers': [16, 16, 16], # Layers and hidden units in network
     'lr': 0.001, # Learning rate
     'max_a': 1., # max absolute value of actions
-    'dropout_rate': 0.1, # Dropout rate during training and forward samples
+    # 'dropout_rate': 0.1, # Dropout rate during training and forward samples
     'filepath': '~/Research/experiments/tmp/'
 }
 
 class GymRobotAgent(object):
     
-    def __init__ (self, env_dims, layers, max_a, lr=0.1, 
-                    dropout_rate=0.1, filepath='tmp/', load=False):
+    def __init__ (self, env_dims, layers, max_a, lr, 
+                    dropout_rate, concrete, filepath='tmp/', load=False):
         """
         Agent that learns via imitation to perform an OpenAI Robotic Task
             
@@ -38,17 +38,26 @@ class GymRobotAgent(object):
         self.dropout_rate = dropout_rate
         self.filepath = filepath
         
+        self.total_samples = 1
+        
         self.sess = tf.get_default_session()
         if self.sess is None:
             self.sess = tf.InteractiveSession()
         
-        self._build_network()
+        self.concrete = concrete
+        if self.concrete:
+            self._build_concrete_network()
+        else:
+            self._build_network()
+        
+        self.sess.run(tf.global_variables_initializer())
+        self.saver = tf.train.Saver(max_to_keep=10)
         
         if load:
             self._load_model()
         else:
             self.writer = tf.summary.FileWriter(self.filepath+'events/', self.sess.graph)
-    
+            
     def _build_network(self):
                     
         o_dim = self.env_dims['observation']
@@ -74,21 +83,51 @@ class GymRobotAgent(object):
         
         # initialize vars
         # tf.variables_initializer(self._global_vars('')).run()
-        self.sess.run(tf.global_variables_initializer())
-        self.saver = tf.train.Saver(max_to_keep=10)
     
     # def _global_vars(self, scope):
     #     res = tf.get_collection(tf.GraphKeys.GLOBAL_VARIABLES, scope=self.scope + '/' + scope)
     #     return res
         
     def _build_concrete_network(self):
+        
+        o_dim = self.env_dims['observation']
+        g_dim = self.env_dims['goal']
+        a_dim = self.env_dims['action']
+        
+        self.dropout = tf.Variable(self.dropout_rate, name='Dropout_Rate')
+        self.apply_dropout = tf.placeholder(tf.bool) # Just keeping this in for no good reason
+        
+        self.o = tf.placeholder(tf.float32, [None, o_dim])
+        self.g = tf.placeholder(tf.float32, [None, g_dim])
+        policy_input = tf.concat(axis=1, values=[self.o, self.g])
+        
+        from active_imitation.utils import ConcreteDropout
         N = policy_input.shape[0]
-        wd = l**2/N
-        dd = 2./N
+        
+        l = 1e-4
+        self.N = tf.placeholder(tf.float32, [])
+        wd = l**2./self.N
+        dd = 2./self.N
         network = concreteNet(policy_input, self.layers, wd, dd, name='Model')
-        self.policy = self.max_a * ConcreteDropout(tf.layers.Dense(units=a_dim, activation=tf.tanh),
+        self.policy = self.max_a * ConcreteDropout(tf.layers.Dense(units=a_dim, activation=tf.tanh, name='Policy_Mean'),
                                     weight_regularizer=wd, dropout_regularizer=dd)(network, training=True)
-                                
+        
+        log_var = ConcreteDropout(tf.layers.Dense(units=a_dim, name='Policy_Log_Var'), weight_regularizer=wd, 
+                                        dropout_regularizer=dd)(network, training=True)
+        
+        self.prediction = tf.concat([self.policy, log_var], -1, name='Main_Output')                            
+        
+        def heteroscedastic_loss(true, pred):
+            mean = pred[:, :a_dim] # Just separating out the concatenation from above
+            log_var = pred[:, a_dim:]
+            precision = tf.exp(-log_var)
+            reg_losses = tf.reduce_sum(tf.losses.get_regularization_losses())
+            return tf.reduce_sum(precision * (true - mean)**2. + log_var + reg_losses, -1)                        
+        
+        self.expert_action = tf.placeholder(tf.float32, [None, a_dim], name='Expert_Action')
+        self.loss = heteroscedastic_loss(self.expert_action, self.prediction)
+        self.opt = tf.train.AdamOptimizer(self.lr).minimize(self.loss)
+        
     def update(self, batch):
         """
         Update the parameters of the network using the aggregated dataset of
@@ -96,10 +135,15 @@ class GymRobotAgent(object):
         
         batch gets fed in as an array of input and expert actions
         """   
+        assert self.total_samples > 0
+        
         feed_dict = {self.o:batch['observation'], self.g:batch['goal'], 
                     self.expert_action:batch['action'], self.apply_dropout:True}
-                    
+        if self.concrete: 
+            feed_dict[self.N] = self.total_samples
+              
         _,loss = self.sess.run([self.opt, self.loss], feed_dict=feed_dict)
+        loss = np.mean(loss) # For concrete
         return loss
         
     def updateDropout(self):
@@ -114,8 +158,12 @@ class GymRobotAgent(object):
         """
         Make a forward pass through the policy network
         """
+        assert self.total_samples > 0
         feed_dict = {self.o:state['observation'], self.g:state['goal'], 
                     self.apply_dropout:apply_dropout}
+        if self.concrete: 
+            feed_dict[self.N] = self.total_samples
+            
         return self.sess.run(self.policy, feed_dict=feed_dict)
     
     def sampleAction(self, state, batch=1, apply_dropout=False):
@@ -134,7 +182,7 @@ class GymRobotAgent(object):
         action = self._samplePolicy(state, apply_dropout=apply_dropout)
         #TODO may want to flatten batch size 1 here instead of outside?
         return action
-        
+                
     def uncertainAction(self, state, batch=32):
         """
         Sample multiple actions from the same state through multiple stochastic
@@ -146,9 +194,15 @@ class GymRobotAgent(object):
         action_avg = np.mean(actions, axis=0, keepdims=True)
         per_action_var = np.var(actions, axis=0)
         
-        # Assume independence between actions in the action space, sum variances
-        action_var = np.sum(per_action_var)
-        return action_avg, action_var
+        return action_avg, per_action_var
+        
+        
+    def concreteAction(self, state, batch=32): 
+        # This could be used to get the predicted variance along with the predicted mean
+           
+        pass
+        
+        
     
     def save_model(self, expert_samples=-1):
         savefile = os.path.join(self.filepath, 'checkpoints/model-'+ str(expert_samples) + '_samples.ckpt')

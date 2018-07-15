@@ -1,7 +1,7 @@
 
 from active_imitation.utils import AggBuffer
 from active_imitation.learners.active import Hindsight_DAgger, Efficient_DAgger
-from active_imitation.active_learning import entropyAction, QBC_KL, varianceAction
+from active_imitation.active_learning import entropyAction, QBC_KL, QBC_JSD, varianceAction, concreteUncertainty
 from active_imitation.learners import DAgger
 
 MODES  = {'pool':   Hindsight_DAgger,
@@ -18,7 +18,7 @@ POOL_DEFAULT = {'random_sample': False,
 STREAM_DEFAULT = {'random_sample': False}
 
 #TODO Don't have env_dims and envs as arguments, gotta be a better way
-def configure_robot(env, env_dims, agent, expert, mode, continuous, param_mods=None):
+def configure_robot(env, env_dims, agent, expert, mode, continuous, concrete, param_mods=None):
     
     agg_buffer = AggBuffer(env_dims, continuous=True)
     params = DEFAULT_PARAMS
@@ -31,7 +31,9 @@ def configure_robot(env, env_dims, agent, expert, mode, continuous, param_mods=N
     if mode == 'pool':
         params.update(POOL_DEFAULT)
         if not continuous:
-            params['action_selection'] = QBC_KL
+            params['action_selection'] = QBC_JSD#QBC_KL
+        elif concrete:
+            params['action_selection'] = concreteUncertainty
     elif mode == 'stream':
         params.update(STREAM_DEFAULT)
     
@@ -48,20 +50,6 @@ def configure_robot(env, env_dims, agent, expert, mode, continuous, param_mods=N
                             **params)
     return learning_mode
     
-# def configure_classic(env, env_dims, agent, expert, mode, param_mods=None):
-# 
-# 
-# 
-# 
-#     learning_mode = trainer(env,
-#                             agent,
-#                             expert,
-#                             agg_buffer=agg_buffer,
-#                             continuous=True,
-#                             **params)
-#     return learning_mode
-
-
     # learner = Efficient_DAgger(env, 
     #                           agent, 
     #                           expert, 

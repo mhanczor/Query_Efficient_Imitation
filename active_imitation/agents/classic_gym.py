@@ -10,13 +10,13 @@ import os
 DEFAULT_PARAMS = {
     # 'layers': [16, 16, 16], # Layers and hidden units in network
     'lr': 0.001, # Learning rate
-    'dropout_rate': 0.1, # Dropout rate during training and forward samples
+    # 'dropout_rate': 0.1, # Dropout rate during training and forward samples
     'filepath': '~/Research/experiments/tmp/'
 }
 
 class GymAgent(object):
     
-    def __init__(self, env_dims, lr=0.001, dropout_rate=0.1, filepath='tmp/'):
+    def __init__(self, env_dims, lr, dropout_rate, filepath='tmp/'):
         """
         Learner agent for OpenAI Gym's classic environments like CartPole and LunarLander
         
@@ -34,6 +34,7 @@ class GymAgent(object):
             self.sess = tf.InteractiveSession()
         
         self.dropout_rate = dropout_rate
+        self.lr = lr
         
         self.filepath = filepath
         input_size = (None,) + (env_dims['observation'],)
@@ -56,7 +57,7 @@ class GymAgent(object):
             self.loss = tf.losses.softmax_cross_entropy(labels, logits, reduction=tf.losses.Reduction.SUM) + \
                 regularizer * 0.001
             self.global_step = tf.Variable(0, trainable=False, name='global_step')
-            self.opt = tf.train.AdamOptimizer(lr).minimize(self.loss)
+            self.opt = tf.train.AdamOptimizer(self.lr).minimize(self.loss)
     
         self.sess.run(tf.global_variables_initializer())
         self.saver = tf.train.Saver(max_to_keep=10)
