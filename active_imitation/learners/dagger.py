@@ -58,6 +58,10 @@ class DAgger(object):
         
         if samples > 300:
             batch_size = 256 # using this to speed up training of large dataset tasks
+        if samples > 2000:
+            batch_size = 512
+        if samples > 10000:
+            batch_size = 1024
         
         if self.continuous:
             self.learner.total_samples = samples
@@ -91,12 +95,13 @@ class DAgger(object):
                     correct_labels += 1
             else:
                 correct_labels += np.sum((expert_action - action)**2.)**(1./2)
-            try:
-                state, reward, done, info = self.env.step(action)
-            except:
-                print('DAgger runEpisode \n\
-                        State: {} \n Action: {}'.format(state, action))
-                import pdb; pdb.set_trace()
+            state, reward, done, info = self.env.step(action)
+            # try:
+            #     state, reward, done, info = self.env.step(action)
+            # except:
+            #     print('DAgger runEpisode \n\
+            #             State: {} \n Action: {}'.format(state, action))
+            #     import pdb; pdb.set_trace()
             total_reward += reward
             episode_length += 1
             if self.continuous: # If using a robot env, check for success
@@ -124,12 +129,13 @@ class DAgger(object):
                 expert_action = self.expert.sampleAction(state)
             #Aggregate expert data
             self.dataset.store(state, expert_action)
-            try:
-                state, reward, done, _ = self.env.step(action)
-            except:
-                print('DAgger generateExpertSamples \n\
-                        State: {} \n Action: {}'.format(state, action))
-                import pdb; pdb.set_trace()
+            state, reward, done, _ = self.env.step(action)
+            # try:
+            #     state, reward, done, _ = self.env.step(action)
+            # except:
+            #     print('DAgger generateExpertSamples \n\
+            #             State: {} \n Action: {}'.format(state, action))
+            #     import pdb; pdb.set_trace()
             
             expert_samples += 1
             total_reward += reward

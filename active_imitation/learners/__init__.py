@@ -1,1 +1,3 @@
 from active_imitation.learners.dagger import DAgger
+from active_imitation.learners.active.efficient_dagger import Efficient_DAgger
+from active_imitation.learners.active.hindsight_dagger import Hindsight_DAgger

@@ -1,8 +1,9 @@
 
 from active_imitation.utils import AggBuffer
-from active_imitation.learners.active import Hindsight_DAgger, Efficient_DAgger
+# from active_imitation.learners.active import Hindsight_DAgger, Efficient_DAgger
 from active_imitation.active_learning import entropyAction, QBC_KL, QBC_JSD, varianceAction, concreteUncertainty
-from active_imitation.learners import DAgger
+# from active_imitation.learners import DAgger
+from active_imitation.learners import DAgger, Hindsight_DAgger, Efficient_DAgger
 
 MODES  = {'pool':   Hindsight_DAgger,
           'stream': Efficient_DAgger, 

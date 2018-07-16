@@ -13,13 +13,13 @@ env_name = 'FetchPush-v1'
 mode = 'pool'
 expert_first = True
 save_model = True
-episodes = 5000
-random_sample = False
+episodes = 10000
+random_sample = True
 dropout = 0.05
 concrete = True
-learning_rate = 1e-4
-run_no = ''
-samples = 10
+learning_rate = 1e-5
+run_no = '2samples'
+samples = 2
 
 
 data_savepath = './tmp/' + env_name + '/'
