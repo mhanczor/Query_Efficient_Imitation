@@ -39,13 +39,12 @@ policy_files = {'FetchReach-v1': os.path.join(prefix, 'FetchReach-v1/policy_best
 
 #######
 # Assorted training variables
-mixing = 1.0
-mixing_decay = 1.0
 train_epochs = 10
 
 #######
 
-def main(env_name, mode, episodes, random_sample, save_path, expert_first=False, save_model=True, dropout=0.05, concrete=False):
+def main(env_name, mode, episodes, random_sample, save_path, expert_first=False, 
+            save_model=True, dropout=0.05, concrete=False, lr=0.001):
     """
     env_name - gym environment [LunarLander-v2, CartPole-v1]
     mode - learning type [pool, stream, classic]
@@ -77,8 +76,9 @@ def main(env_name, mode, episodes, random_sample, save_path, expert_first=False,
     # params['layers'] = [64, 64, 64]
     params['dropout_rate'] = dropout #[0.05, 0.1, 0.15, 0.2]
     params['filepath'] = save_path
+    params['lr'] = lr
     if isFetch:
-        params['layers'] = [256, 256, 256]
+        params['layers'] = [256, 256, 256] #[512, 512, 512] #
         params['concrete'] = concrete
     
     if expert_first:
@@ -102,7 +102,24 @@ def main(env_name, mode, episodes, random_sample, save_path, expert_first=False,
     learning_mode = configure.configure_robot(env, env_dims, agent, expert, 
                                               mode, continuous=continuous, 
                                               concrete=concrete, param_mods=param_mods)  
-                                                                    
+    
+    ## Save the training parameters
+    # learning rate, dropout, isconcrete, iscontinuout, env_name, mode, 
+    parameter_savefile = os.path.join(save_path, 'parameters.txt')
+    with open(parameter_savefile, 'w') as f:
+        f.write('Environment Name: {} \n'.format(env_name))
+        f.write('Learning Mode: {} \n'.format(mode))
+        f.write('# of Episodes: {} \n'.format(episodes))
+        f.write('Training Epochs: {}\n'.format(train_epochs))
+        f.write('Continuous: {}\n'.format(continuous))
+        f.write('Concrete: {}\n'.format(concrete))
+        f.write('Random Sample: {}\n'.format(random_sample))
+        f.write('Mixing: {}\n'.format(mixing))
+        f.write('Mixing Decay: {}\n'.format(mixing_decay))
+        for label, value in params.items():
+            f.write('{}: {}\n'.format(label, value))
+        f.write('Random Seed: {}\n'.format(seed))
+                                                                 
     rewards, stats = learning_mode.train(episodes=episodes, 
                                         mixing_decay=mixing_decay,
                                         train_epochs=train_epochs,
@@ -114,7 +131,6 @@ def main(env_name, mode, episodes, random_sample, save_path, expert_first=False,
     env.close()
     tf.reset_default_graph()
     return rewards, stats
-
 
 if __name__ == "__main__":
     params = {'env_name':'LunarLander-v2',#'CartPole-v1'

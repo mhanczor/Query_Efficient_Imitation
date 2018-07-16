@@ -1,7 +1,7 @@
 import tensorflow as tf
 from active_imitation.utils import ConcreteDropout
 
-def denseNet(inputs, layer_sizes, dropout, dropout_flag, reuse=None, name=""):
+def denseNet(inputs, layer_sizes, dropout, dropout_flag, reuse=None, reg_weight=1e-7, name=""):
     """
     Create a typical Deep MLP
     Inputs:
@@ -17,7 +17,7 @@ def denseNet(inputs, layer_sizes, dropout, dropout_flag, reuse=None, name=""):
                                 activation=tf.nn.relu,
                                 reuse=reuse,
                                 kernel_initializer=tf.contrib.layers.xavier_initializer(),
-                                kernel_regularizer=tf.contrib.layers.l2_regularizer(1e-3),
+                                kernel_regularizer=tf.contrib.layers.l2_regularizer(reg_weight),
                                 name=name + '_' + str(i))
         inputs = tf.layers.dropout(inputs, rate=dropout, training=dropout_flag)
         
@@ -35,9 +35,13 @@ def concreteNet(inputs, layer_sizes, wd, dd,  name=""):
         """
         for i, size in enumerate(layer_sizes):
             # Use relu activation
-            inputs = ConcreteDropout(tf.layers.Dense(size, activation=tf.nn.relu, name=name + '_' + str(i)), 
-                                    weight_regularizer=wd, dropout_regularizer=dd, 
-                                    trainable=True)(inputs, training=True)
+            inputs = ConcreteDropout(tf.layers.Dense(size, 
+                                                    activation=tf.nn.relu,
+                                                    kernel_initializer=tf.contrib.layers.xavier_initializer(),
+                                                    name=name + '_' + str(i),
+                                                    ), weight_regularizer=wd, 
+                                                    dropout_regularizer=dd, 
+                                                    trainable=True)(inputs, training=True)
         return inputs
         
         

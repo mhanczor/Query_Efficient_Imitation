@@ -105,7 +105,6 @@ def concreteUncertainty(learner, state):
     Using concrete dropout, calculate the epistemic uncertainty of the model
     """
     assert learner.concrete # Need to be in concrete mode
-    
     batch = 32
     action, per_action_var = learner.uncertainAction(state, batch=32)
     # variance norm #TODO, decite if this is the way to go?

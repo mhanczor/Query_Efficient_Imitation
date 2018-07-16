@@ -53,7 +53,6 @@ class DAgger(object):
                 
         samples = self.dataset.size
         if samples == 0:
-            # import pdb; pdb.set_trace()
             print("WARNING: No data available to train")
             return 0
         
@@ -61,6 +60,7 @@ class DAgger(object):
             self.learner.total_samples = samples
             
         indices = list(range(samples))
+        losses = []
         for ep in range(epochs):
             random.shuffle(indices)
             total_loss = 0.
@@ -68,12 +68,10 @@ class DAgger(object):
             while i < samples:
                 batch = self.dataset.sample(indices[i:i+batch_size])
                 loss = self.learner.update(batch)
-                total_loss += loss
+                total_loss += loss*len(indices[i:i+batch_size])/samples
                 i += batch_size
-            #TODO make sure this average math works out, what loss does TF return with batches?
-            average_loss = total_loss / samples
-            # print("\t Epoch {} loss {}".format(ep, average_loss))
-        return average_loss
+            losses.append(total_loss)
+        return max([abs(x) for x in losses]) # Returns the largest loss over all updates, see if there are some big losses causing issues?
     
     def runEpisode(self, agent, render=False):
         # TODO will need a continuous action version of validation? 
@@ -142,7 +140,7 @@ class DAgger(object):
         return valid_reward, valid_acc, avg_success
     
     def train(self, episodes=100, mixing_decay=0.1, train_epochs=10, 
-                    save_images=False, image_filepath='./', save_rate=50):
+                    save_images=False, image_filepath='./', save_rate=100):
         
         total_expert_samples = 0
         prev_samples = 0
@@ -190,7 +188,7 @@ class DAgger(object):
             self.learner.writer.add_summary(reward_per_samples, global_step=total_expert_samples)
             samples_per_episode = tf.Summary(value=[tf.Summary.Value(tag='Expert_Samples_per_Episode', simple_value=expert_samples)])
             self.learner.writer.add_summary(samples_per_episode, global_step=ep)
-            loss_summary = tf.Summary(value=[tf.Summary.Value(tag='Final_Training_Loss_per_Episode', simple_value=final_loss)])
+            loss_summary = tf.Summary(value=[tf.Summary.Value(tag='Max_Training_Loss_per_Episode', simple_value=final_loss)])
             self.learner.writer.add_summary(loss_summary, global_step=ep)
             
             if not self.continuous:

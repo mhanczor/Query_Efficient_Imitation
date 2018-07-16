@@ -63,6 +63,7 @@ class GymRobotAgent(object):
         o_dim = self.env_dims['observation']
         g_dim = self.env_dims['goal']
         a_dim = self.env_dims['action']
+        wr = 1e-5
 
         self.dropout = tf.Variable(self.dropout_rate, name='Dropout_Rate')
         self.apply_dropout = tf.placeholder(tf.bool)
@@ -70,15 +71,16 @@ class GymRobotAgent(object):
         self.o = tf.placeholder(tf.float32, [None, o_dim])
         self.g = tf.placeholder(tf.float32, [None, g_dim])
         policy_input = tf.concat(axis=1, values=[self.o, self.g]) # Concatenate observations and goals as a single network input
-        network = denseNet(policy_input, self.layers, self.dropout, self.apply_dropout, name='Model')
-        self.policy = self.max_a * tf.layers.dense(inputs=network, units=a_dim, activation=tf.tanh, kernel_regularizer=tf.contrib.layers.l2_regularizer(1e-3))
+        network = denseNet(policy_input, self.layers, self.dropout, self.apply_dropout, reg_weight=wr, name='Model')
+        self.policy = self.max_a * tf.layers.dense(inputs=network, units=a_dim, activation=tf.tanh, kernel_regularizer=tf.contrib.layers.l2_regularizer(wr))
         
         with tf.name_scope("Loss"):
             # Continuous action spaces, MSE loss
             self.expert_action = tf.placeholder(tf.float32, [None, a_dim], name='Expert_Action')
             self.reg_losses = tf.reduce_sum(tf.losses.get_regularization_losses())
             # self.loss = tf.losses.mean_squared_error(self.expert_action, self.policy)
-            self.loss = tf.reduce_sum((self.expert_action - self.policy)**2. + self.reg_losses, -1)
+            self.mse = tf.losses.mean_squared_error(self.expert_action, self.policy)
+            self.loss = self.mse + self.reg_losses
         with tf.name_scope("Opt"):
             # Adam optimzer with a fixed lrz
             self.opt = tf.train.AdamOptimizer(self.lr).minimize(self.loss)    
@@ -101,7 +103,7 @@ class GymRobotAgent(object):
         from active_imitation.utils import ConcreteDropout
         N = policy_input.shape[0]
         
-        l = 1e-4
+        l = 5e-7
         self.N = tf.placeholder(tf.float32, [])
         wd = l**2./self.N
         dd = 2./self.N
@@ -139,17 +141,11 @@ class GymRobotAgent(object):
                     self.expert_action:batch['action'], self.apply_dropout:True}
         if self.concrete: 
             feed_dict[self.N] = self.total_samples
-        _,loss = self.sess.run([self.opt, self.loss], feed_dict=feed_dict)
+        # import ipdb; ipdb.set_trace()
+        _,loss, reg_losses = self.sess.run([self.opt, self.loss, self.reg_losses], feed_dict=feed_dict)
         loss = np.mean(loss) # For concrete
+        # print('Loss: {}  MSE: {}  Regular Loss: {}'.format(loss, mse, reg_losses))
         return loss
-        
-    def updateDropout(self):
-        """
-        Modify the dropout rate if necessary
-        
-        This will ideally be used for Concrete Dropout at some point
-        """
-        raise NotImplementedError
     
     def _samplePolicy(self, state, apply_dropout):
         """
@@ -198,7 +194,6 @@ class GymRobotAgent(object):
         # This could be used to get the predicted variance along with the predicted mean
            
         pass
-        
         
     
     def save_model(self, expert_samples=-1):

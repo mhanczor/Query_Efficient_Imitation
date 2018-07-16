@@ -65,6 +65,7 @@ class Hindsight_DAgger(DAgger):
                 if val_ind.shape[0] > 1:
                     print('WARNING: SELECTING FROM MULTIPLE EQUIVALENT STATES')
                     best_ind = np.random.choice(val_ind.squeeze())
+                    print(best_val)
                 else:
                     best_ind = val_ind[0,0]
 
@@ -78,7 +79,7 @@ class Hindsight_DAgger(DAgger):
             #     self.learner.writer.add_summary(reward_per_samples, global_step=total_expert_samples)
             selected_utility = trajectory_belief[best_ind]
         else:
-            selected_utility = -1. # Don't select examples if the expert is providing them all 
+            selected_utility = 0. # Don't select examples if the expert is providing them all 
         
         self.mixing += mixing_decay    
         state_imgs = []
