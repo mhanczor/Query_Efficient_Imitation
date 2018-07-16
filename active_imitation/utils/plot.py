@@ -162,6 +162,11 @@ def plotData(data, labels=None, data_axis=4, expert=None, xlims=None, ylims=None
     plt.ylabel(labels[1], fontsize=16)
     plt.title(labels[2], fontsize=22)
     
+    # Show a horizontal line with the expert's performance if available
+    if expert is not None:
+        plt.hlines(expert, xmin=0, xmax=20000, colors='r', 
+                label='Expert', linewidths=3, linestyles='dashdot') #linestyles : [‘solid’ | ‘dashed’ | ‘dashdot’ | ‘dotted’],
+    
     # Pastel2 and Dark2 should be the colormaps used for confidence and mean resp.
     cmap = ['Dark2', 'Pastel2'] 
     
@@ -177,6 +182,7 @@ def plotData(data, labels=None, data_axis=4, expert=None, xlims=None, ylims=None
         plt.plot(x_axis, means, lw=2, label=name, color=cm.Dark2(i)) # color = ???
         plt.fill_between(x_axis, means - bands, means + bands, color=cm.Pastel2(i)) # color=???
         i += 0.126
+        
     plt.legend(loc=4, prop={'size':20}) # There are up to 10 positions, 0 is best, 1 upper right, 4, lower right
     plt.show()
     
