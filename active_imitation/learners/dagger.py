@@ -122,7 +122,7 @@ class DAgger(object):
         self.mixing += mixing_decay
         if self.mixing > 1.0: self.mixing = 1.0
         
-        return expert_samples, _
+        return expert_samples, _, 0
         
     def validateAgent(self, valid_runs):
         valid_reward = 0
