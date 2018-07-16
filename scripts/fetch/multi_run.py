@@ -9,16 +9,16 @@ FetchPickAndPlace-v1
 FetchPush-v1
 """
 
-env_name = 'FetchReach-v1'
+env_name = 'FetchPush-v1'
 mode = 'pool'
 expert_first = True
 save_model = True
-episodes = 1000
+episodes = 5000
 random_sample = False
 dropout = 0.05
 concrete = True
-learning_rate = 5e-4
-run_no = 'long'
+learning_rate = 1e-4
+run_no = ''
 samples = 10
 
 
@@ -33,7 +33,9 @@ for i in range(samples):
          data_savefile += '-random'
     if concrete:
         data_savefile += '-concrete'
-    data_savefile += '-multi-' + run_no+ '/'
+    data_savefile += '-multi'
+    if run_no != '': data_savefile += '-'+run_no
+    data_savefile += '/'
         
     
     print('Starting run {} in {}'.format(i+1, env_name))
@@ -52,6 +54,8 @@ for i in range(samples):
         sf += '-random'
     if concrete:
         sf += '-concrete'
-    sf += '-multi-' + run_no + '.npy'
+    sf += '-multi'
+    if run_no != '': sf += '-'+run_no
+    sf += '.npy'
         
     np.save(sf, saved_stats)

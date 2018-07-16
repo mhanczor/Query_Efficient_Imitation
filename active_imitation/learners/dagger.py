@@ -56,6 +56,9 @@ class DAgger(object):
             print("WARNING: No data available to train")
             return 0
         
+        if samples > 300:
+            batch_size = 256 # using this to speed up training of large dataset tasks
+        
         if self.continuous:
             self.learner.total_samples = samples
             
@@ -74,7 +77,6 @@ class DAgger(object):
         return max([abs(x) for x in losses]) # Returns the largest loss over all updates, see if there are some big losses causing issues?
     
     def runEpisode(self, agent, render=False):
-        # TODO will need a continuous action version of validation? 
         total_reward = 0
         state = self.env.reset()
         done = False
@@ -87,14 +89,22 @@ class DAgger(object):
             if not self.continuous: # Can only compare actions in discrete action space
                 if action == expert_action:
                     correct_labels += 1
-            state, reward, done, info = self.env.step(action)
+            else:
+                correct_labels += np.sum((expert_action - action)**2.)**(1./2)
+            try:
+                state, reward, done, info = self.env.step(action)
+            except:
+                print('DAgger runEpisode \n\
+                        State: {} \n Action: {}'.format(state, action))
+                import pdb; pdb.set_trace()
             total_reward += reward
             episode_length += 1
             if self.continuous: # If using a robot env, check for success
                 success = info['is_success']
             if render:
                 self.env.render()
-        
+        if self.continuous:
+            correct_labels = correct_labels / episode_length # Average Euclidean distance
         return total_reward, correct_labels, episode_length, success
     
     def generateExpertSamples(self, mixing_decay=0.1):
@@ -114,7 +124,12 @@ class DAgger(object):
                 expert_action = self.expert.sampleAction(state)
             #Aggregate expert data
             self.dataset.store(state, expert_action)
-            state, reward, done, _ = self.env.step(action)
+            try:
+                state, reward, done, _ = self.env.step(action)
+            except:
+                print('DAgger generateExpertSamples \n\
+                        State: {} \n Action: {}'.format(state, action))
+                import pdb; pdb.set_trace()
             
             expert_samples += 1
             total_reward += reward
@@ -125,17 +140,25 @@ class DAgger(object):
         return expert_samples, _, 0
         
     def validateAgent(self, valid_runs):
-        valid_reward = 0
-        total_correct_labels, total_steps, total_success = 0, 0, 0.
+        valid_reward = 0.
+        total_correct_labels, total_steps, total_success = 0, 0., 0.
+        total_error = 0.
+
         for i in range(valid_runs):
             cur_reward, correct_labels, ep_length, success = self.runEpisode(self.learner)
             valid_reward += cur_reward/valid_runs
-            total_correct_labels += correct_labels
+            if not self.continuous:
+                total_correct_labels += correct_labels
+            else:
+                total_error += correct_labels * ep_length # Correct labels here represents the average euclidean distance between the learner and expert actions
             total_steps += ep_length
             if success:
-                total_success += 1
+                total_success += 1.
         avg_success = total_success / float(valid_runs)
-        valid_acc = float(total_correct_labels) / total_steps 
+        if not self.continuous:
+            valid_acc = float(total_correct_labels) / total_steps 
+        else:
+            valid_acc = total_error / total_steps
         
         return valid_reward, valid_acc, avg_success
     
@@ -152,17 +175,15 @@ class DAgger(object):
         
         reward_per_samples  = tf.Summary(value=[tf.Summary.Value(tag='Reward_per_Expert_Samples', simple_value=valid_reward)])
         self.learner.writer.add_summary(reward_per_samples, global_step=total_expert_samples)
-        if not self.continuous:
-            accuracy_per_samples  = tf.Summary(value=[tf.Summary.Value(tag='Accuracy_per_Expert_Samples', simple_value=valid_acc)])
-            self.learner.writer.add_summary(accuracy_per_samples, global_step=total_expert_samples)
-            variable_stat = valid_acc
-        else:
+        accuracy_per_samples  = tf.Summary(value=[tf.Summary.Value(tag='Accuracy_per_Expert_Samples', simple_value=valid_acc)])
+        self.learner.writer.add_summary(accuracy_per_samples, global_step=total_expert_samples)
+        
+        if self.continuous:
             successes_per_sample  = tf.Summary(value=[tf.Summary.Value(tag='Success_per_Expert_Samples', simple_value=avg_successes)])
             self.learner.writer.add_summary(successes_per_sample, global_step=total_expert_samples)
-            variable_stat = avg_successes
             
-        stats = [[0, 0, 0, valid_reward, variable_stat, 0., 0.]]
-        print("Episode: {} reward: {} expert_samples: {}".format(0, valid_reward, 0))
+        stats = [[0, 0, 0, valid_reward, avg_successes, 0., 0., valid_acc]]
+        print("Episode: {} Reward: {} Episode Samples: {} Total Samples: {}".format(0, valid_reward, 0, total_expert_samples))
         
         for ep in range(episodes):
             if save_images:
@@ -190,21 +211,18 @@ class DAgger(object):
             self.learner.writer.add_summary(samples_per_episode, global_step=ep)
             loss_summary = tf.Summary(value=[tf.Summary.Value(tag='Max_Training_Loss_per_Episode', simple_value=final_loss)])
             self.learner.writer.add_summary(loss_summary, global_step=ep)
+            accuracy_per_samples  = tf.Summary(value=[tf.Summary.Value(tag='Accuracy_per_Expert_Samples', simple_value=valid_acc)])
+            self.learner.writer.add_summary(accuracy_per_samples, global_step=total_expert_samples)
             
-            if not self.continuous:
-                accuracy_per_samples  = tf.Summary(value=[tf.Summary.Value(tag='Accuracy_per_Expert_Samples', simple_value=valid_acc)])
-                self.learner.writer.add_summary(accuracy_per_samples, global_step=total_expert_samples)
-                variable_stat = valid_acc
-            else:
+            if self.continuous:
                 successes_per_sample  = tf.Summary(value=[tf.Summary.Value(tag='Success_per_Expert_Samples', simple_value=avg_successes)])
                 self.learner.writer.add_summary(successes_per_sample, global_step=total_expert_samples)
-                variable_stat = avg_successes
             
             utility_summary = tf.Summary(value=[tf.Summary.Value(tag='Sample_Utility', simple_value=utility_measure)])
             self.learner.writer.add_summary(utility_summary, global_step=total_expert_samples)
             
-            print("Episode: {} reward: {} expert_samples: {}".format(ep+1, valid_reward, expert_samples))
-            stats.append([ep+1, total_expert_samples, expert_samples, valid_reward, variable_stat, utility_measure, final_loss])
+            print("Episode: {} Reward: {} Episode Samples: {} Total Samples: {}".format(ep+1, valid_reward, expert_samples, total_expert_samples))
+            stats.append([ep+1, total_expert_samples, expert_samples, valid_reward, avg_successes, utility_measure, final_loss, valid_acc])
             
             if total_expert_samples % save_rate == 0:
              # TODO change this so it also logs when we have crossed the threshold of expert samples

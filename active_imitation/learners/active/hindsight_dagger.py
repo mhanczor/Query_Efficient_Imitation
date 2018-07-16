@@ -46,7 +46,12 @@ class Hindsight_DAgger(DAgger):
                 arr = self.env.render(mode='rgb_array')
                 img_arr.append(arr)
             
-            state, reward, done, _ = self.env.step(action)
+            try:
+                state, reward, done, _ = self.env.step(action)
+            except:
+                print('Hingsight Generate \n\
+                        State: {} \n Action: {}'.format(state, action))
+                import pdb; pdb.set_trace()
         
         if len(trajectory_belief) > 0:
             """
