@@ -39,7 +39,7 @@ def configure_robot(env, env_dims, agent, expert, mode, continuous, concrete, pa
         params.update(STREAM_DEFAULT)
     
     # Modify any of the default parameters
-    if param_mods != None and mode != 'classic':
+    if param_mods != None:
         for key in param_mods.keys():
             params[key] = param_mods[key]
     

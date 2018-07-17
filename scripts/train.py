@@ -114,7 +114,7 @@ def main(env_name, mode, episodes, random_sample, save_path, concrete, expert_fi
         f.write('Environment Name: {} \n'.format(env_name))
         f.write('Learning Mode: {} \n'.format(mode))
         f.write('# of Episodes: {} \n'.format(episodes))
-        f.write('Learning Rate:{} \n').format(lr)
+        f.write('Learning Rate:{} \n'.format(lr))
         f.write('Concrete Length Scale: {} \n'.format(ls))
         f.write('Training Epochs: {}\n'.format(train_epochs))
         f.write('Continuous: {}\n'.format(continuous))

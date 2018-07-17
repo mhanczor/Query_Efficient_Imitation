@@ -11,7 +11,7 @@ Be able to revert to last best weights if validation is lower than previous?
 
 class DAgger(object):
     
-    def __init__(self, env, learner, expert, agg_buffer, mixing=0.0, continuous=False):
+    def __init__(self, env, learner, expert, agg_buffer, mixing=0.0, continuous=False, random_sample=False):
         self.env = env
         self.expert = expert
         self.learner = learner
@@ -33,7 +33,6 @@ class DAgger(object):
         dropout = self.learner.dropout_rate
         filepath = self.learner.filepath
         lr = self.learner.lr
-        
         print("\n \n *** Now training a imitation network with the following parameters: *** \n \
         Environment Name: {} \n \
         Learner Type: {} \n \
