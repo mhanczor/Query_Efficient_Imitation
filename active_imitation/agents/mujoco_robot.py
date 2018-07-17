@@ -15,7 +15,7 @@ DEFAULT_PARAMS = {
 class GymRobotAgent(object):
     
     def __init__ (self, env_dims, layers, max_a, lr, 
-                    dropout_rate, concrete, filepath='tmp/', load=False):
+                    dropout_rate, concrete, ls, filepath='tmp/', load=False):
         """
         Agent that learns via imitation to perform an OpenAI Robotic Task
             
@@ -39,6 +39,7 @@ class GymRobotAgent(object):
         self.filepath = filepath
         
         self.total_samples = 1
+        self.ls = ls
         
         self.sess = tf.get_default_session()
         if self.sess is None:
@@ -88,6 +89,7 @@ class GymRobotAgent(object):
         assert len(tf.losses.get_regularization_losses()) == len(self.layers) + 1, print(len(tf.losses.get_regularization_losses()))
         
     def _build_concrete_network(self):
+        from active_imitation.utils import ConcreteDropout
         
         o_dim = self.env_dims['observation']
         g_dim = self.env_dims['goal']
@@ -100,10 +102,7 @@ class GymRobotAgent(object):
         self.g = tf.placeholder(tf.float32, [None, g_dim])
         policy_input = tf.concat(axis=1, values=[self.o, self.g])
         
-        from active_imitation.utils import ConcreteDropout
-        N = policy_input.shape[0]
-        
-        l = 5e-7
+        l = self.ls
         self.N = tf.placeholder(tf.float32, [])
         wd = l**2./self.N
         dd = 2./self.N

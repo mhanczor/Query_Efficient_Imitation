@@ -20,6 +20,7 @@ concrete = True
 learning_rate = 1e-5
 run_no = '2samples'
 samples = 2
+ls = 1e-4
 
 
 data_savepath = './tmp/' + env_name + '/'
@@ -42,7 +43,7 @@ for i in range(samples):
     rewards, stats = train.main(env_name, mode, episodes, random_sample, 
                                 data_savefile + str(i) + '/', expert_first=expert_first, 
                                 save_model=save_model, dropout=dropout, concrete=concrete,
-                                lr=learning_rate)
+                                lr=learning_rate, ls=)
     stats = np.array(stats)
     saved_stats = np.atleast_3d(stats) if saved_stats is None else np.append(saved_stats, stats[:,:, None], axis=2)
 

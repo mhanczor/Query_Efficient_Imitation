@@ -43,8 +43,8 @@ train_epochs = 10
 
 #######
 
-def main(env_name, mode, episodes, random_sample, save_path, expert_first=False, 
-            save_model=True, dropout=0.05, concrete=False, lr=0.001):
+def main(env_name, mode, episodes, random_sample, save_path, concrete, expert_first=False, 
+            save_model=True, dropout=0.05, lr=0.001, ls=5e-7):
     """
     env_name - gym environment [LunarLander-v2, CartPole-v1]
     mode - learning type [pool, stream, classic]
@@ -79,6 +79,10 @@ def main(env_name, mode, episodes, random_sample, save_path, expert_first=False,
     params['lr'] = lr
     if isFetch:
         params['layers'] = [256, 256, 256] #[512, 512, 512] #
+        params['concrete'] = concrete
+        params['ls'] = ls
+    else:
+        params['layers'] = [16, 16]
         params['concrete'] = concrete
     
     if expert_first:
