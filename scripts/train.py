@@ -82,7 +82,7 @@ def main(env_name, mode, episodes, random_sample, save_path, concrete, expert_fi
         params['concrete'] = concrete
         params['ls'] = ls
     else:
-        params['layers'] = [16, 16]
+        params['layers'] = [16, 16, 16]
         params['concrete'] = concrete
     
     if expert_first:

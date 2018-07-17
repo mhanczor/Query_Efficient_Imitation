@@ -3,9 +3,7 @@ import tensorflow as tf
 from scipy import stats
 import os
 
-#TODO:
-#   Change env to only pass in the env dimensions required
-
+from active_imitation.utils import denseNet, concreteNet
 
 DEFAULT_PARAMS = {
     # 'layers': [16, 16, 16], # Layers and hidden units in network
@@ -16,7 +14,8 @@ DEFAULT_PARAMS = {
 
 class GymAgent(object):
     
-    def __init__(self, env_dims, lr, dropout_rate, filepath='tmp/'):
+    def __init__(self, env_dims, layers, lr, dropout_rate, 
+                concrete, filepath='tmp/'):
         """
         Learner agent for OpenAI Gym's classic environments like CartPole and LunarLander
         
@@ -29,45 +28,113 @@ class GymAgent(object):
             filepath[str]: policy and data save location        
         """
         
+        self.env_dims = env_dims
+        self.layers = layers
+        self.dropout_rate = dropout_rate
+        self.lr = lr
+        self.dropout_rate = dropout_rate
+        self.filepath = filepath
+        
+        self.total_samples = 1
+        
         self.sess = tf.get_default_session()
         if self.sess is None:
             self.sess = tf.InteractiveSession()
         
-        self.dropout_rate = dropout_rate
-        self.lr = lr
+        self.concrete = concrete
+        # if self.concrete:
+        #     self._build_concrete_network()
+        # else:
+        #     self._build_network()
+        self._build_network()
         
-        self.filepath = filepath
-        input_size = (None,) + (env_dims['observation'],)
-        output_size = env_dims['action_space']
+        self.sess.run(tf.global_variables_initializer())
+        self.saver = tf.train.Saver(max_to_keep=10)
+        
+        self.writer = tf.summary.FileWriter(filepath+'events/', self.sess.graph)
+        
+    def _build_network(self):
+        wr = 1e-9
+        input_size = (None,) + (self.env_dims['observation'],)
+        output_size = self.env_dims['action_space']
         
         with tf.name_scope("Inputs"):
             self.state = tf.placeholder(tf.float32, input_size, name='State')
             self.expert_action = tf.placeholder(tf.int32, [None, ], name='Expert_Action')
             self.apply_dropout = tf.placeholder(tf.bool)
-        with tf.name_scope("Model"):
-            fc_1 = tf.layers.dense(inputs=self.state, units=16, activation=tf.nn.relu)
-            dropout_1 = tf.layers.dropout(inputs=fc_1, rate=self.dropout_rate, training=self.apply_dropout)
-            fc_2 = tf.layers.dense(inputs=dropout_1, units=16, activation=tf.nn.relu)
-            dropout_2 = tf.layers.dropout(inputs=fc_2, rate=self.dropout_rate, training=self.apply_dropout)
-            logits = tf.layers.dense(inputs=dropout_2, units=output_size, activation=None)
-            self.policy = tf.nn.softmax(logits, name="Policy_Output")
+        
+        network = denseNet(self.state, self.layers, self.dropout_rate, self.apply_dropout, reg_weight=wr, name='Model')
+        logits = tf.layers.dense(inputs=network, units=output_size, activation=tf.nn.relu, kernel_regularizer=tf.contrib.layers.l2_regularizer(wr))
+        self.policy = tf.nn.softmax(logits, name="Policy_Output")
+        self.log_var = tf.layers.dense(inputs=network, units=output_size, activation=tf.nn.relu, kernel_regularizer=tf.contrib.layers.l2_regularizer(wr))
+        
         with tf.name_scope("Loss"):
-            regularizer = tf.nn.l2_loss(fc_1) + tf.nn.l2_loss(fc_2) + tf.nn.l2_loss(logits)
+            self.reg_losses = tf.reduce_sum(tf.losses.get_regularization_losses())
             labels = tf.one_hot(self.expert_action, output_size, axis=-1)
-            self.loss = tf.losses.softmax_cross_entropy(labels, logits, reduction=tf.losses.Reduction.SUM) + \
-                regularizer * 0.001
-            self.global_step = tf.Variable(0, trainable=False, name='global_step')
+            self.ce_loss = tf.losses.softmax_cross_entropy(labels, logits, reduction=tf.losses.Reduction.NONE) 
+            
+            self.hetero_loss = self.concrete
+            if self.hetero_loss:
+                self.ce_loss = tf.reshape(self.ce_loss, [tf.shape(self.ce_loss)[0],1])
+                precision = tf.exp(-self.log_var)
+                self.loss = tf.reduce_mean(tf.reduce_sum(precision*self.ce_loss + self.log_var + self.reg_losses, -1),-1)
+                # self.loss = self.ce_loss + self.reg_losses
+            else:
+                self.ce_loss = tf.reduce_sum(self.ce_loss, -1)
+                self.loss = self.ce_loss + self.reg_losses
+            # self.loss = self.ce_loss + self.reg_losses
+            # self.global_step = tf.Variable(0, trainable=False, name='global_step')
+        with tf.name_scope("Opt"):
             self.opt = tf.train.AdamOptimizer(self.lr).minimize(self.loss)
-    
-        self.sess.run(tf.global_variables_initializer())
-        self.saver = tf.train.Saver(max_to_keep=10)
-        self.writer = tf.summary.FileWriter(filepath+'events/', self.sess.graph)
+
+        assert len(tf.losses.get_regularization_losses()) == len(self.layers) + 2, print(len(tf.losses.get_regularization_losses()))
+        
+    def _build_concrete_network(self):
+        from active_imitation.utils import ConcreteDropout
+        
+        input_size = (None,) + (self.env_dims['observation'],)
+        output_size = self.env_dims['action_space']
+        
+        l = 1e-4
+        self.N = tf.placeholder(tf.float32, []) # Number of total labeled samples in the dataset
+        wd = l**2./self.N
+        dd = 1./self.N # reduce from a factor of two since we're using cross entropy loss
+        
+        with tf.name_scope("Inputs"):
+            self.state = tf.placeholder(tf.float32, input_size, name='State')
+            self.expert_action = tf.placeholder(tf.int32, [None, ], name='Expert_Action')
+            self.apply_dropout = tf.placeholder(tf.bool)
+        
+        network = concreteNet(policy_input, self.layers, wd, dd, name='Model')
+        logits = ConcreteDropout(tf.layers.Dense(units=output_size, activation=tf.nn.relu),
+                                    weight_regularizer=wd, dropout_regularizer=dd)(network, training=True)
+        self.policy = tf.nn.softmax(logits, name="Policy_Output")
+                
+        log_var = ConcreteDropout(tf.layers.Dense(units=output_size, name='Policy_Log_Var'), weight_regularizer=wd, 
+                                        dropout_regularizer=dd)(network, training=True)
+        
+        self.prediction = tf.concat([self.policy, log_var], -1, name='Main_Output')                            
+        
+        with tf.name_scope("Loss"):
+            # Heteroscedastic Loss
+            labels = tf.one_hot(self.expert_action, output_size, axis=-1)
+            precision = tf.exp(-log_var) # Do we still need this term?
+            self.reg_losses = tf.reduce_sum(tf.losses.get_regularization_losses())
+            self.ce_loss = tf.losses.softmax_cross_entropy(labels, logits, reduction=tf.losses.Reduction.SUM)
+            self.loss = tf.reduce_sum(precision * self.ce_loss + log_var + self.reg_losses, -1) 
+            assert len(tf.losses.get_regularization_losses()) == len(self.layers) + 2, print(len(tf.losses.get_regularization_losses()))
+            
+        with tf.name_scope("Opt"):
+            self.opt = tf.train.AdamOptimizer(self.lr).minimize(self.loss)
         
     
     def update(self, batch):
         feed_dict = {self.state:batch['observation'], self.expert_action:batch['action'].flatten(), 
                     self.apply_dropout:True}
-        _, loss = self.sess.run([self.opt, self.loss], feed_dict=feed_dict)
+        
+        # import ipdb; ipdb.set_trace()        
+        _, loss, reg_loss, ce_loss, log_var = self.sess.run([self.opt, self.loss, self.reg_losses, self.ce_loss, self.log_var], feed_dict=feed_dict)
+        # print("Cross Entropy Loss: {} \nPrecision: {} \nReg. Loss: {} \nTotal Loss: {}".format(ce_loss, precision, reg_loss, loss))
         return loss
     
     def _samplePolicy(self, state, apply_dropout=False):
