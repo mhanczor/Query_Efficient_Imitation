@@ -37,14 +37,8 @@ policy_files = {'FetchReach-v1': os.path.join(prefix, 'FetchReach-v1/policy_best
                 'FetchPickAndPlace-v1': os.path.join(prefix, 'FetchPickAndPlace-v1/policy_best.pkl'),
                 'FetchPush-v1': os.path.join(prefix, 'FetchPush-v1/policy_best.pkl')}
 
-#######
-# Assorted training variables
-train_epochs = 10
-
-#######
-
 def main(env_name, mode, episodes, random_sample, save_path, concrete, expert_first=False, 
-            save_model=True, dropout=0.05, lr=0.001, ls=5e-7):
+            save_model=True, dropout=0.05, lr=0.001, ls=5e-7, train_epochs=10):
     """
     env_name - gym environment [LunarLander-v2, CartPole-v1]
     mode - learning type [pool, stream, classic]

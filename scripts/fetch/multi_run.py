@@ -10,18 +10,18 @@ FetchPush-v1
 """
 
 env_name = 'FetchPush-v1'
-mode = 'pool'
+mode = 'classic'
 expert_first = True
 save_model = True
-episodes = 10000
-random_sample = True
+episodes = 100
+random_sample = False
 dropout = 0.05
 concrete = True
-learning_rate = 1e-5
-run_no = '2samples'
+learning_rate = 1e-4
+run_no = 'f'
 samples = 2
 ls = 1e-4
-
+train_epochs = 100
 
 data_savepath = './tmp/' + env_name + '/'
 saved_stats = None
@@ -43,7 +43,7 @@ for i in range(samples):
     rewards, stats = train.main(env_name, mode, episodes, random_sample, 
                                 data_savefile + str(i) + '/', expert_first=expert_first, 
                                 save_model=save_model, dropout=dropout, concrete=concrete,
-                                lr=learning_rate, ls=)
+                                lr=learning_rate, ls=ls, train_epochs=train_epochs)
     stats = np.array(stats)
     saved_stats = np.atleast_3d(stats) if saved_stats is None else np.append(saved_stats, stats[:,:, None], axis=2)
 
