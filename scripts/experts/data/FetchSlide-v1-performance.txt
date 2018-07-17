@@ -1,0 +1,4 @@
+Environment: FetchSlide-v1 
+# of Runs: 1000 
+Average Reward: -24.496999999999996 
+Average Success Rate: 0.871

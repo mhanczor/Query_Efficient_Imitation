@@ -1,0 +1,4 @@
+Environment: FetchReach-v1 
+# of Runs: 1000 
+Average Reward: -1.7089999999999799 
+Average Success Rate: 1.0

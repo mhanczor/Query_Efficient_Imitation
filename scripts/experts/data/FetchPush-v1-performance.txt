@@ -1,0 +1,4 @@
+Environment: FetchPush-v1 
+# of Runs: 1000 
+Average Reward: -8.908999999999955 
+Average Success Rate: 0.999
