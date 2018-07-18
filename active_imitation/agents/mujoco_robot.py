@@ -44,6 +44,8 @@ class GymRobotAgent(object):
         self.sess = tf.get_default_session()
         if self.sess is None:
             self.sess = tf.InteractiveSession()
+        # from tensorflow.python import debug as tf_debug
+        # self.sess =  tf_debug.LocalCLIDebugWrapperSession(self.sess)
         
         self.concrete = concrete
         if self.concrete:
@@ -124,7 +126,14 @@ class GymRobotAgent(object):
         
         self.expert_action = tf.placeholder(tf.float32, [None, a_dim], name='Expert_Action')
         self.loss = heteroscedastic_loss(self.expert_action, self.prediction)
-        self.opt = tf.train.AdamOptimizer(self.lr).minimize(self.loss)
+        
+        train_opt = tf.train.AdamOptimizer(self.lr)
+        grads_and_vars = train_opt.compute_gradients(self.loss)
+        for idx, (grad, var) in enumerate(grads_and_vars):
+            if grad is not None:
+                # grad_val = tf.Print(grad, [tf.norm(grad), tf.norm(var), tf.norm(tf.clip_by_norm(grad, 200))])
+                grads_and_vars[idx] = (tf.clip_by_norm(grad, 200), var)
+        self.opt = train_opt.apply_gradients(grads_and_vars)
         assert len(tf.losses.get_regularization_losses()) == len(self.layers) + 2, print(len(tf.losses.get_regularization_losses()))
         
     def update(self, batch):
