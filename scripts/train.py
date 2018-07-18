@@ -38,7 +38,7 @@ policy_files = {'FetchReach-v1': os.path.join(prefix, 'FetchReach-v1/policy_best
                 'FetchPush-v1': os.path.join(prefix, 'FetchPush-v1/policy_best.pkl')}
 
 def main(env_name, mode, episodes, random_sample, save_path, concrete, expert_first=False, 
-            save_model=True, dropout=0.05, lr=0.001, ls=5e-7, train_epochs=10):
+            save_model=True, dropout=0.05, lr=0.001, ls=5e-7, train_epochs=10, density=0.0):
     """
     env_name - gym environment [LunarLander-v2, CartPole-v1]
     mode - learning type [pool, stream, classic]
@@ -86,7 +86,7 @@ def main(env_name, mode, episodes, random_sample, save_path, concrete, expert_fi
         mixing = 1.0
         mixing_decay = 1.0
     
-    param_mods = {'random_sample': random_sample, 'mixing':mixing}
+    param_mods = {'random_sample': random_sample, 'mixing':mixing, 'density_weight':density}
 
     if isFetch:
         agent = GymRobotAgent(env_dims, **params)
@@ -116,6 +116,7 @@ def main(env_name, mode, episodes, random_sample, save_path, concrete, expert_fi
         f.write('Random Sample: {}\n'.format(random_sample))
         f.write('Mixing: {}\n'.format(mixing))
         f.write('Mixing Decay: {}\n'.format(mixing_decay))
+        f.write('Density Weighting: {}\n'.format(density))
         for label, value in params.items():
             f.write('{}: {}\n'.format(label, value))
         f.write('Random Seed: {}\n'.format(seed))

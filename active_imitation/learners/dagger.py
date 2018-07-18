@@ -11,7 +11,7 @@ Be able to revert to last best weights if validation is lower than previous?
 
 class DAgger(object):
     
-    def __init__(self, env, learner, expert, agg_buffer, mixing=0.0, continuous=False, random_sample=False):
+    def __init__(self, env, learner, expert, agg_buffer, mixing=0.0, continuous=False, **kwargs):
         self.env = env
         self.expert = expert
         self.learner = learner
