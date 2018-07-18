@@ -44,8 +44,8 @@ for i in range(samples):
     data_savefile += '/'
         
     
-    print('\n \n Starting run {} in {}\n \
-Last Episode Length: {} Total Training Time: {} \n'.format(i+1, env_name, round(past_time, 3), round(tot_time, 3)))
+    print('\n \n Starting run {} of {} in {}\n \
+Last Episode Length: {} Total Training Time: {} \n'.format(i+1, samples, env_name, round(past_time, 3), round(tot_time, 3)))
     rewards, stats = train.main(env_name, mode, episodes, random_sample, 
                                 data_savefile + str(i) + '/', expert_first=expert_first, 
                                 save_model=save_model, dropout=dropout, concrete=concrete,
