@@ -109,11 +109,16 @@ class Hindsight_DAgger(DAgger):
         
         # Calculate the distance from each point to every other point
         N = (len(obs))
+        # import ipdb; ipdb.set_trace()
         if self.continuous:
             s_dim = obs[0]['observation'].shape[0]
             states = np.empty((N, s_dim))
             for i, state in enumerate(obs):
                 states[i, :] = state['observation']
+        else:
+            # s_dim = obs[]
+            states = np.array(obs)
+            
         
         density = np.empty((N))
         for i in range(N):

@@ -39,7 +39,7 @@ class GymAgent(object):
         
         self.sess = tf.get_default_session()
         if self.sess is None:
-            self.sess = tf.InteractiveSession()
+            self.sess =  tf.InteractiveSession()
         
         self.concrete = concrete
         # if self.concrete:
@@ -54,7 +54,7 @@ class GymAgent(object):
         self.writer = tf.summary.FileWriter(filepath+'events/', self.sess.graph)
         
     def _build_network(self):
-        wr = 1e-9
+        wr = 1e-4
         input_size = (None,) + (self.env_dims['observation'],)
         output_size = self.env_dims['action_space']
         
@@ -85,7 +85,14 @@ class GymAgent(object):
             # self.loss = self.ce_loss + self.reg_losses
             # self.global_step = tf.Variable(0, trainable=False, name='global_step')
         with tf.name_scope("Opt"):
-            self.opt = tf.train.AdamOptimizer(self.lr).minimize(self.loss)
+            # self.opt = tf.train.AdamOptimizer(self.lr).minimize(self.loss)
+            train_opt = tf.train.AdamOptimizer(self.lr)
+            grads_and_vars = train_opt.compute_gradients(self.loss)
+            for idx, (grad, var) in enumerate(grads_and_vars):
+                if grad is not None:
+                    # grad_val = tf.Print(grad, [tf.norm(grad), tf.norm(var), tf.norm(tf.clip_by_norm(grad, 30))])
+                    grads_and_vars[idx] = (tf.clip_by_norm(grad, 10), var)
+            self.opt = train_opt.apply_gradients(grads_and_vars)
 
         assert len(tf.losses.get_regularization_losses()) == len(self.layers) + 2, print(len(tf.losses.get_regularization_losses()))
         
@@ -125,7 +132,13 @@ class GymAgent(object):
             assert len(tf.losses.get_regularization_losses()) == len(self.layers) + 2, print(len(tf.losses.get_regularization_losses()))
             
         with tf.name_scope("Opt"):
-            self.opt = tf.train.AdamOptimizer(self.lr).minimize(self.loss)
+            # Applies gradient clipping
+            train_opt = tf.train.AdamOptimizer(self.lr)
+            grads_and_vars = train_opt.compute_gradients(self.loss)
+            for idx, (grad, var) in enumerate(grads_and_vars):
+                if grad is not None:
+                    grads_and_vars[idx] = (tf.clip_by_norm(grad, 10), var)
+            self.opt = train_opt.apply_gradients(grads_and_vars)
         
     
     def update(self, batch):
