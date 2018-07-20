@@ -86,7 +86,14 @@ class GymRobotAgent(object):
             self.loss = self.mse + self.reg_losses
         with tf.name_scope("Opt"):
             # Adam optimzer with a fixed lrz
-            self.opt = tf.train.AdamOptimizer(self.lr).minimize(self.loss)    
+            train_opt = tf.train.AdamOptimizer(self.lr)
+            grads_and_vars = train_opt.compute_gradients(self.loss)
+            for idx, (grad, var) in enumerate(grads_and_vars):
+                if grad is not None:
+                    grad_val = tf.Print(grad, [tf.norm(grad), tf.norm(var), tf.norm(tf.clip_by_norm(grad, 2))])
+                    grads_and_vars[idx] = (tf.clip_by_norm(grad, 2), var)
+            self.opt = train_opt.apply_gradients(grads_and_vars)
+            # self.opt = tf.train.AdamOptimizer(self.lr).minimize(self.loss)    
             
         assert len(tf.losses.get_regularization_losses()) == len(self.layers) + 1, print(len(tf.losses.get_regularization_losses()))
         
@@ -125,14 +132,14 @@ class GymRobotAgent(object):
             return tf.reduce_sum(precision * (true - mean)**2. + log_var + self.reg_losses, -1)                        
         
         self.expert_action = tf.placeholder(tf.float32, [None, a_dim], name='Expert_Action')
-        self.loss = heteroscedastic_loss(self.expert_action, self.prediction)
+        self.loss = tf.reduce_mean(heteroscedastic_loss(self.expert_action, self.prediction), -1)
         
         train_opt = tf.train.AdamOptimizer(self.lr)
         grads_and_vars = train_opt.compute_gradients(self.loss)
         for idx, (grad, var) in enumerate(grads_and_vars):
             if grad is not None:
-                # grad_val = tf.Print(grad, [tf.norm(grad), tf.norm(var), tf.norm(tf.clip_by_norm(grad, 200))])
-                grads_and_vars[idx] = (tf.clip_by_norm(grad, 200), var)
+                grad_val = tf.Print(grad, [tf.norm(grad), tf.norm(var), tf.norm(tf.clip_by_norm(grad, 100))])
+                grads_and_vars[idx] = (tf.clip_by_norm(grad, 100), var)
         self.opt = train_opt.apply_gradients(grads_and_vars)
         assert len(tf.losses.get_regularization_losses()) == len(self.layers) + 2, print(len(tf.losses.get_regularization_losses()))
         
@@ -151,7 +158,9 @@ class GymRobotAgent(object):
             feed_dict[self.N] = self.total_samples
         # import ipdb; ipdb.set_trace()
         _,loss, reg_losses = self.sess.run([self.opt, self.loss, self.reg_losses], feed_dict=feed_dict)
-        loss = np.mean(loss) # For concrete
+        # print(loss, np.mean(loss))
+        # import ipdb; ipdb.set_trace()
+        # loss = np.mean(loss) # For concrete
         # print('Loss: {}  MSE: {}  Regular Loss: {}'.format(loss, mse, reg_losses))
         return loss
     

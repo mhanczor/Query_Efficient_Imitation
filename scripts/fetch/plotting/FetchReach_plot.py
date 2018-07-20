@@ -18,7 +18,14 @@ DAgger_fp = os.path.join(prefix, 'Baselines/FetchReach-v1-classic-concrete-multi
 Random_fp = os.path.join(prefix, '0715/FetchReach-v1-pool-random-concrete-multi-long/FetchReach-v1-pool-random-concrete-multi-long.npy')
 Concrete_fp = os.path.join(prefix, '0715/FetchReach-v1-pool-concrete-multi-long/FetchReach-v1-pool-concrete-multi-long.npy')
 
-filepaths = {'DAgger':DAgger_fp, 'Random':Random_fp, 'Concrete':Concrete_fp}
+rand_basic = os.path.join(prefix, '0719/FetchReach-v1-pool-random-multi-basic.npy')
+rand_basic_1e5 = os.path.join(prefix, '0719/FetchReach-v1-pool-random-multi-basic_1e5.npy')
+dw_05 = os.path.join(prefix, '0719/FetchReach-v1-pool-concrete-multi-dw_0-5.npy')
+dw_10 = os.path.join(prefix, '0719/FetchReach-v1-pool-concrete-multi-dw_1-0.npy')
+dw_5e4 = os.path.join(prefix, '0719/FetchReach-v1-pool-concrete-multi-dw_5e4.npy')
+
+filepaths = {'DAgger':DAgger_fp, 'Random':Random_fp, 'Concrete':Concrete_fp,
+'Rand Basic':rand_basic, 'Rand Basic 1e5':rand_basic_1e5, 'DW 0.5':dw_05, 'DW 1.0':dw_10, 'DW 5e-4':dw_5e4}
 s_val = 13
 smoothing = {'DAgger':0, 'Random':s_val, 'Concrete':s_val}
 # filepaths = {'Concrete':concrete_fp}
@@ -29,9 +36,9 @@ for name, filepath in filepaths.items():
     data[name] = arr
 
 plot_labels = ['Expert_Samples', 'Validation Reward', 'FetchReach-v1']
-plot.plotData(data, plot_labels, expert=expert_valid, data_axis=3, xlims=(0, 1000), ylims=None, smoothing=smoothing)
+plot.plotData(data, plot_labels, expert=expert_valid, data_axis=3, xlims=(0, 1000), ylims=None, smoothing=None)
 plot_labels = ['Expert_Samples', 'Success Rate', 'FetchReach-v1']
-plot.plotData(data, plot_labels, expert=expert_success, data_axis=4, xlims=(0, 1000), ylims=None, smoothing=smoothing)
+plot.plotData(data, plot_labels, expert=expert_success, data_axis=4, xlims=(0, 1000), ylims=None, smoothing=None)
 
 plot_labels = ['Expert_Samples', 'Sample Uncertainty', 'FetchReach-v1']
 plot.plotData(data, plot_labels, data_axis=5, xlims=(0, 1000), ylims=None, smoothing=None)
@@ -40,9 +47,10 @@ s_val = 15
 # Only plot Random and Concrete here? Why?
 smoothing = {'DAgger':s_val, 'Random':s_val, 'Concrete':s_val}
 plot_labels = ['Expert_Samples', 'Training Loss', 'FetchReach-v1']
-plot.plotData(data, plot_labels, data_axis=6, xlims=(50, 1000), ylims=(0, 60), smoothing=None)
+plot.plotData(data, plot_labels, data_axis=6, xlims=None, ylims=None, smoothing=None)
 
-
+plot_labels = ['Expert_Samples', 'Action Similarity', 'FetchReach-v1']
+plot.plotData(data, plot_labels, data_axis=7, xlims=None, ylims=None, smoothing=none)
 # Old file paths
 # 
 # Pre-concrete dropout baselines

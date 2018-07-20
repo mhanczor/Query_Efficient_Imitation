@@ -87,12 +87,13 @@ class DAgger(object):
         correct_labels = 0
         success = 0.0
         while not done:
-            action = agent.sampleAction(state).squeeze() # sampleAction returns 2d arrays, need 1D
+            action = agent.sampleAction(state)#.squeeze() # sampleAction returns 2d arrays, need 1D
             expert_action = self.expert.sampleAction(state)
             if not self.continuous: # Can only compare actions in discrete action space
                 if action == expert_action:
                     correct_labels += 1
             else:
+                action = action.squeeze()
                 correct_labels += np.sum((expert_action - action)**2.)**(1./2)
             state, reward, done, info = self.env.step(action)
             # try:
@@ -172,6 +173,7 @@ class DAgger(object):
         
         total_expert_samples = 0
         prev_samples = 0
+        n_saved = 0
         # Run an initial validation to get starting agent reward
         validation = []
         valid_runs = 5
@@ -229,9 +231,9 @@ class DAgger(object):
             print("Episode: {} Reward: {} Episode Samples: {} Total Samples: {}".format(ep+1, valid_reward, expert_samples, total_expert_samples))
             stats.append([ep+1, total_expert_samples, expert_samples, valid_reward, avg_successes, utility_measure, final_loss, valid_acc])
             
-            if total_expert_samples % save_rate == 0:
-             # TODO change this so it also logs when we have crossed the threshold of expert samples
+            if total_expert_samples % save_rate == 0 or (total_expert_samples - n_saved * save_rate) > save_rate:
                 self.learner.save_model(expert_samples=total_expert_samples)
+                n_saved = total_expert_samples // save_rate
             
         valid_reward, valid_acc, avg_successes = self.validateAgent(5)
         validation.append(valid_reward)

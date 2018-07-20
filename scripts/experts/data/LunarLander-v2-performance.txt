@@ -1,4 +1,4 @@
 Environment: LunarLander-v2 
 # of Runs: 1000 
-Average Reward: 226.16851462645468 
+Average Reward: 224.02099972877502 
 Average Success Rate: 0.0
