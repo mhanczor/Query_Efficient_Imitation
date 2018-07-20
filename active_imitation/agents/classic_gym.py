@@ -64,9 +64,9 @@ class GymAgent(object):
             self.apply_dropout = tf.placeholder(tf.bool)
         
         network = denseNet(self.state, self.layers, self.dropout_rate, self.apply_dropout, reg_weight=wr, name='Model')
-        logits = tf.layers.dense(inputs=network, units=output_size, activation=tf.nn.relu, kernel_regularizer=tf.contrib.layers.l2_regularizer(wr))
+        logits = tf.layers.dense(inputs=network, units=output_size, kernel_initializer=tf.random_normal_initializer(), kernel_regularizer=tf.contrib.layers.l2_regularizer(wr))
         self.policy = tf.nn.softmax(logits, name="Policy_Output")
-        self.log_var = tf.layers.dense(inputs=network, units=output_size, activation=tf.nn.relu, kernel_regularizer=tf.contrib.layers.l2_regularizer(wr))
+        self.log_var = tf.layers.dense(inputs=network, units=output_size, kernel_initializer=tf.random_uniform_initializer(0, 2), kernel_regularizer=tf.contrib.layers.l2_regularizer(wr))
         
         with tf.name_scope("Loss"):
             self.reg_losses = tf.reduce_sum(tf.losses.get_regularization_losses())
@@ -90,63 +90,62 @@ class GymAgent(object):
             grads_and_vars = train_opt.compute_gradients(self.loss)
             for idx, (grad, var) in enumerate(grads_and_vars):
                 if grad is not None:
-                    # grad_val = tf.Print(grad, [tf.norm(grad), tf.norm(var), tf.norm(tf.clip_by_norm(grad, 30))])
-                    grads_and_vars[idx] = (tf.clip_by_norm(grad, 10), var)
+                    grad_val = tf.Print(grad, [tf.norm(grad), tf.norm(var), tf.norm(tf.clip_by_norm(grad, 10))])
+                    grads_and_vars[idx] = (tf.clip_by_norm(grad_val,10), var)
             self.opt = train_opt.apply_gradients(grads_and_vars)
 
         assert len(tf.losses.get_regularization_losses()) == len(self.layers) + 2, print(len(tf.losses.get_regularization_losses()))
         
-    def _build_concrete_network(self):
-        from active_imitation.utils import ConcreteDropout
-        
-        input_size = (None,) + (self.env_dims['observation'],)
-        output_size = self.env_dims['action_space']
-        
-        l = 1e-4
-        self.N = tf.placeholder(tf.float32, []) # Number of total labeled samples in the dataset
-        wd = l**2./self.N
-        dd = 1./self.N # reduce from a factor of two since we're using cross entropy loss
-        
-        with tf.name_scope("Inputs"):
-            self.state = tf.placeholder(tf.float32, input_size, name='State')
-            self.expert_action = tf.placeholder(tf.int32, [None, ], name='Expert_Action')
-            self.apply_dropout = tf.placeholder(tf.bool)
-        
-        network = concreteNet(policy_input, self.layers, wd, dd, name='Model')
-        logits = ConcreteDropout(tf.layers.Dense(units=output_size, activation=tf.nn.relu),
-                                    weight_regularizer=wd, dropout_regularizer=dd)(network, training=True)
-        self.policy = tf.nn.softmax(logits, name="Policy_Output")
-                
-        log_var = ConcreteDropout(tf.layers.Dense(units=output_size, name='Policy_Log_Var'), weight_regularizer=wd, 
-                                        dropout_regularizer=dd)(network, training=True)
-        
-        self.prediction = tf.concat([self.policy, log_var], -1, name='Main_Output')                            
-        
-        with tf.name_scope("Loss"):
-            # Heteroscedastic Loss
-            labels = tf.one_hot(self.expert_action, output_size, axis=-1)
-            precision = tf.exp(-log_var) # Do we still need this term?
-            self.reg_losses = tf.reduce_sum(tf.losses.get_regularization_losses())
-            self.ce_loss = tf.losses.softmax_cross_entropy(labels, logits, reduction=tf.losses.Reduction.SUM)
-            self.loss = tf.reduce_sum(precision * self.ce_loss + log_var + self.reg_losses, -1) 
-            assert len(tf.losses.get_regularization_losses()) == len(self.layers) + 2, print(len(tf.losses.get_regularization_losses()))
-            
-        with tf.name_scope("Opt"):
-            # Applies gradient clipping
-            train_opt = tf.train.AdamOptimizer(self.lr)
-            grads_and_vars = train_opt.compute_gradients(self.loss)
-            for idx, (grad, var) in enumerate(grads_and_vars):
-                if grad is not None:
-                    grads_and_vars[idx] = (tf.clip_by_norm(grad, 10), var)
-            self.opt = train_opt.apply_gradients(grads_and_vars)
+    # def _build_concrete_network(self):
+    #     from active_imitation.utils import ConcreteDropout
+    # 
+    #     input_size = (None,) + (self.env_dims['observation'],)
+    #     output_size = self.env_dims['action_space']
+    # 
+    #     l = 1e-4
+    #     self.N = tf.placeholder(tf.float32, []) # Number of total labeled samples in the dataset
+    #     wd = l**2./self.N
+    #     dd = 1./self.N # reduce from a factor of two since we're using cross entropy loss
+    # 
+    #     with tf.name_scope("Inputs"):
+    #         self.state = tf.placeholder(tf.float32, input_size, name='State')
+    #         self.expert_action = tf.placeholder(tf.int32, [None, ], name='Expert_Action')
+    #         self.apply_dropout = tf.placeholder(tf.bool)
+    # 
+    #     network = concreteNet(policy_input, self.layers, wd, dd, name='Model')
+    #     logits = ConcreteDropout(tf.layers.Dense(units=output_size, activation=tf.nn.relu),
+    #                                 weight_regularizer=wd, dropout_regularizer=dd)(network, training=True)
+    #     self.policy = tf.nn.softmax(logits, name="Policy_Output")
+    # 
+    #     log_var = ConcreteDropout(tf.layers.Dense(units=output_size, name='Policy_Log_Var'), weight_regularizer=wd, 
+    #                                     dropout_regularizer=dd)(network, training=True)
+    # 
+    #     self.prediction = tf.concat([self.policy, log_var], -1, name='Main_Output')                            
+    # 
+    #     with tf.name_scope("Loss"):
+    #         # Heteroscedastic Loss
+    #         labels = tf.one_hot(self.expert_action, output_size, axis=-1)
+    #         precision = tf.exp(-log_var) # Do we still need this term?
+    #         self.reg_losses = tf.reduce_sum(tf.losses.get_regularization_losses())
+    #         self.ce_loss = tf.losses.softmax_cross_entropy(labels, logits, reduction=tf.losses.Reduction.SUM)
+    #         self.loss = tf.reduce_sum(precision * self.ce_loss + log_var + self.reg_losses, -1) 
+    #         assert len(tf.losses.get_regularization_losses()) == len(self.layers) + 2, print(len(tf.losses.get_regularization_losses()))
+    # 
+    #     with tf.name_scope("Opt"):
+    #         # Applies gradient clipping
+    #         train_opt = tf.train.AdamOptimizer(self.lr)
+    #         grads_and_vars = train_opt.compute_gradients(self.loss)
+    #         for idx, (grad, var) in enumerate(grads_and_vars):
+    #             if grad is not None:
+    #                 grads_and_vars[idx] = (tf.clip_by_norm(grad, 10), var)
+    #         self.opt = train_opt.apply_gradients(grads_and_vars)
         
     
     def update(self, batch):
         feed_dict = {self.state:batch['observation'], self.expert_action:batch['action'].flatten(), 
                     self.apply_dropout:True}
-        
-        # import ipdb; ipdb.set_trace()        
         _, loss, reg_loss, ce_loss, log_var = self.sess.run([self.opt, self.loss, self.reg_losses, self.ce_loss, self.log_var], feed_dict=feed_dict)
+        # import ipdb; ipdb.set_trace()
         # print("Cross Entropy Loss: {} \nPrecision: {} \nReg. Loss: {} \nTotal Loss: {}".format(ce_loss, precision, reg_loss, loss))
         return loss
     
