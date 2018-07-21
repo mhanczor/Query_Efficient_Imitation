@@ -121,7 +121,6 @@ class DAgger(object):
         state = self.env.reset()
         done = False
         expert_samples = 0
-        # import ipdb; ipdb.set_trace()
         while not done:
             # Mix policies by randomly choosing between them
             if random.random() >= self.mixing:

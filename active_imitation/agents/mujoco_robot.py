@@ -189,8 +189,7 @@ class GymRobotAgent(object):
         g = np.repeat(g, batch, axis=0)
         state = {'observation':o, 'goal':g}
         
-        action = self._samplePolicy(state, apply_dropout=apply_dropout)
-        #TODO may want to flatten batch size 1 here instead of outside?
+        action = self._samplePolicy(state, apply_dropout=apply_dropout).squeeze()
         return action
                 
     def uncertainAction(self, state, batch=32):
