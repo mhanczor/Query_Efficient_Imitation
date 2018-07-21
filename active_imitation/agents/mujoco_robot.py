@@ -138,8 +138,8 @@ class GymRobotAgent(object):
         grads_and_vars = train_opt.compute_gradients(self.loss)
         for idx, (grad, var) in enumerate(grads_and_vars):
             if grad is not None:
-                grad_val = tf.Print(grad, [tf.norm(grad), tf.norm(var), tf.norm(tf.clip_by_norm(grad, 100))])
-                grads_and_vars[idx] = (tf.clip_by_norm(grad, 100), var)
+                grad_val = tf.Print(grad, [tf.norm(grad), tf.norm(var), tf.norm(tf.clip_by_norm(grad, 50))])
+                grads_and_vars[idx] = (tf.clip_by_norm(grad, 50), var)
         self.opt = train_opt.apply_gradients(grads_and_vars)
         assert len(tf.losses.get_regularization_losses()) == len(self.layers) + 2, print(len(tf.losses.get_regularization_losses()))
         
