@@ -5,19 +5,20 @@ from baselines.common.vec_env.vec_frame_stack import VecFrameStack
 from baselines.common.cmd_util import make_atari_env
 import time
 import gym
+import os
+from active_imitation.experts import trained_models
 
 
 class SpaceInvadersExpert(object):
     def __init__(self, env_dims):
-        exp_filepath = '/home/hades/Research/Active_Imitation/scripts/gym_classics/tmp/SpaceInvaders-v0/expert_ckpts/78800_atari_model.ckpt'
+        prefix = os.path.dirname(trained_models.__file__)
+        exp_filepath = os.path.join(prefix, 'SpaceInvadersNoFrameskip-v0/78800_atari_model.ckpt')
         self.sess = tf.get_default_session()
         if self.sess is None:
             self.sess = tf.InteractiveSession()
         
         obs_space = env_dims['observation']
         act_space = env_dims['action']
-        # obs_space = env.observation_space
-        # act_space = env.action_space
         
         self.model = Model(policy=CnnPolicy, ob_space=obs_space, ac_space=act_space, nbatch_act=1, 
                     nbatch_train=1, nsteps=1, ent_coef=0.01, vf_coef=0.5, max_grad_norm=0.5)
