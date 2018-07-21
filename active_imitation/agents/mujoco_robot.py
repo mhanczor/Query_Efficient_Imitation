@@ -15,7 +15,7 @@ DEFAULT_PARAMS = {
 class GymRobotAgent(object):
     
     def __init__ (self, env_dims, layers, max_a, lr, 
-                    dropout_rate, concrete, ls, filepath='tmp/', load=False):
+                    dropout_rate, concrete, ls, filepath='tmp/', load=False, hetero_loss=False):
         """
         Agent that learns via imitation to perform an OpenAI Robotic Task
             
@@ -47,6 +47,8 @@ class GymRobotAgent(object):
         # from tensorflow.python import debug as tf_debug
         # self.sess =  tf_debug.LocalCLIDebugWrapperSession(self.sess)
         
+        self.hetero_loss = hetero_loss
+        
         self.concrete = concrete
         if self.concrete:
             self._build_concrete_network()
@@ -54,7 +56,7 @@ class GymRobotAgent(object):
             self._build_network()
         
         self.sess.run(tf.global_variables_initializer())
-        self.saver = tf.train.Saver(max_to_keep=10)
+        self.saver = tf.train.Saver(max_to_keep=50)
         
         if load:
             self._load_model()
@@ -76,14 +78,27 @@ class GymRobotAgent(object):
         policy_input = tf.concat(axis=1, values=[self.o, self.g]) # Concatenate observations and goals as a single network input
         network = denseNet(policy_input, self.layers, self.dropout, self.apply_dropout, reg_weight=wr, name='Model')
         self.policy = self.max_a * tf.layers.dense(inputs=network, units=a_dim, activation=tf.tanh, kernel_regularizer=tf.contrib.layers.l2_regularizer(wr))
+        log_var = tf.layers.dense(inputs=network, units=a_dim, kernel_initializer=tf.random_normal_initializer(1.0), kernel_regularizer=tf.contrib.layers.l2_regularizer(wr), name='Policy_Log_Var', )
+        self.prediction = tf.concat([self.policy, log_var], -1, name='Main_Output') 
         
         with tf.name_scope("Loss"):
             # Continuous action spaces, MSE loss
             self.expert_action = tf.placeholder(tf.float32, [None, a_dim], name='Expert_Action')
             self.reg_losses = tf.reduce_sum(tf.losses.get_regularization_losses())
-            # self.loss = tf.losses.mean_squared_error(self.expert_action, self.policy)
-            self.mse = tf.losses.mean_squared_error(self.expert_action, self.policy)
-            self.loss = self.mse + self.reg_losses
+            if self.hetero_loss:
+                def heteroscedastic_loss(true, pred):
+                    mean = pred[:, :a_dim] # Just separating out the concatenation from above
+                    log_var = pred[:, a_dim:]
+                    precision = tf.exp(-log_var)
+                    return tf.reduce_sum(precision * (true - mean)**2. + log_var + self.reg_losses, -1)                        
+                
+                self.expert_action = tf.placeholder(tf.float32, [None, a_dim], name='Expert_Action')
+                self.loss = tf.reduce_mean(heteroscedastic_loss(self.expert_action, self.prediction), -1)
+            
+            else:   
+                self.mse = tf.losses.mean_squared_error(self.expert_action, self.policy)
+                self.loss = self.mse + self.reg_losses
+            
         with tf.name_scope("Opt"):
             # Adam optimzer with a fixed lrz
             train_opt = tf.train.AdamOptimizer(self.lr)
@@ -95,7 +110,7 @@ class GymRobotAgent(object):
             self.opt = train_opt.apply_gradients(grads_and_vars)
             # self.opt = tf.train.AdamOptimizer(self.lr).minimize(self.loss)    
             
-        assert len(tf.losses.get_regularization_losses()) == len(self.layers) + 1, print(len(tf.losses.get_regularization_losses()))
+        assert len(tf.losses.get_regularization_losses()) == len(self.layers) + 2, print(len(tf.losses.get_regularization_losses()))
         
     def _build_concrete_network(self):
         from active_imitation.utils import ConcreteDropout

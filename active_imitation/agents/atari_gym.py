@@ -15,7 +15,7 @@ DEFAULT_PARAMS = {
 class AtariGymAgent(object):
     
     def __init__(self, env_dims, layers, lr, dropout_rate, 
-                concrete, filepath='tmp/', **kwargs):
+                concrete, hetero_loss, filepath='tmp/', **kwargs):
         """
         Learner agent for OpenAI Gym's classic environments like CartPole and LunarLander
         
@@ -41,7 +41,7 @@ class AtariGymAgent(object):
         # if self.sess is None:
         #     self.sess =  tf.InteractiveSession()
         
-        self.hetero_loss = concrete
+        self.hetero_loss = hetero_loss
         self._build_network()
         
         self.sess.run(tf.global_variables_initializer())
