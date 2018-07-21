@@ -35,7 +35,6 @@ if __name__ == "__main__":
     from baselines.common.atari_wrappers import make_atari, wrap_deepmind
     import numpy as np
     env_id = 'SpaceInvadersNoFrameskip-v0'
-    exp_fp = '/home/hades/Research/Active_Imitation/scripts/gym_classics/tmp/SpaceInvaders-v0/expert_ckpts/78800_atari_model.ckpt'
     # The make atarri and vecframestack take a bit of the work out of reducing the
     # environment down from a 260px image and also i believe handle the color channel stuff, so worthwhile to keep
     # 

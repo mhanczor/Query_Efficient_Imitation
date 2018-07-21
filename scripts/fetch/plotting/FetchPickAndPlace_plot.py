@@ -17,7 +17,10 @@ Dag_e4e5_fp = os.path.join(prefix, '0717/FetchPickAndPlace-v1-classic-concrete-m
 Dag_e4e5_lu_fp = os.path.join(prefix, '0717/FetchPickAndPlace-v1-classic-concrete-multi-1e4-1e5-long_update.npy')
 Rand_conc_fp = os.path.join(prefix, '0716/FetchPickAndPlace-v1-pool-random-concrete-multi-2samples.npy')
 
-filepaths = {'Concrete DAgger':DAgger_fp, 'Old DAgger':Old_DAgger_fp, 'CDAg 1e-4 1e-4':Dag_e4e4_fp, 'CDAg 1e-4 1e-5':Dag_e4e5_fp, 'CDAg 1e-4 1e-5 LU':Dag_e4e5_lu_fp, 'Rand Conc':Rand_conc_fp}
+Conc_fp = os.path.join(prefix, '0718/FetchPickAndPlace-v1-pool-concrete-multi-10samp.npy')
+Rand_Conc = os.path.join(prefix, '0718/FetchPickAndPlace-v1-pool-random-concrete-multi-10samp.npy')
+
+filepaths = {'Concrete DAgger':DAgger_fp, 'Old DAgger':Old_DAgger_fp, 'Rand Conc':Rand_conc_fp, 'Concrete Dropout':Conc_fp, 'RandConcNew':Rand_Conc}
 
 data = {}
 for name, filepath in filepaths.items():
@@ -36,7 +39,7 @@ plot.plotData(data, plot_labels, expert=expert_success, data_axis=4, xlims=(0, 5
 """
 REMOVING SOME OF THE DATSETS HERE, MAKE SURE TO CHANGE THIS LATER!!!!
 """
-filepaths = {'Concrete DAgger':DAgger_fp, 'CDAg 1e-4 1e-4':Dag_e4e4_fp, 'CDAg 1e-4 1e-5':Dag_e4e5_fp, 'CDAg 1e-4 1e-5 LU':Dag_e4e5_lu_fp, 'Rand Conc':Rand_conc_fp}
+filepaths = {'Concrete DAgger':DAgger_fp, 'Rand Conc':Rand_conc_fp, 'Concrete Dropout':Conc_fp, 'RandConcNew':Rand_Conc}
 
 data = {}
 for name, filepath in filepaths.items():

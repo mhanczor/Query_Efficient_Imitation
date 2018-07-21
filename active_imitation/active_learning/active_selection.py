@@ -98,7 +98,7 @@ def varianceAction(learner, state):
     action, per_action_var = learner.uncertainAction(state, batch=batch)
     # Assume independence between actions in the action space, sum variances
     action_var = np.sum(per_action_var)
-    return action, action_var  
+    return action.squeeze(), action_var  
     
 def concreteUncertainty(learner, state):
     """
