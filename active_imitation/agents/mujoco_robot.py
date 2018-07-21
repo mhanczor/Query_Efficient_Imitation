@@ -100,7 +100,7 @@ class GymRobotAgent(object):
     def _build_concrete_network(self):
         from active_imitation.utils import ConcreteDropout
         
-        o_dim = self.env_dims['observation']
+        o_dim = self.env_dims['observation'][0]
         g_dim = self.env_dims['goal']
         a_dim = self.env_dims['action']
         
@@ -202,6 +202,7 @@ class GymRobotAgent(object):
         
         action_avg = np.mean(actions, axis=0, keepdims=True)
         per_action_var = np.var(actions, axis=0)
+        action_avg = action_avg.squeeze()
         
         return action_avg, per_action_var
         
