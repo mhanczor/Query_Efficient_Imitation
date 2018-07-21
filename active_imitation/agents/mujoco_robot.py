@@ -86,6 +86,7 @@ class GymRobotAgent(object):
             self.expert_action = tf.placeholder(tf.float32, [None, a_dim], name='Expert_Action')
             self.reg_losses = tf.reduce_sum(tf.losses.get_regularization_losses())
             if self.hetero_loss:
+                grad_clip = 50
                 def heteroscedastic_loss(true, pred):
                     mean = pred[:, :a_dim] # Just separating out the concatenation from above
                     log_var = pred[:, a_dim:]
@@ -96,6 +97,7 @@ class GymRobotAgent(object):
                 self.loss = tf.reduce_mean(heteroscedastic_loss(self.expert_action, self.prediction), -1)
             
             else:   
+                grad_clip = 2
                 self.mse = tf.losses.mean_squared_error(self.expert_action, self.policy)
                 self.loss = self.mse + self.reg_losses
             
@@ -105,8 +107,8 @@ class GymRobotAgent(object):
             grads_and_vars = train_opt.compute_gradients(self.loss)
             for idx, (grad, var) in enumerate(grads_and_vars):
                 if grad is not None:
-                    grad_val = tf.Print(grad, [tf.norm(grad), tf.norm(var), tf.norm(tf.clip_by_norm(grad, 2))])
-                    grads_and_vars[idx] = (tf.clip_by_norm(grad, 2), var)
+                    grad_val = tf.Print(grad, [tf.norm(grad), tf.norm(var), tf.norm(tf.clip_by_norm(grad, grad_clip))])
+                    grads_and_vars[idx] = (tf.clip_by_norm(grad, grad_clip), var)
             self.opt = train_opt.apply_gradients(grads_and_vars)
             # self.opt = tf.train.AdamOptimizer(self.lr).minimize(self.loss)    
             
