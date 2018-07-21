@@ -21,7 +21,7 @@ class DAgger(object):
         self.dataset = agg_buffer
         self.isSpace = isSpace
         
-        # self._logParameters()        
+        self._logParameters()        
     
     def _logParameters(self):
     #     """
