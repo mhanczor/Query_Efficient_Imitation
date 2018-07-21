@@ -4,18 +4,17 @@ import pickle
 import tensorflow as tf
 import os
 
-from active_imitation.experts import CartPole_iLQR, LunarLander_Expert, RoboticEnv_Expert
+from active_imitation.experts import CartPole_iLQR, LunarLander_Expert, RoboticEnv_Expert, SpaceInvadersExpert
 from active_imitation.experts import trained_models
 from active_imitation.learners import DAgger
 
+from baselines.common.vec_env.vec_frame_stack import VecFrameStack
+from baselines.common.cmd_util import make_atari_env
+
 import numpy as np
 
-env_name = 'CartPole-v1'
-validation_runs = 1000
-
-
-experts = {'CartPole-v1' : CartPole_iLQR,
-           'LunarLander-v2' : LunarLander_Expert} 
+env_name = 'SpaceInvadersNoFrameskip-v0'
+validation_runs = 30
 
 prefix = os.path.dirname(trained_models.__file__)
 policy_files = {'FetchReach-v1': os.path.join(prefix, 'FetchReach-v1/policy_best.pkl'),
@@ -27,22 +26,31 @@ policy_files = {'FetchReach-v1': os.path.join(prefix, 'FetchReach-v1/policy_best
 # the agent in this case.  Then by just running validAgent I should get the 
 # successes, and validation rewards I'd want
 
-env = gym.make(env_name)
 
+kwargs = {}
 isFetch = env_name[:5] == 'Fetch'
 if isFetch:
+    env = gym.make(env_name)
     agent = RoboticEnv_Expert(policy_files[env_name])
     continuous = True
 else:
     continuous = False
     if env_name == 'CartPole-v1': 
+        env = gym.make(env_name)
         agent = CartPole_iLQR(env.unwrapped)
     if env_name == 'LunarLander-v2':
+        env = gym.make(env_name)
         agent = LunarLander_Expert(env.unwrapped)
+    if env_name == 'SpaceInvadersNoFrameskip-v0':
+        wrapper_kwargs = {'episode_life':False}
+        env = VecFrameStack(make_atari_env(env_name, 1, 0, wrapper_kwargs=wrapper_kwargs), 4)
+        kwargs['isSpace'] = True
+        env_dims = {'observation':env.observation_space, 'action':env.action_space}
+        agent = SpaceInvadersExpert(env_dims)
         
         
 learning_mode = DAgger(env, learner=agent, expert=agent, 
-                agg_buffer=None, continuous=continuous)
+                agg_buffer=None, continuous=continuous, **kwargs)
                 
 valid_reward, valid_acc, avg_success = learning_mode.validateAgent(validation_runs)
 

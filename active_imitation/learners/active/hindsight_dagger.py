@@ -3,13 +3,14 @@ import numpy as np
 
 from active_imitation.learners import DAgger
 import random
+import time
 
 
 class Hindsight_DAgger(DAgger):
     
     def __init__(self, env, learner, expert, agg_buffer, action_selection, 
-                    mixing=0.0, random_sample=False, continuous=False, density_weight=0.0):
-        super(Hindsight_DAgger, self).__init__(env, learner, expert, agg_buffer, mixing, continuous)
+                    mixing=0.0, random_sample=False, continuous=False, density_weight=0.0, **kwargs):
+        super(Hindsight_DAgger, self).__init__(env, learner, expert, agg_buffer, mixing, continuous, **kwargs)
         self.random_sample = random_sample
         self.learner_predict = action_selection # This is a function 
         self.density_weight = density_weight
@@ -41,7 +42,7 @@ class Hindsight_DAgger(DAgger):
                 self.dataset.store(state, action)
                 expert_samples += 1
             else:
-                action = learner_action.squeeze()
+                action = learner_action
                 trajectory_belief.append(action_uncertainty)
                 trajectory_states.append(state)
             
@@ -109,7 +110,6 @@ class Hindsight_DAgger(DAgger):
         
         # Calculate the distance from each point to every other point
         N = (len(obs))
-        # import ipdb; ipdb.set_trace()
         if self.continuous:
             s_dim = obs[0]['observation'].shape[0]
             states = np.empty((N, s_dim))
@@ -119,13 +119,18 @@ class Hindsight_DAgger(DAgger):
             # s_dim = obs[]
             states = np.array(obs)
             
-        
-        density = np.empty((N))
-        for i in range(N):
-            norm = np.linalg.norm(states[i, :] - states, axis=1)
-            avg = np.sum(norm)/N
-            density[i] = avg
-        density = 1./(density + 1e-3) #inverse distance, want more packed states ranked larger
+        if states.ndim > 4:
+            # Not really a good metric
+            states = states.squeeze()
+            avg_state = np.mean(states, axis=0, keepdims=True)
+            density = np.mean(states - avg_state, axis=(1, 2, 3))
+        else:
+            density = np.empty((N))
+            for i in range(N):
+                norm = np.linalg.norm(states[i, :] - states, axis=1)
+                avg = np.sum(norm)/N
+                density[i] = avg
+            density = 1./(density + 1e-3) #inverse distance, want more packed states ranked larger
         return density
         
     

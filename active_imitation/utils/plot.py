@@ -76,7 +76,7 @@ def interpolateData(data, data_axis=4, max_samples=None):
     """
     
     assert data[0,1,0] == 0
-    
+    import ipdb; ipdb.set_trace()
     # Set the max number of samples
     if max_samples == None:
         max_samples = int(np.min(data[-1, 1, :])) #TODO Fix this Largest number of expert samples available
@@ -118,7 +118,7 @@ def formatConfidenceData(data, bound='std', data_axis=4):
     
     return x_axis, mean, confidence_bound
     
-def plotData(data, labels=None, data_axis=4, expert=None, xlims=None, ylims=None, interpolate=False, smoothing=None):
+def plotData(data, labels=None, data_axis=4, expert=None, xlims=None, ylims=None, interpolate=None, smoothing=None):
     """
     This produces a line plot with confidence intervals as specified
     Uses the standard error of the mean as confidence intervals
@@ -173,7 +173,7 @@ def plotData(data, labels=None, data_axis=4, expert=None, xlims=None, ylims=None
     # Iterate over the recorded datasets
     i = 0
     for name, values in data.items():
-        if interpolate:
+        if interpolate is not None and name in interpolate:
             values = interpolateData(values, data_axis=data_axis)
         if smoothing is not None and name in smoothing:
             for j in range(values.shape[2]):

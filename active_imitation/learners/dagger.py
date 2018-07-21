@@ -11,7 +11,7 @@ Be able to revert to last best weights if validation is lower than previous?
 
 class DAgger(object):
     
-    def __init__(self, env, learner, expert, agg_buffer, mixing=0.0, continuous=False, **kwargs):
+    def __init__(self, env, learner, expert, agg_buffer, mixing=0.0, continuous=False, isSpace=False, **kwargs):
         self.env = env
         self.expert = expert
         self.learner = learner
@@ -19,8 +19,9 @@ class DAgger(object):
         self.continuous = continuous
         
         self.dataset = agg_buffer
+        self.isSpace = isSpace
         
-        self._logParameters()        
+        # self._logParameters()        
     
     def _logParameters(self):
     #     """
@@ -108,6 +109,8 @@ class DAgger(object):
                 success = info['is_success']
             if render:
                 self.env.render()
+        if self.isSpace:
+            total_reward = info[0]['episode']['r']
         if self.continuous:
             correct_labels = correct_labels / episode_length # Average Euclidean distance
         return total_reward, correct_labels, episode_length, success
@@ -125,11 +128,11 @@ class DAgger(object):
                 action = self.expert.sampleAction(state)
                 expert_action = action
             else:
-                action = self.learner.sampleAction(state).squeeze()
+                action = self.learner.sampleAction(state)
                 expert_action = self.expert.sampleAction(state)
             #Aggregate expert data
             self.dataset.store(state, expert_action)
-            state, reward, done, _ = self.env.step(action)
+            state, reward, done, info = self.env.step(action)
             # try:
             #     state, reward, done, _ = self.env.step(action)
             # except:
@@ -139,11 +142,11 @@ class DAgger(object):
             
             expert_samples += 1
             total_reward += reward
-        
+        if self.isSpace:
+            total_reward = info[0]['episode']['r']
         self.mixing += mixing_decay
         if self.mixing > 1.0: self.mixing = 1.0
-        
-        return expert_samples, _, 0
+        return expert_samples, None, 0
         
     def validateAgent(self, valid_runs):
         valid_reward = 0.
@@ -169,14 +172,13 @@ class DAgger(object):
         return valid_reward, valid_acc, avg_success
     
     def train(self, episodes=100, mixing_decay=0.1, train_epochs=10, 
-                    save_images=False, image_filepath='./', save_rate=100):
+                    save_images=False, image_filepath='./', save_rate=100, valid_runs=5):
         
         total_expert_samples = 0
         prev_samples = 0
         n_saved = 0
         # Run an initial validation to get starting agent reward
         validation = []
-        valid_runs = 5
         valid_reward, valid_acc, avg_successes = self.validateAgent(valid_runs)
         validation.append(valid_reward)
         

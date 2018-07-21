@@ -1,3 +1,4 @@
 from active_imitation.experts.cartpole_experts import CartPole_iLQR, CartPole_SubExpert
 from active_imitation.experts.lunarlander_experts import LunarLander_Expert
 from active_imitation.experts.robotenv_experts import RoboticEnv_Expert
+from active_imitation.experts.atari_experts import SpaceInvadersExpert

@@ -77,12 +77,12 @@ def QBC_JSD(learner, state):
     if JSD < 0:
         JSD = -1.
     
-    policy_avg = np.mean(policy, axis = 0)
+    policy_avg = np.mean(policy, axis=0, keepdims=True)
     policy_sum = np.sum(policy_avg)
     if policy_sum > 1.0:
         policy_avg = policy_avg / policy_sum
 
-    action = np.argmax(policy_avg) # Greedily take actions according to the current policy
+    action = np.argmax(policy_avg, axis=1) # Greedily take actions according to the current policy
 
     # Return the average divergence along with the sampled action from the consensus        
     return action, JSD

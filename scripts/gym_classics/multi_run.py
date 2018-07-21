@@ -6,21 +6,24 @@ import time
 """
 CartPole-v1
 LunarLander-v2
+
+SpaceInvadersNoFrameskip-v0
 """
 
-env_name = 'LunarLander-v2'#'CartPole-v1'
+env_name = 'SpaceInvadersNoFrameskip-v0'#'CartPole-v1'
+# env_name = 'LunarLander-v2'
 mode = 'pool'
-expert_first = False
+expert_first = True
 save_model = True
-episodes = 600 #50 for LL, 20 for CP
+episodes = 100 #50 for LL, 20 for CP
 random_sample = False
 dropout = 0.05 # much smaller network here usually [16, 16, 16]
 concrete = True
-learning_rate = 5e-4
-run_no = 'new_obj_dw_5e4'
+learning_rate = 1e-3
+run_no = 'SI'
 samples = 10
 train_epochs = 10
-density = 1.0
+density = 0.0
 """ IF DENSITY != 0.0 AND RANDOM == TRUE, THEN DW ONLY"""
 
 data_savepath = './tmp/' + env_name + '/'

@@ -39,8 +39,12 @@ class AggBuffer(object):
             continuous[bool] - if the action space is continuous, otherwise assume int8
             max_sample[int] - largest size the buffer can take 
         """
-        
-        self.buffer = {'observation':np.empty((0, spaces['observation'])),
+        obs_space = (0,) + spaces['observation']
+        if len(obs_space) == 4:
+            self.buffer = {'observation':np.empty(obs_space, dtype=np.uint8),
+                        'action':np.empty((0, spaces['action']))}
+        else:
+            self.buffer = {'observation':np.empty(obs_space),
                         'action':np.empty((0, spaces['action']))}
         self.store_q = False
         
@@ -63,6 +67,8 @@ class AggBuffer(object):
             self.buffer['goal'] = np.append(self.buffer['goal'], state['desired_goal'][None,:], axis=0)
             self.buffer['observation'] = np.append(self.buffer['observation'], state['observation'][None,:], axis=0)
         else:
+            if state.ndim == 4:
+                state = state[0, :, :, :]
             self.buffer['observation'] = np.append(self.buffer['observation'], state[None,:], axis=0)
             
         action = np.atleast_1d(action)

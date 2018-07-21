@@ -5,11 +5,14 @@ import tensorflow as tf
 import os
 import random
 
-from active_imitation.experts import CartPole_iLQR, LunarLander_Expert, RoboticEnv_Expert
-from active_imitation.agents import GymAgent, GymRobotAgent
+from active_imitation.experts import CartPole_iLQR, LunarLander_Expert, RoboticEnv_Expert, SpaceInvadersExpert
+from active_imitation.agents import GymAgent, GymRobotAgent, AtariGymAgent
 
 from active_imitation.utils import configure
 from active_imitation.experts import trained_models
+
+from baselines.common.vec_env.vec_frame_stack import VecFrameStack
+from baselines.common.cmd_util import make_atari_env
 
 """
 Use this script for training on the classic OpenAI gym environments
@@ -45,23 +48,33 @@ def main(env_name, mode, episodes, random_sample, save_path, concrete, expert_fi
     save_path - where the model and tf loggin data should be saved to
     """
     seed = random.randint(0, 1e6)
-    env = gym.make(env_name)
-    env.seed(seed)
+    isSpace = env_name[:5] == 'Space'
+    if isSpace:
+        wrapper_kwargs = {'episode_life':False}
+        env = VecFrameStack(make_atari_env(env_name, 1, 0, wrapper_kwargs=wrapper_kwargs), 4)
+    else:
+        env = gym.make(env_name)
+        env.seed(seed)
     
     isFetch = env_name[:5] == 'Fetch'
-
     if isFetch: # That's so fetch
         from active_imitation.agents.mujoco_robot import DEFAULT_PARAMS
         action_size = env.action_space.shape[0]
-        observation_size = env.observation_space.spaces['observation'].shape[0]
+        observation_size = env.observation_space.spaces['observation'].shape
         goal_size = env.observation_space.spaces['desired_goal'].shape[0]
         env_dims = {'observation':observation_size, 'goal':goal_size, 'action':action_size}
+    elif isSpace:
+        from active_imitation.agents.classic_gym import DEFAULT_PARAMS
+        action_size = 1
+        action_space = env.action_space.n
+        observation_size = env.observation_space.shape
+        env_dims = {'observation':observation_size, 'action':action_size, 'action_space':action_space}
     else:
         from active_imitation.agents.classic_gym import DEFAULT_PARAMS
         # Need the spaces dimensions to initialize the NN agent    
         action_size = 1 # Single, discrete actions
         action_space = env.action_space.n
-        observation_size = env.observation_space.shape[0]
+        observation_size = env.observation_space.shape
         env_dims = {'observation':observation_size, 'action':action_size, 'action_space':action_space}
     
     # Change the dimensions of the nn layers
@@ -71,7 +84,7 @@ def main(env_name, mode, episodes, random_sample, save_path, concrete, expert_fi
     params['dropout_rate'] = dropout #[0.05, 0.1, 0.15, 0.2]
     params['filepath'] = save_path
     params['lr'] = lr
-    if isFetch:
+    if isFetch or isSpace:
         params['layers'] = [256, 256, 256] #[512, 512, 512] #
         params['concrete'] = concrete
         params['ls'] = ls
@@ -92,6 +105,11 @@ def main(env_name, mode, episodes, random_sample, save_path, concrete, expert_fi
         agent = GymRobotAgent(env_dims, **params)
         expert = RoboticEnv_Expert(policy_files[env_name])
         continuous = True
+    elif isSpace:
+        expert = SpaceInvadersExpert({'observation':env.observation_space, 'action':env.action_space})
+        agent = AtariGymAgent(env_dims, **params)
+        continuous = False
+        param_mods['isSpace'] = True
     else:
         agent = GymAgent(env_dims, **params)
         expert = experts[env_name](env.unwrapped)
@@ -100,7 +118,7 @@ def main(env_name, mode, episodes, random_sample, save_path, concrete, expert_fi
     learning_mode = configure.configure_robot(env, env_dims, agent, expert, 
                                               mode, continuous=continuous, 
                                               concrete=concrete, param_mods=param_mods)  
-    
+
     ## Save the training parameters
     # learning rate, dropout, isconcrete, iscontinuout, env_name, mode, 
     parameter_savefile = os.path.join(save_path, 'parameters.txt')
@@ -120,12 +138,20 @@ def main(env_name, mode, episodes, random_sample, save_path, concrete, expert_fi
         for label, value in params.items():
             f.write('{}: {}\n'.format(label, value))
         f.write('Random Seed: {}\n'.format(seed))
-                                                                 
+    
+    if isSpace:
+        save_rate = 1000
+        valid_runs = 1
+    else:
+        save_rate = 100
+        valid_runs = 5
     rewards, stats = learning_mode.train(episodes=episodes, 
                                         mixing_decay=mixing_decay,
                                         train_epochs=train_epochs,
                                         save_images=False,
-                                        image_filepath=save_path+'images/')
+                                        image_filepath=save_path+'images/',
+                                        save_rate=save_rate,
+                                        valid_runs=valid_runs,)
     if save_model:
         agent.save_model()
     agent.sess.close()

@@ -12,10 +12,10 @@ DEFAULT_PARAMS = {
     'filepath': '~/Research/experiments/tmp/'
 }
 
-class GymAgent(object):
+class AtariGymAgent(object):
     
     def __init__(self, env_dims, layers, lr, dropout_rate, 
-                concrete, filepath='tmp/'):
+                concrete, filepath='tmp/', **kwargs):
         """
         Learner agent for OpenAI Gym's classic environments like CartPole and LunarLander
         
@@ -37,9 +37,9 @@ class GymAgent(object):
         
         self.total_samples = 1
         
-        self.sess = tf.get_default_session()
-        if self.sess is None:
-            self.sess =  tf.InteractiveSession()
+        self.sess = tf.Session()
+        # if self.sess is None:
+        #     self.sess =  tf.InteractiveSession()
         
         self.hetero_loss = concrete
         self._build_network()
@@ -50,6 +50,7 @@ class GymAgent(object):
         self.writer = tf.summary.FileWriter(filepath+'events/', self.sess.graph)
         
     def _build_network(self):
+        
         wr = 1e-4
         input_size = (None,) + self.env_dims['observation']
         output_size = self.env_dims['action_space']
@@ -59,24 +60,33 @@ class GymAgent(object):
             self.expert_action = tf.placeholder(tf.int32, [None, ], name='Expert_Action')
             self.apply_dropout = tf.placeholder(tf.bool)
         
-        network = denseNet(self.state, self.layers, self.dropout_rate, self.apply_dropout, reg_weight=wr, name='Model')
-        logits = tf.layers.dense(inputs=network, units=output_size, kernel_initializer=tf.random_normal_initializer(), kernel_regularizer=tf.contrib.layers.l2_regularizer(wr))
-        self.policy = tf.nn.softmax(logits, name="Policy_Output")
-        self.log_var = tf.layers.dense(inputs=network, units=output_size, kernel_initializer=tf.random_normal_initializer(1.), kernel_regularizer=tf.contrib.layers.l2_regularizer(wr))
-        
+        scaled_obs = tf.cast(self.state, tf.float32) / 255.
+        conv_1 = tf.layers.conv2d(inputs=scaled_obs, filters=32, kernel_size=8, strides=4,
+                            kernel_initializer=None, activation=tf.nn.relu)
+        conv_2 = tf.layers.conv2d(inputs=conv_1, filters=64, kernel_size=4, strides=2,
+                            kernel_initializer=None, activation=tf.nn.relu)
+        conv_3 = tf.layers.conv2d(inputs=conv_2, filters=64, kernel_size=3, strides=1,
+                            kernel_initializer=None, activation=tf.nn.relu)
+        nh = np.prod([v.value for v in conv_3.get_shape()[1:]])
+        flat_c3 = tf.reshape(conv_3, [-1, nh])
+
+        fc_layers = denseNet(flat_c3, self.layers, self.dropout_rate, self.apply_dropout, reg_weight=wr, name='FC_Layers')
+        logits = tf.layers.dense(inputs=fc_layers, units=output_size, kernel_initializer=tf.random_normal_initializer(), kernel_regularizer=tf.contrib.layers.l2_regularizer(wr))
+        self.policy = tf.nn.softmax(logits, name='Policy_output')
+        self.log_var = tf.layers.dense(inputs=fc_layers, units=output_size, kernel_initializer=tf.random_normal_initializer(1.0), kernel_regularizer=tf.contrib.layers.l2_regularizer(wr))
+
         with tf.name_scope("Loss"):
             self.reg_losses = tf.reduce_sum(tf.losses.get_regularization_losses())
             labels = tf.one_hot(self.expert_action, output_size, axis=-1)
             self.ce_loss = tf.losses.softmax_cross_entropy(labels, logits, reduction=tf.losses.Reduction.NONE) 
             
-            self.hetero_loss
             if self.hetero_loss:
                 self.ce_loss = tf.reshape(self.ce_loss, [tf.shape(self.ce_loss)[0],1])
                 precision = tf.exp(-self.log_var)
                 self.loss = tf.reduce_mean(tf.reduce_sum(precision*self.ce_loss + self.log_var + self.reg_losses, -1),-1)
                 # self.loss = self.ce_loss + self.reg_losses
             else:
-                self.ce_loss = tf.reduce_sum(self.ce_loss, -1)
+                self.ce_loss = tf.reduce_sum(self.ce_loss, -1)#tf.reduce_mean(self.ce_loss, -1)
                 self.loss = self.ce_loss + self.reg_losses
             # self.loss = self.ce_loss + self.reg_losses
             # self.global_step = tf.Variable(0, trainable=False, name='global_step')
@@ -86,17 +96,17 @@ class GymAgent(object):
             grads_and_vars = train_opt.compute_gradients(self.loss)
             for idx, (grad, var) in enumerate(grads_and_vars):
                 if grad is not None:
-                    grad_val = tf.Print(grad, [tf.norm(grad), tf.norm(var), tf.norm(tf.clip_by_norm(grad, 10))])
-                    grads_and_vars[idx] = (tf.clip_by_norm(grad,10), var)
+                    # grad_val = tf.Print(grad, [tf.norm(grad), tf.norm(var), tf.norm(tf.clip_by_norm(grad, 10))])
+                    grads_and_vars[idx] = (tf.clip_by_norm(grad, 10), var)
             self.opt = train_opt.apply_gradients(grads_and_vars)
-
         assert len(tf.losses.get_regularization_losses()) == len(self.layers) + 2, print(len(tf.losses.get_regularization_losses()))
-            
+    
     def update(self, batch):
         feed_dict = {self.state:batch['observation'], self.expert_action:batch['action'].flatten(), 
                     self.apply_dropout:True}
+        
+        # import ipdb; ipdb.set_trace()        
         _, loss, reg_loss, ce_loss, log_var = self.sess.run([self.opt, self.loss, self.reg_losses, self.ce_loss, self.log_var], feed_dict=feed_dict)
-        # import ipdb; ipdb.set_trace()
         # print("Cross Entropy Loss: {} \nPrecision: {} \nReg. Loss: {} \nTotal Loss: {}".format(ce_loss, precision, reg_loss, loss))
         return loss
     
@@ -110,7 +120,7 @@ class GymAgent(object):
         policy = self._samplePolicy(state, apply_dropout)
         # Could either sample actions or take max action
         # For now take max
-        action  = np.argmax(policy)
+        action  = np.argmax(policy, axis=1)
         return action
     
     def samplePolicy(self, state, batch=32, apply_dropout=True):

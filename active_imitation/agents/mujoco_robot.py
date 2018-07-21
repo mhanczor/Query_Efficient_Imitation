@@ -63,7 +63,7 @@ class GymRobotAgent(object):
             
     def _build_network(self):
                     
-        o_dim = self.env_dims['observation']
+        o_dim = self.env_dims['observation'][0]
         g_dim = self.env_dims['goal']
         a_dim = self.env_dims['action']
         wr = 1e-5
