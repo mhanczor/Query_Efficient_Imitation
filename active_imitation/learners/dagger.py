@@ -56,12 +56,12 @@ class DAgger(object):
             print("WARNING: No data available to train")
             return 0
         
-        if samples > 300:
-            batch_size = 256 # using this to speed up training of large dataset tasks
-        if samples > 2000:
-            batch_size = 512
-        if samples > 10000:
-            batch_size = 1024
+        # if samples > 300:
+        #     batch_size = 256 # using this to speed up training of large dataset tasks
+        # if samples > 2000:
+        #     batch_size = 512
+        # if samples > 10000:
+        #     batch_size = 1024
         
         if self.continuous:
             self.learner.total_samples = samples
