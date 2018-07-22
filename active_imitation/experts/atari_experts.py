@@ -29,6 +29,10 @@ class SpaceInvadersExpert(object):
     def sampleAction(self, obs):
         action, value, state, neglogpac = self.model.step(obs)
         return action
+    
+    def close(self):
+        tf.reset_default_graph()
+        self.sess.close()
 
 
 if __name__ == "__main__":

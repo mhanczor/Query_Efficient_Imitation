@@ -157,9 +157,15 @@ def main(env_name, mode, episodes, random_sample, save_path, concrete=False, exp
                                         valid_runs=valid_runs,)
     if save_model:
         agent.save_model()
+    
+    
+    if isSpace:
+        expert.close()
+        
     agent.sess.close()
     env.close()
     tf.reset_default_graph()
+    
     return rewards, stats
 
 if __name__ == "__main__":
