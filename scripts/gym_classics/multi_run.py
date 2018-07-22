@@ -10,13 +10,13 @@ LunarLander-v2
 SpaceInvadersNoFrameskip-v0
 """
 
-env_name = 'SpaceInvadersNoFrameskip-v0'#'CartPole-v1'
-# env_name = 'LunarLander-v2'
+# env_name = 'SpaceInvadersNoFrameskip-v0'#'CartPole-v1'
+env_name = 'LunarLander-v2'
 mode = 'pool'
-expert_first = True
+expert_first = False
 save_model = True
 episodes = 100 #50 for LL, 20 for CP
-random_sample = False
+random_sample = True
 dropout = 0.05 # much smaller network here usually [16, 16, 16]
 learning_rate = 1e-3
 run_no = 'SI'
@@ -24,6 +24,7 @@ samples = 10
 train_epochs = 10
 density = 0.0
 hetero_loss = False
+budget = 2
 """ IF DENSITY != 0.0 AND RANDOM == TRUE, THEN DW ONLY"""
 
 data_savepath = './tmp/' + env_name + '/'
@@ -37,8 +38,8 @@ for i in range(samples):
     data_savefile = data_savepath + env_name + '-' + mode
     if random_sample:
          data_savefile += '-random'
-    if concrete:
-        data_savefile += '-concrete'
+    if hetero_loss:
+        data_savefile += '-hetero'
     data_savefile += '-multi'
     if run_no != '': data_savefile += '-'+run_no
     data_savefile += '/'
@@ -48,7 +49,7 @@ Last Episode Length: {} Total Training Time: {} \n'.format(i+1, samples, env_nam
     rewards, stats = train.main(env_name, mode, episodes, random_sample, 
                                 data_savefile + str(i) + '/', expert_first=expert_first, 
                                 save_model=save_model, dropout=dropout, hetero_loss=hetero_loss,
-                                lr=learning_rate, train_epochs=train_epochs, density=density)
+                                lr=learning_rate, train_epochs=train_epochs, density=density, budget=budget)
     stats = np.array(stats)
     saved_stats = np.atleast_3d(stats) if saved_stats is None else np.append(saved_stats, stats[:,:, None], axis=2)
 
@@ -58,8 +59,8 @@ Last Episode Length: {} Total Training Time: {} \n'.format(i+1, samples, env_nam
     sf = data_savefile + env_name + '-' + mode
     if random_sample:
         sf += '-random'
-    if concrete:
-        sf += '-concrete'
+    if hetero_loss:
+        sf += '-hetero'
     sf += '-multi'
     if run_no != '': sf += '-'+run_no
     sf += '.npy'

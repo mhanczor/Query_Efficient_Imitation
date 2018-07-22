@@ -1,7 +1,7 @@
 
 from active_imitation.utils import AggBuffer
 # from active_imitation.learners.active import Hindsight_DAgger, Efficient_DAgger
-from active_imitation.active_learning import entropyAction, QBC_KL, QBC_JSD, varianceAction, concreteUncertainty
+from active_imitation.active_learning import entropyAction, QBC_KL, QBC_JSD, varianceAction, concreteUncertainty, QBC_JSD_Single
 # from active_imitation.learners import DAgger
 from active_imitation.learners import DAgger, Hindsight_DAgger, Efficient_DAgger
 
@@ -32,7 +32,11 @@ def configure_robot(env, env_dims, agent, expert, mode, continuous, concrete, pa
     if mode == 'pool':
         params.update(POOL_DEFAULT)
         if not continuous:
-            params['action_selection'] = QBC_JSD#QBC_KL
+            if 'isSpace' in param_mods:
+                if param_mods['isSpace']:
+                    params['action_selection'] = QBC_JSD
+            else:
+                params['action_selection'] = QBC_JSD_Single#QBC_KL
         elif concrete:
             params['action_selection'] = concreteUncertainty
     elif mode == 'stream':

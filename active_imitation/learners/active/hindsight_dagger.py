@@ -9,11 +9,12 @@ import time
 class Hindsight_DAgger(DAgger):
     
     def __init__(self, env, learner, expert, agg_buffer, action_selection, 
-                    mixing=0.0, random_sample=False, continuous=False, density_weight=0.0, **kwargs):
+                    mixing=0.0, random_sample=False, continuous=False, density_weight=0.0, budget=1, **kwargs):
         super(Hindsight_DAgger, self).__init__(env, learner, expert, agg_buffer, mixing, continuous, **kwargs)
         self.random_sample = random_sample
         self.learner_predict = action_selection # This is a function 
         self.density_weight = density_weight
+        self.budget = budget
     
     def generateExpertSamples(self, mixing_decay=0.1, num_samples=1, save_image=False):
         """
@@ -64,45 +65,51 @@ class Hindsight_DAgger(DAgger):
             samples are the max over the action metric, this metric can be whatever
             """
             trajectory_belief = np.array(trajectory_belief)
-            if (self.random_sample and not self.density_weight) or len(trajectory_belief) == 1:
-                best_ind = random.randint(0, len(trajectory_belief)-1)
-            else:
-                # Select the state that had the highest uncertainty
-                # If there are multiple states with the same uncertainty, randomly select between them
-                trajectory_belief = trajectory_belief.squeeze()
-                if self.density_weight:
-                    weighting = self.densityWeighting(states)**self.density_weight
-                    if self.random_sample:
-                        trajectory_belief = weighting # If we just want points to be selected by density weighting
-                    else:
-                        trajectory_belief *= weighting
-                best_val = np.max(trajectory_belief)
-                val_ind = np.argwhere(trajectory_belief == best_val)
-                if val_ind.shape[0] > 1:
-                    print('WARNING: SELECTING FROM MULTIPLE EQUIVALENT STATES')
-                    best_ind = np.random.choice(val_ind.squeeze())
-                    print(best_val)
-                else:
-                    best_ind = val_ind[0,0]
-
-            state = trajectory_states[best_ind]
-            action = self.expert.sampleAction(state)
-            self.dataset.store(state, action)
-            expert_samples += 1
             
-            # if num_samples == 1:
-            #     sample_metric  = tf.Summary(value=[tf.Summary.Value(tag='Selected_Sample_Metric_Value', simple_value=valid_reward)])
-            #     self.learner.writer.add_summary(reward_per_samples, global_step=total_expert_samples)
-            selected_utility = trajectory_belief[best_ind]
+            # Apply density weighting to the states if necessary
+            if self.density_weight:
+                weighting = self.densityWeighting(states)**self.density_weight
+                if self.random_sample:
+                    trajectory_belief = weighting # If we just want points to be selected by density weighting and not by trajectory uncertainty
+                else:
+                    trajectory_belief *= weighting # Combining density weighting and uncertainty
+                            
+            N = len(trajectory_belief)
+            if N <= self.budget:
+                best_indices = np.arange(N) # If we have more budget than states, take them all 
+            elif self.random_sample and not self.density_weight:
+                best_indices = np.random.choice(N, self.budget) # If we are randomly selecting, return random indices up to the budget size
+                # best_ind = random.randint(0, len(trajectory_belief)-1)
+            else:
+                # Use argpartition to quickly select the largest uncertainty indices unordered
+                best_indices = np.argpartition(trajectory_belief, -self.budget)[-self.budget:]
+        
+            for index in best_indices:
+                state = trajectory_states[index]
+                action = self.expert.sampleAction(state)
+                self.dataset.store(state, action)
+                expert_samples += 1
+            
+            avg_selected_utility = np.mean(trajectory_belief[best_indices])
         else:
-            selected_utility = 0. # Don't select examples if the expert is providing them all 
+            avg_selected_utility = 0. # Don't select examples if the expert is providing them all 
         
         self.mixing += mixing_decay    
         state_imgs = []
         if save_image:
             state_imgs = [img_arr[best_ind]]
 
-        return expert_samples, state_imgs, selected_utility #TODO do we actually need to return any of this?
+        return expert_samples, state_imgs, avg_selected_utility #TODO do we actually need to return any of this?
+    
+    # REMOVED THIS WARNING, SOMTHING TO THINK ABOUT!
+    # best_val = np.max(trajectory_belief)
+    # val_ind = np.argwhere(trajectory_belief == best_val)
+    # if val_ind.shape[0] > 1:
+    #     print('WARNING: SELECTING FROM MULTIPLE EQUIVALENT STATES')
+    #     best_ind = np.random.choice(val_ind.squeeze())
+    #     print(best_val)
+    # else:
+    #     best_ind = val_ind[0,0]
     
     def densityWeighting(self, obs):
         # For Fetch envs we'll only need the state, the goal is the same for every timestep

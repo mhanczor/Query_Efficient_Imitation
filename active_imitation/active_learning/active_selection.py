@@ -45,9 +45,9 @@ def QBC_KL(learner, state):
     policy_sum = np.sum(p_consensus)
     if policy_sum > 1.0:
         p_consensus = p_consensus / policy_sum
-
+    
     action = np.argmax(p_consensus)
-        
+    
     # Return the average divergence along with the sampled action from the consensus        
     return action, avg_kl
 
@@ -86,6 +86,12 @@ def QBC_JSD(learner, state):
 
     # Return the average divergence along with the sampled action from the consensus        
     return action, JSD
+
+def QBC_JSD_Single(learner, state):
+    # This way we can handle spaceinvaders and typical gym envs
+    action, jsd = QBC_JSD(learner, state)
+    action = int(action)
+    return action, jsd
     
 def varianceAction(learner, state):
     """
