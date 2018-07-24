@@ -2,6 +2,7 @@ import numpy as np
 import tensorflow as tf
 import os
 import random
+import mujoco_py
 
 """
 Running things to fix:
@@ -167,7 +168,7 @@ class DAgger(object):
             valid_acc = float(total_correct_labels) / total_steps 
         else:
             valid_acc = total_error / total_steps
-        
+        raise mujoco_py.builder.MujocoException
         return valid_reward, valid_acc, avg_success
     
     def train(self, episodes=100, mixing_decay=0.1, train_epochs=10, 
@@ -204,12 +205,20 @@ class DAgger(object):
                     filename = image_filepath + 'episode_' + str(ep) + '_' + str(num) + '.png'
                     imsave(filename, image)
             else:
-                expert_samples, _, utility_measure = self.generateExpertSamples(mixing_decay=mixing_decay)
+                try:
+                    expert_samples, _, utility_measure = self.generateExpertSamples(mixing_decay=mixing_decay)
+                except mujoco_py.builder.MujocoException:
+                    print('Encountered Mujoco Error While Training!')
+                    return validation, stats
 
             final_loss = self.updateAgent(epochs=train_epochs)
             total_expert_samples += expert_samples
             
-            valid_reward, valid_acc, avg_successes = self.validateAgent(valid_runs)
+            try:
+                valid_reward, valid_acc, avg_successes = self.validateAgent(valid_runs)
+            except mujoco_py.builder.MujocoException:
+                print('Encountered Mujoco Error While Training!')
+                return validation, stats
             validation.append(valid_reward)
             
             # Is there a good way to clean this up?
@@ -235,9 +244,14 @@ class DAgger(object):
             if total_expert_samples % save_rate == 0 or (total_expert_samples - n_saved * save_rate) > save_rate:
                 self.learner.save_model(expert_samples=total_expert_samples)
                 n_saved = total_expert_samples // save_rate
+        
+        try:
+            valid_reward, valid_acc, avg_successes = self.validateAgent(5)
+            validation.append(valid_reward)
+        except mujoco_py.builder.MujocoException:
+            print('Encountered Mujoco Error While Training!')
+            return validation, stats
             
-        valid_reward, valid_acc, avg_successes = self.validateAgent(5)
-        validation.append(valid_reward)
         print("\n Training Complete")
         print("Final validation reward: {} total expert samples: {}".format(valid_reward, total_expert_samples))
         
