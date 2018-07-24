@@ -9,6 +9,7 @@ Running things to fix:
 Be able to revert to last best weights if validation is lower than previous?
     Don't actually need to do this, in practice just assume that the last trained policy is the best
 """
+stats_empty = [0]*8
 
 class DAgger(object):
     
@@ -168,7 +169,6 @@ class DAgger(object):
             valid_acc = float(total_correct_labels) / total_steps 
         else:
             valid_acc = total_error / total_steps
-        raise mujoco_py.builder.MujocoException
         return valid_reward, valid_acc, avg_success
     
     def train(self, episodes=100, mixing_decay=0.1, train_epochs=10, 
@@ -209,6 +209,8 @@ class DAgger(object):
                     expert_samples, _, utility_measure = self.generateExpertSamples(mixing_decay=mixing_decay)
                 except mujoco_py.builder.MujocoException:
                     print('Encountered Mujoco Error While Training!')
+                    validation.extend([-1,]*(episodes-ep))
+                    stats.extend([stats_empty]*(episodes-ep))
                     return validation, stats
 
             final_loss = self.updateAgent(epochs=train_epochs)
@@ -218,6 +220,8 @@ class DAgger(object):
                 valid_reward, valid_acc, avg_successes = self.validateAgent(valid_runs)
             except mujoco_py.builder.MujocoException:
                 print('Encountered Mujoco Error While Training!')
+                validation.extend([-1,]*(episodes-ep))
+                stats.extend([stats_empty]*(episodes-ep))
                 return validation, stats
             validation.append(valid_reward)
             
@@ -250,6 +254,8 @@ class DAgger(object):
             validation.append(valid_reward)
         except mujoco_py.builder.MujocoException:
             print('Encountered Mujoco Error While Training!')
+            validation.extend([-1,])
+            stats.extend([stats_empty])
             return validation, stats
             
         print("\n Training Complete")
