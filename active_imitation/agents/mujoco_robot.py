@@ -97,7 +97,7 @@ class GymRobotAgent(object):
                 self.loss = tf.reduce_mean(heteroscedastic_loss(self.expert_action, self.prediction), -1)
             
             else:   
-                grad_clip = 2
+                grad_clip = 1e6 # Effectively want to remove this, not going to delete it now though
                 self.mse = tf.losses.mean_squared_error(self.expert_action, self.policy)
                 self.loss = self.mse + self.reg_losses
             
