@@ -143,8 +143,11 @@ def main(env_name, mode, episodes, random_sample, save_path, concrete=False, exp
         f.write('Random Seed: {}\n'.format(seed))
     
     if isSpace:
-        save_rate = 1000
+        save_rate = 5000
         valid_runs = 1
+    elif isFetch:
+        save_rate = 100
+        valid_runs = 5
     else:
         save_rate = 100
         valid_runs = 5
