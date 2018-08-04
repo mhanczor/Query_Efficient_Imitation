@@ -34,6 +34,7 @@ class Hindsight_DAgger(DAgger):
             unwr_env = self.env.unwrapped
         
         # Generate an episode, store all the visited states
+        successes = 0
         while not done:
             states.append(state)
             learner_action, action_uncertainty = self.learner_predict(self.learner, state)
@@ -51,7 +52,16 @@ class Hindsight_DAgger(DAgger):
                 arr = self.env.render(mode='rgb_array')
                 img_arr.append(arr)
             
-            state, reward, done, _ = self.env.step(action)
+            state, reward, done, info = self.env.step(action)
+            
+            if self.continuous: # If using a robot env, check for success
+                success = info['is_success']
+                if success:
+                    successes += 1
+                else:
+                    successes = 0
+                if successes >= 5:
+                    done = True
             # try:
             #     state, reward, done, _ = self.env.step(action)
             # except:

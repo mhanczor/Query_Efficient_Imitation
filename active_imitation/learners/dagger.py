@@ -62,8 +62,8 @@ class DAgger(object):
         #     batch_size = 256 # using this to speed up training of large dataset tasks
         # if samples > 2000:
         #     batch_size = 512
-        if samples > 10000:
-            batch_size = 521
+        if self.isSpace and samples > 10000:
+            batch_size = 1024
         
         if self.continuous:
             self.learner.total_samples = samples
@@ -89,6 +89,7 @@ class DAgger(object):
         episode_length = 0
         correct_labels = 0
         success = 0.0
+        successes = 0.0
         while not done:
             action = agent.sampleAction(state)#.squeeze() # sampleAction returns 2d arrays, need 1D
             expert_action = self.expert.sampleAction(state)
@@ -109,6 +110,12 @@ class DAgger(object):
             episode_length += 1
             if self.continuous: # If using a robot env, check for success
                 success = info['is_success']
+                if success:
+                    successes += 1
+                else:
+                    successes = 0
+                if successes >= 5:
+                    done = True
             if render:
                 self.env.render()
         if self.isSpace:
@@ -123,6 +130,7 @@ class DAgger(object):
         state = self.env.reset()
         done = False
         expert_samples = 0
+        successes = 0
         while not done:
             # Mix policies by randomly choosing between them
             if random.random() >= self.mixing:
@@ -143,6 +151,16 @@ class DAgger(object):
             
             expert_samples += 1
             total_reward += reward
+            
+            if self.continuous: # If using a robot env, check for success
+                success = info['is_success']
+                if success:
+                    successes += 1
+                else:
+                    successes = 0
+                if successes >= 5:
+                    done = True
+            
         if self.isSpace:
             total_reward = info[0]['episode']['r']
         self.mixing += mixing_decay
