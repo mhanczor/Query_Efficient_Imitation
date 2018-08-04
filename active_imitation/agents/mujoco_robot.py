@@ -147,8 +147,8 @@ class GymRobotAgent(object):
             if grad is not None:
                 grad_val = tf.Print(grad, [tf.norm(grad), tf.norm(var), tf.norm(tf.clip_by_norm(grad, clip_val))])
                 grads_and_vars[idx] = (tf.clip_by_norm(grad, clip_val), var)
-        # self.opt = train_opt.apply_gradients(grads_and_vars)
-        self.opt = tf.train.AdamOptimizer(self.lr).minimize(self.loss)
+        self.opt = train_opt.apply_gradients(grads_and_vars)
+        # self.opt = tf.train.AdamOptimizer(self.lr).minimize(self.loss)
         assert len(tf.losses.get_regularization_losses()) == len(self.layers) + 2, print(len(tf.losses.get_regularization_losses()))
         
     def update(self, batch):
