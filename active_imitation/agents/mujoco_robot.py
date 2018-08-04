@@ -65,11 +65,11 @@ class GymRobotAgent(object):
             
     def _build_network(self):
                     
-        o_dim = self.env_dims['observation'][0]
+        o_dim = self.env_dims['observation'][0] # diff here
         g_dim = self.env_dims['goal']
         a_dim = self.env_dims['action']
         wr = 1e-5
-
+         
         self.dropout = tf.Variable(self.dropout_rate, name='Dropout_Rate')
         self.apply_dropout = tf.placeholder(tf.bool)
         
@@ -85,33 +85,23 @@ class GymRobotAgent(object):
             # Continuous action spaces, MSE loss
             self.expert_action = tf.placeholder(tf.float32, [None, a_dim], name='Expert_Action')
             self.reg_losses = tf.reduce_sum(tf.losses.get_regularization_losses())
-            if self.hetero_loss:
-                grad_clip = 50
-                def heteroscedastic_loss(true, pred):
-                    mean = pred[:, :a_dim] # Just separating out the concatenation from above
-                    log_var = pred[:, a_dim:]
-                    precision = tf.exp(-log_var)
-                    return tf.reduce_sum(precision * (true - mean)**2. + log_var + self.reg_losses, -1)                        
-                
-                self.expert_action = tf.placeholder(tf.float32, [None, a_dim], name='Expert_Action')
-                self.loss = tf.reduce_mean(heteroscedastic_loss(self.expert_action, self.prediction), -1)
             
-            else:   
-                grad_clip = 1e6 # Effectively want to remove this, not going to delete it now though
-                self.mse = tf.losses.mean_squared_error(self.expert_action, self.policy)
-                self.loss = self.mse + self.reg_losses
+            self.mse = tf.losses.mean_squared_error(self.expert_action, self.policy)
+            self.loss = self.mse + self.reg_losses
             
         with tf.name_scope("Opt"):
-            # Adam optimzer with a fixed lrz
+            # self.opt = tf.train.AdamOptimizer(self.lr).minimize(self.loss)  
+            
             train_opt = tf.train.AdamOptimizer(self.lr)
             grads_and_vars = train_opt.compute_gradients(self.loss)
+            clip_amt = 0.5
             for idx, (grad, var) in enumerate(grads_and_vars):
                 if grad is not None:
-                    grad_val = tf.Print(grad, [tf.norm(grad), tf.norm(var), tf.norm(tf.clip_by_norm(grad, grad_clip))])
-                    grads_and_vars[idx] = (tf.clip_by_norm(grad, grad_clip), var)
+                    grad_val = tf.Print(grad, [tf.norm(grad), tf.norm(var), tf.norm(tf.clip_by_norm(grad, clip_amt))])
+                    grads_and_vars[idx] = (tf.clip_by_norm(grad, clip_amt), var)  
+            # self.opt = tf.train.GradientDescentOptimizer(self.lr).minimize(self.loss)
+            # self.opt = tf.train.AdagradOptimizer(self.lr).minimize(self.loss)      
             self.opt = train_opt.apply_gradients(grads_and_vars)
-            # self.opt = tf.train.AdamOptimizer(self.lr).minimize(self.loss)    
-            
         assert len(tf.losses.get_regularization_losses()) == len(self.layers) + 2, print(len(tf.losses.get_regularization_losses()))
         
     def _build_concrete_network(self):
@@ -147,17 +137,18 @@ class GymRobotAgent(object):
             precision = tf.exp(-log_var)
             self.reg_losses = tf.reduce_sum(tf.losses.get_regularization_losses())
             return tf.reduce_sum(precision * (true - mean)**2. + log_var + self.reg_losses, -1)                        
-        
         self.expert_action = tf.placeholder(tf.float32, [None, a_dim], name='Expert_Action')
         self.loss = tf.reduce_mean(heteroscedastic_loss(self.expert_action, self.prediction), -1)
         
         train_opt = tf.train.AdamOptimizer(self.lr)
         grads_and_vars = train_opt.compute_gradients(self.loss)
+        clip_val = 1
         for idx, (grad, var) in enumerate(grads_and_vars):
             if grad is not None:
-                grad_val = tf.Print(grad, [tf.norm(grad), tf.norm(var), tf.norm(tf.clip_by_norm(grad, 50))])
-                grads_and_vars[idx] = (tf.clip_by_norm(grad, 50), var)
-        self.opt = train_opt.apply_gradients(grads_and_vars)
+                grad_val = tf.Print(grad, [tf.norm(grad), tf.norm(var), tf.norm(tf.clip_by_norm(grad, clip_val))])
+                grads_and_vars[idx] = (tf.clip_by_norm(grad, clip_val), var)
+        # self.opt = train_opt.apply_gradients(grads_and_vars)
+        self.opt = tf.train.AdamOptimizer(self.lr).minimize(self.loss)
         assert len(tf.losses.get_regularization_losses()) == len(self.layers) + 2, print(len(tf.losses.get_regularization_losses()))
         
     def update(self, batch):
