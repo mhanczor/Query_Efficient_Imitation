@@ -13,8 +13,8 @@ from baselines.common.cmd_util import make_atari_env
 
 import numpy as np
 
-env_name = 'SpaceInvadersNoFrameskip-v0'
-validation_runs = 30
+env_name = 'FetchPush-v1'
+validation_runs = 1000
 
 prefix = os.path.dirname(trained_models.__file__)
 policy_files = {'FetchReach-v1': os.path.join(prefix, 'FetchReach-v1/policy_best.pkl'),
