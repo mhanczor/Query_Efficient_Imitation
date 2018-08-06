@@ -1,5 +1,5 @@
 
-from active_imitation.utils import AggBuffer
+from active_imitation.utils import AggBuffer, ListBuffer
 # from active_imitation.learners.active import Hindsight_DAgger, Efficient_DAgger
 from active_imitation.active_learning import entropyAction, QBC_KL, QBC_JSD, varianceAction, concreteUncertainty, QBC_JSD_Single
 # from active_imitation.learners import DAgger
@@ -19,9 +19,13 @@ POOL_DEFAULT = {'random_sample': False,
 STREAM_DEFAULT = {'random_sample': False}
 
 #TODO Don't have env_dims and envs as arguments, gotta be a better way
-def configure_robot(env, env_dims, agent, expert, mode, continuous, concrete, param_mods=None):
+def configure_robot(env, env_dims, agent, expert, mode, continuous, concrete, param_mods=None, list_buffer=True):
     
-    agg_buffer = AggBuffer(env_dims, continuous=True)
+    if list_buffer:
+        agg_buffer = ListBuffer(env_dims, continuous=True)
+    else:
+        agg_buffer = AggBuffer(env_dims, continuous=True)
+        
     params = DEFAULT_PARAMS
     
     if mode in MODES:
