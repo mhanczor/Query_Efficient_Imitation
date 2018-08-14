@@ -1,4 +1,0 @@
-Environment: FetchPickAndPlace-v1 
-# of Runs: 1000 
-Average Reward: -11.277999999999933 
-Average Success Rate: 0.944

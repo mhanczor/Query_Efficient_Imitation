@@ -76,7 +76,7 @@ def interpolateData(data, data_axis=4, max_samples=None):
     """
     
     assert data[0,1,0] == 0
-    import ipdb; ipdb.set_trace()
+    # import ipdb; ipdb.set_trace()
     # Set the max number of samples
     if max_samples == None:
         max_samples = int(np.min(data[-1, 1, :])) #TODO Fix this Largest number of expert samples available
@@ -143,7 +143,6 @@ def plotData(data, labels=None, data_axis=4, expert=None, xlims=None, ylims=None
     ax.get_yaxis().tick_left()
     
     # Limit the range of the plot to the data
-    # plt.ylim(-60, 0)
     if xlims != None:
         plt.xlim(xlims[0], xlims[1])
     if ylims != None:
@@ -151,27 +150,28 @@ def plotData(data, labels=None, data_axis=4, expert=None, xlims=None, ylims=None
         # plt.yticks(range(ylims[0], ylims[1], (ylims[1] - ylims[0])/10.), fontsize=14)
     
     # Increase axis tick marks
-    # TODO set these tick marks to reflect the actual data, or let this be a keyword arg
     # plt.xticks(range(0, 100, 10), fontsize=14)
     # plt.yticks(range(-60, 0, 10), fontsize=14)
+    
+    ax.tick_params(labelsize=16)
     
     # Axis and title labels with increased size
     if labels == None:
         labels = ['X-Axis', 'Y-Axis', 'Title']
-    plt.xlabel(labels[0], fontsize=16)
-    plt.ylabel(labels[1], fontsize=16)
-    plt.title(labels[2], fontsize=22)
+    plt.xlabel(labels[0], fontsize=24)
+    plt.ylabel(labels[1], fontsize=24)
+    # plt.title(labels[2], fontsize=22) #### TODO WHEN MAKING SLIDE DECK
     
     # Show a horizontal line with the expert's performance if available
     if expert is not None:
-        plt.hlines(expert, xmin=0, xmax=20000, colors='r', 
+        plt.hlines(expert, xmin=0, xmax=20000, colors='#737373', 
                 label='Expert', linewidths=3, linestyles='dashdot') #linestyles : [‘solid’ | ‘dashed’ | ‘dashdot’ | ‘dotted’],
     
     # Pastel2 and Dark2 should be the colormaps used for confidence and mean resp.
     cmap = ['Dark2', 'Pastel2'] 
     
     # Iterate over the recorded datasets
-    i = 0
+    i = 0.0
     for name, values in data.items():
         if interpolate is not None and name in interpolate:
             values = interpolateData(values, data_axis=data_axis)
@@ -179,26 +179,13 @@ def plotData(data, labels=None, data_axis=4, expert=None, xlims=None, ylims=None
             for j in range(values.shape[2]):
                 values[:,data_axis,j] = smooth(values[:,data_axis,j], window_len=smoothing[name])
         x_axis, means, bands = formatConfidenceData(values, bound='std', data_axis=data_axis)
-        plt.plot(x_axis, means, lw=2, label=name, color=cm.Dark2(i)) # color = ???
-        plt.fill_between(x_axis, means - bands, means + bands, color=cm.Pastel2(i)) # color=???
-        i += 0.126
+        plt.plot(x_axis, means, lw=2, label=name, color=cm.Dark2(i)) 
+        plt.fill_between(x_axis, means - bands, means + bands, color=cm.Pastel2(i))
+        i += 0.126 # Change color
         
-    plt.legend(loc=4, prop={'size':20}) # There are up to 10 positions, 0 is best, 1 upper right, 4, lower right
+    plt.legend(loc=4, prop={'size':24}) # There are up to 10 positions, 0 is best, 1 upper right, 2 top left, 3, 4 lower right
     plt.show()
-    
-    
-    
-    # bbox_inches="tight" removes all the extra whitespace on the edges of your plot.  
-    # plt.savefig(filename, bbox_inches="tight") 
-        
-"""
-Want to be able to plot the data by passing in an arbitrary number of runs
-Each line should be associated with a label that gets added to the legend
-The data that gets passed in should be the raw data, and the confidence intervals
-are calculated in the function
 
-Don't need to make this too general, it's going to be used to plot 
-"""
         
 if __name__ == "__main__":
     

@@ -15,7 +15,7 @@ DEFAULT_PARAMS = {
 class GymRobotAgent(object):
     
     def __init__ (self, env_dims, layers, max_a, lr, 
-                    dropout_rate, concrete, ls, filepath='tmp/', load=False, hetero_loss=False):
+                    dropout_rate, concrete, ls, filepath='tmp/', load=None, hetero_loss=False):
         """
         Agent that learns via imitation to perform an OpenAI Robotic Task
             
@@ -58,9 +58,9 @@ class GymRobotAgent(object):
         self.sess.run(tf.global_variables_initializer())
         self.saver = tf.train.Saver(max_to_keep=50)
         
-        if load:
-            self._load_model()
-        else:
+        # if load:
+        #     self._load_model(load)
+        if not load:
             self.writer = tf.summary.FileWriter(self.filepath+'events/', self.sess.graph)
             
     def _build_network(self):
@@ -142,7 +142,7 @@ class GymRobotAgent(object):
         
         train_opt = tf.train.AdamOptimizer(self.lr)
         grads_and_vars = train_opt.compute_gradients(self.loss)
-        clip_val = 1
+        clip_val = 50
         for idx, (grad, var) in enumerate(grads_and_vars):
             if grad is not None:
                 grad_val = tf.Print(grad, [tf.norm(grad), tf.norm(var), tf.norm(tf.clip_by_norm(grad, clip_val))])
@@ -227,8 +227,8 @@ class GymRobotAgent(object):
         print('Saved Model as {}'.format(savefile))
     
     
-    def _load_model(self):
-        loadfile = os.path.join(self.filepath, 'model.ckpt')
+    def _load_model(self, file_num):
+        loadfile = os.path.join(self.filepath, 'checkpoints/model-'+ file_num + '_samples.ckpt')
         self.saver.restore(self.sess, loadfile)
         print('Model Loaded')
 

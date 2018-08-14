@@ -131,12 +131,11 @@ class ListBuffer(object):
             self.buffer['observation'].append(state['observation'])
         else:
             if state.ndim == 4:
-                state = state[0, :, :, :]
+                state = state[0, :, :, :].astype('uint8')
             self.buffer['observation'].append(state)
             
         action = np.atleast_1d(action)
         self.buffer['action'].append(action)
-        
         return
 
     def sample(self, indices):
