@@ -2,14 +2,9 @@ import numpy as np
 import tensorflow as tf
 
 
-""" Expert Classes """
-"""
-Expert classes should have the following:
-sampleAction(state): uses the expert to come up with an action given the state
-"""
-
 class LunarLander_Expert(object):
     def __init__(self, env, continuous=False):
+        """ Expert provided in OpenAI's LunarLander"""
         self.continuous = continuous
     
     def sampleAction(self, s):

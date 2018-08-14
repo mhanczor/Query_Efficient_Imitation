@@ -5,6 +5,9 @@ import pickle
 
 class RoboticEnv_Expert(object):
     def __init__(self, policy_file, request_q=False):
+        """
+        Trained experts using OpenAI's DDPG+HER baseline for the Fetch Robotics tasks
+        """
         self.request_q = request_q
         with open(policy_file, 'rb') as f:
             self.policy = pickle.load(f)
@@ -15,7 +18,6 @@ class RoboticEnv_Expert(object):
         Action selecton for fetch tasks
         state - a dictionary of [observations, achieved_goal, desired_goal]
         """
-        # import ipdb; ipdb.set_trace()
         o = state['observation']
         ag = state['achieved_goal']
         g = state['desired_goal']

@@ -12,7 +12,7 @@ class Hindsight_DAgger(DAgger):
                     mixing=0.0, random_sample=False, continuous=False, density_weight=0.0, budget=1, **kwargs):
         super(Hindsight_DAgger, self).__init__(env, learner, expert, agg_buffer, mixing, continuous, **kwargs)
         self.random_sample = random_sample
-        self.learner_predict = action_selection # This is a function 
+        self.learner_predict = action_selection
         self.density_weight = density_weight
         self.budget = budget
     
@@ -62,12 +62,6 @@ class Hindsight_DAgger(DAgger):
                     successes = 0
                 if successes >= 5:
                     done = True
-            # try:
-            #     state, reward, done, _ = self.env.step(action)
-            # except:
-            #     print('Hingsight Generate \n\
-            #             State: {} \n Action: {}'.format(state, action))
-            #     import pdb; pdb.set_trace()
         
         if len(trajectory_belief) > 0:
             """
@@ -89,7 +83,6 @@ class Hindsight_DAgger(DAgger):
                 best_indices = np.arange(N) # If we have more budget than states, take them all 
             elif self.random_sample and not self.density_weight:
                 best_indices = np.random.choice(N, self.budget) # If we are randomly selecting, return random indices up to the budget size
-                # best_ind = random.randint(0, len(trajectory_belief)-1)
             else:
                 # Use argpartition to quickly select the largest uncertainty indices unordered
                 best_indices = np.argpartition(trajectory_belief, -self.budget)[-self.budget:]
@@ -109,22 +102,11 @@ class Hindsight_DAgger(DAgger):
         if save_image:
             state_imgs = [img_arr[best_ind]]
 
-        return expert_samples, state_imgs, avg_selected_utility #TODO do we actually need to return any of this?
-    
-    # REMOVED THIS WARNING, SOMTHING TO THINK ABOUT!
-    # best_val = np.max(trajectory_belief)
-    # val_ind = np.argwhere(trajectory_belief == best_val)
-    # if val_ind.shape[0] > 1:
-    #     print('WARNING: SELECTING FROM MULTIPLE EQUIVALENT STATES')
-    #     best_ind = np.random.choice(val_ind.squeeze())
-    #     print(best_val)
-    # else:
-    #     best_ind = val_ind[0,0]
+        return expert_samples, state_imgs, avg_selected_utility
+
     
     def densityWeighting(self, obs):
         # For Fetch envs we'll only need the state, the goal is the same for every timestep
-        # For gym, not sure what to do yet
-        
         # Calculate the distance from each point to every other point
         N = (len(obs))
         if self.continuous:
@@ -137,7 +119,6 @@ class Hindsight_DAgger(DAgger):
             states = np.array(obs)
             
         if states.ndim > 4:
-            # Not really a good metric
             states = states.squeeze()
             avg_state = np.mean(states, axis=0, keepdims=True)
             density = np.mean(states - avg_state, axis=(1, 2, 3))

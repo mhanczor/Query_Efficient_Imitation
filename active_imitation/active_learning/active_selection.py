@@ -7,6 +7,7 @@ def entropyAction(learner, state):
     """
     policy = learner.samplePolicy(state)
     entropy = -np.dot(policy, np.log(policy).T)
+    
     ## When cast to np.float64 this can cause errors in np multinomial
     ## Normalize if this is larger than 1 due to rounding
     policy.astype(np.float64)
@@ -29,7 +30,7 @@ def QBC_KL(learner, state):
     The policy should be the probabilities of selecting from discrete actions, 
     calculates the KL divergence between the committee members
     """
-    # import ipdb; ipdb.set_trace()
+
     sample = learner.samplePolicy(state, batch=32, apply_dropout=True)
 
     # need the average probability of each action
@@ -39,6 +40,7 @@ def QBC_KL(learner, state):
     
     # Compute the KL divergence of each committee member to the consensus probability
     kl_div = np.sum(log_diff * sample, axis=1)
+    
     # Average over the committee members to get the average divergence
     avg_kl = np.sum(kl_div) / sample.shape[0]
     
@@ -88,7 +90,7 @@ def QBC_JSD(learner, state):
     return action, JSD
 
 def QBC_JSD_Single(learner, state):
-    # This way we can handle spaceinvaders and typical gym envs
+    # This handles spaceinvaders and typical gym envs
     action, jsd = QBC_JSD(learner, state)
     action = int(action)
     return action, jsd
@@ -113,7 +115,8 @@ def concreteUncertainty(learner, state):
     assert learner.concrete # Need to be in concrete mode
     batch = 32
     action, per_action_var = learner.uncertainAction(state, batch=32)
-    # variance norm #TODO, decite if this is the way to go?
+    
+    # variance norm
     action_var = np.linalg.norm(per_action_var)
     
     return action, action_var

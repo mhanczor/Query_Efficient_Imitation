@@ -11,6 +11,10 @@ from active_imitation.experts import trained_models
 
 class SpaceInvadersExpert(object):
     def __init__(self, env_dims):
+        """
+            Use a pretrained SpaceInvaders expert to query
+            This expert is trained using OpenAI's PPO baseline
+        """        
         prefix = os.path.dirname(trained_models.__file__)
         exp_filepath = os.path.join(prefix, 'SpaceInvadersNoFrameskip-v0/78800_atari_model.ckpt')
         self.sess = tf.get_default_session()
@@ -39,9 +43,7 @@ if __name__ == "__main__":
     from baselines.common.atari_wrappers import make_atari, wrap_deepmind
     import numpy as np
     env_id = 'SpaceInvadersNoFrameskip-v0'
-    # The make atarri and vecframestack take a bit of the work out of reducing the
-    # environment down from a 260px image and also i believe handle the color channel stuff, so worthwhile to keep
-    # 
+
     wrapper_kwargs = {'episode_life':False}
     env = VecFrameStack(make_atari_env(env_id, 1, 0, wrapper_kwargs=wrapper_kwargs), 4)
     # env = VecFrameStack(wrap_deepmind(make_atari(env_id), episode_life=False), 4)

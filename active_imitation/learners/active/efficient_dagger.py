@@ -1,13 +1,6 @@
 import numpy as np
 from active_imitation.learners import DAgger
-# from DeepQ import DQNetwork
 import random
-
-
-"""
-Running things to fix:
-Be able to revert to last best weights if validation is lower than previous?
-"""
 
 class Efficient_DAgger(DAgger):
     """
@@ -29,7 +22,6 @@ class Efficient_DAgger(DAgger):
         """
         
         # Initialize environment and run a mixed trajectory
-        # import pdb; pdb.set_trace()
         total_reward = 0
         state = self.env.reset()
         done = False
@@ -38,7 +30,6 @@ class Efficient_DAgger(DAgger):
             
             learner_action, uncertainty_val = self.learner_predict(state)
             # print(action_var)
-            # import pdb; pdb.set_trace()  
             mixing_prob = random.random()
             if uncertainty_val >= self.thresh or mixing_prob >= self.mixing: 
                 if mixing_prob >= self.mixing:
@@ -81,14 +72,12 @@ class Entropy_DAgger(Efficient_DAgger):
         policy.astype(np.float64)
         pol_sum = np.sum(policy)
         if pol_sum > 1.0:
-            # import pdb; pdb.set_trace()
             policy = policy / pol_sum
         try:        
             action = np.random.multinomial(1, policy[0])
             action = np.argmax(action)
         except:
             action = np.argmax(policy[0])
-        # print entropy
         
         return action, entropy
 

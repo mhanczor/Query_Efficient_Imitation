@@ -68,7 +68,7 @@ def smooth(x,window_len=11,window='hanning'):
 def interpolateData(data, data_axis=4, max_samples=None):
     """
     Every run may not have an expert sample at intervals of 1
-    Linearly interpolate the data between expert samples such at every interval
+    Interpolate the data between expert samples such at every interval
     there is an expert sample over which confidence bounds can be created
     
     Data - Nx2 array, first column is the number of expert samples, 2nd is the plotted value
@@ -76,12 +76,11 @@ def interpolateData(data, data_axis=4, max_samples=None):
     """
     
     assert data[0,1,0] == 0
-    # import ipdb; ipdb.set_trace()
+    
     # Set the max number of samples
     if max_samples == None:
         max_samples = int(np.min(data[-1, 1, :])) #TODO Fix this Largest number of expert samples available
     
-    # import ipdb; ipdb.set_trace()
     new_data = np.empty((max_samples+1, data.shape[1], data.shape[2]))
     
     for k in range(new_data.shape[2]):
@@ -99,11 +98,12 @@ def interpolateData(data, data_axis=4, max_samples=None):
     return new_data
 
 
-def formatConfidenceData(data, bound='std', data_axis=4):
+def formatConfidenceData(data, bound='std', data_axis=4, std_devs=2):
     """
-    data - episode_len X 4 X num_of_runs numpy array with columns:
-            [episode, expert_samples, validation_reward, variable stat]
-            where variable stat is either the classifcation accuracy or avg successes per episode
+    data - episode_len X N X num_of_runs numpy array 
+    bound - SEM or STD error bars
+    data_axis - which stored value to plot
+    std_devs - how wide the error bars should be
     """    
     
     x_axis = data[:,1, 0]  #TODO This assumes that all the x-axis is the same, which it should be
@@ -112,7 +112,7 @@ def formatConfidenceData(data, bound='std', data_axis=4):
     if bound == 'sem':
         confidence_bound = sem(data[:, data_axis,:], axis=1)
     elif bound == 'std':
-        confidence_bound = np.std(data[:, data_axis, :], axis=1) * 1 #TODO change back to 2
+        confidence_bound = np.std(data[:, data_axis, :], axis=1) * std_devs 
     else:
         raise ValueError
     
@@ -126,7 +126,11 @@ def plotData(data, labels=None, data_axis=4, expert=None, xlims=None, ylims=None
         data[dict] - Dict of multi_dim array of N+1xM array of columns where the 
             second column is the x-axis, and every other column is a dataset 
         labels[list] - String list of [x-axis, y-axis, title]
+        data_axis[int] - Column to plot against the x-axis
         expert[scalar] - Value that the expert/demonstrator performed at (horiz line on plot)
+        xlims/ylims - (min, max) values for the axes
+        interpolate[list] - Name of the experiments to interpolate points
+        smoothing[dict] - Name and value pairs to perform smoothing over the data before plotting
     """
     assert len(data.keys()) <= 8 # Only 8 colors available in this set, don't expect this to be a problem
 
@@ -147,7 +151,6 @@ def plotData(data, labels=None, data_axis=4, expert=None, xlims=None, ylims=None
         plt.xlim(xlims[0], xlims[1])
     if ylims != None:
         plt.ylim(ylims[0], ylims[1])
-        # plt.yticks(range(ylims[0], ylims[1], (ylims[1] - ylims[0])/10.), fontsize=14)
     
     # Increase axis tick marks
     # plt.xticks(range(0, 100, 10), fontsize=14)
@@ -188,16 +191,7 @@ def plotData(data, labels=None, data_axis=4, expert=None, xlims=None, ylims=None
 
         
 if __name__ == "__main__":
-    
-    # import ipdb; ipdb.set_trace()
-    prefix = '/home/hades/Research/Active_Imitation/active_imitation/tests/FetchReach-v1/Baselines'
-    fp = 'FetchReach-v1-classic-multi-DAgger.npy'
-    fp = os.path.join(prefix, fp)    
-    dag_dat = np.load(fp)
-    data = {'DAgger':dag_dat}
-    labels = ['Expert Samples', 'Episode Return', 'FetchReach-v1']
-    
-    plotData(data, labels)
+    pass
     
     
     

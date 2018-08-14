@@ -17,15 +17,19 @@ class AtariGymAgent(object):
     def __init__(self, env_dims, layers, lr, dropout_rate, 
                 concrete, hetero_loss, filepath='tmp/', **kwargs):
         """
-        Learner agent for OpenAI Gym's classic environments like CartPole and LunarLander
+        Learner agent for OpenAI Gym's Atari environments like Space Invaders (using stacked frames)
         
         Args:
-            sess(tf session): current tensorflow session
-            env_dims (dict): Contains the size of the observation and action spaces
+            env_dims (dict of ints): dimensions for the observatioins, the goal, 
+                and actions
+            layers (list of ints): number and size of NN hidden layers
+            max_a (float): maximum action magnitude, clipped between [-max_a, max_a]
             lr (float): learning rate for the network
             dropout_rate[float]: Probability of dropout for any node, in range [0,1],
                                 a value of 0 would lead to no dropout
-            filepath[str]: policy and data save location        
+            concrete[bool]: whether to use concrete dropout networks or not
+            hetero_loss[bool]: whether or not to use heteroscedastic loss 
+            filepath[str]: policy and data save location         
         """
         
         self.env_dims = env_dims
@@ -84,14 +88,11 @@ class AtariGymAgent(object):
                 self.ce_loss = tf.reshape(self.ce_loss, [tf.shape(self.ce_loss)[0],1])
                 precision = tf.exp(-self.log_var)
                 self.loss = tf.reduce_mean(tf.reduce_sum(precision*self.ce_loss + self.log_var + self.reg_losses, -1),-1)
-                # self.loss = self.ce_loss + self.reg_losses
             else:
-                self.ce_loss = tf.reduce_sum(self.ce_loss, -1)#tf.reduce_mean(self.ce_loss, -1)
+                self.ce_loss = tf.reduce_sum(self.ce_loss, -1)
                 self.loss = self.ce_loss + self.reg_losses
-            # self.loss = self.ce_loss + self.reg_losses
-            # self.global_step = tf.Variable(0, trainable=False, name='global_step')
+
         with tf.name_scope("Opt"):
-            # self.opt = tf.train.AdamOptimizer(self.lr).minimize(self.loss)
             train_opt = tf.train.AdamOptimizer(self.lr)
             grads_and_vars = train_opt.compute_gradients(self.loss)
             for idx, (grad, var) in enumerate(grads_and_vars):
@@ -104,8 +105,7 @@ class AtariGymAgent(object):
     def update(self, batch):
         feed_dict = {self.state:batch['observation'], self.expert_action:batch['action'].flatten(), 
                     self.apply_dropout:True}
-        
-        # import ipdb; ipdb.set_trace()        
+              
         _, loss, reg_loss, ce_loss, log_var = self.sess.run([self.opt, self.loss, self.reg_losses, self.ce_loss, self.log_var], feed_dict=feed_dict)
         # print("Cross Entropy Loss: {} \nPrecision: {} \nReg. Loss: {} \nTotal Loss: {}".format(ce_loss, precision, reg_loss, loss))
         return loss
@@ -124,25 +124,21 @@ class AtariGymAgent(object):
         return action
     
     def samplePolicy(self, state, batch=32, apply_dropout=True):
-        # import pdb; pdb.set_trace()
         state = np.atleast_2d(state)
         state = np.repeat(state, batch, axis=0)
         policy = self._samplePolicy(state, apply_dropout=apply_dropout)
     
         return policy
-
     
     def uncertainAction(self, state, training=True, batch=32):
         """
-        Uses a Bayesian approach for getting uncertainty and an average action over
-        a single state by using dropout at test times
+        Get uncertainty and an average action over a single state by using dropout at test times
         """
-        # import pdb; pdb.set_trace()
         state = np.atleast_2d(state)
         state = np.repeat(state, batch, axis=0)
         policy = self._samplePolicy(state, training)
-        # Could either sample actions or take max action
-        # For now take max
+        
+        #Greedily select actions
         policy_avg = np.mean(policy, axis=0, keepdims=True)
         policy_std = np.std(policy, axis=0)
         
@@ -163,12 +159,12 @@ class AtariGymAgent(object):
         """
         Uses query by committee to select the next action
         """
-        # import pdb; pdb.set_trace()
+
         state = np.atleast_2d(state)
         state = np.repeat(state, batch, axis=0)
         policy = self._samplePolicy(state, training)
-        # Could either sample actions or take max action
-        # For now take max
+
+        #Greedily select actions
         all_actions = np.argmax(policy, axis=1)
         action, _ = stats.mode(all_actions)
         action = action[0]

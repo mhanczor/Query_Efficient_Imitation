@@ -4,11 +4,6 @@ import os
 import random
 import mujoco_py
 
-"""
-Running things to fix:
-Be able to revert to last best weights if validation is lower than previous?
-    Don't actually need to do this, in practice just assume that the last trained policy is the best
-"""
 stats_empty = [0]*8
 
 class DAgger(object):
@@ -58,12 +53,8 @@ class DAgger(object):
             print("WARNING: No data available to train")
             return 0
         
-        # if samples > 300:
-        #     batch_size = 256 # using this to speed up training of large dataset tasks
-        # if samples > 2000:
-        #     batch_size = 512
         if self.isSpace and samples > 10000:
-            batch_size = 1024
+            batch_size = 1024 # For large SpaceInvader runs
         
         if self.continuous:
             self.learner.total_samples = samples
@@ -80,7 +71,7 @@ class DAgger(object):
                 total_loss += loss*len(indices[i:i+batch_size])/samples
                 i += batch_size
             losses.append(total_loss)
-        return max([abs(x) for x in losses]) # Returns the largest loss over all updates, see if there are some big losses causing issues?
+        return max([abs(x) for x in losses]) # Returns the largest loss over all updates
     
     def runEpisode(self, agent, render=False):
         total_reward = 0
@@ -91,7 +82,7 @@ class DAgger(object):
         success = 0.0
         successes = 0.0
         while not done:
-            action = agent.sampleAction(state)#.squeeze() # sampleAction returns 2d arrays, need 1D
+            action = agent.sampleAction(state)
             expert_action = self.expert.sampleAction(state)
             if not self.continuous: # Can only compare actions in discrete action space
                 if action == expert_action:
@@ -100,12 +91,7 @@ class DAgger(object):
                 action = action.squeeze()
                 correct_labels += np.sum((expert_action - action)**2.)**(1./2)
             state, reward, done, info = self.env.step(action)
-            # try:
-            #     state, reward, done, info = self.env.step(action)
-            # except:
-            #     print('DAgger runEpisode \n\
-            #             State: {} \n Action: {}'.format(state, action))
-            #     import pdb; pdb.set_trace()
+
             total_reward += reward
             episode_length += 1
             if self.continuous: # If using a robot env, check for success
@@ -142,13 +128,7 @@ class DAgger(object):
             #Aggregate expert data
             self.dataset.store(state, expert_action)
             state, reward, done, info = self.env.step(action)
-            # try:
-            #     state, reward, done, _ = self.env.step(action)
-            # except:
-            #     print('DAgger generateExpertSamples \n\
-            #             State: {} \n Action: {}'.format(state, action))
-            #     import pdb; pdb.set_trace()
-            
+
             expert_samples += 1
             total_reward += reward
             
@@ -243,7 +223,7 @@ class DAgger(object):
                 return validation, stats
             validation.append(valid_reward)
             
-            # Is there a good way to clean this up?
+            # Clean this up eventually, kept for ease of adding and removing
             reward_per_samples = tf.Summary(value=[tf.Summary.Value(tag='Reward_per_Expert_Samples', simple_value=valid_reward)])
             self.learner.writer.add_summary(reward_per_samples, global_step=total_expert_samples)
             samples_per_episode = tf.Summary(value=[tf.Summary.Value(tag='Expert_Samples_per_Episode', simple_value=expert_samples)])

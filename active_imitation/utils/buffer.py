@@ -18,17 +18,12 @@ We consider a buffer for 3 different environment types:
         State - observations[float32], goal[float32]
         Action - continuous[float32]
         Q-value - 
-May want to allow for Q-values to be stored as well, save time later?
-
-
-Buffer could have a robotics flag that gets used to extract the robotics stuff 
+May want to allow for Q-values to be stored as well
 
 Buffer should have the following abilities:
     __init__
     store data(state, action, q=None)
     sample data(batch)
-    
-
 """
 
 class AggBuffer(object):
@@ -104,6 +99,7 @@ class AggBuffer(object):
 class ListBuffer(object):
     def __init__(self, spaces, continuous=False, max_samples=None):
         """
+        This may reduce the store and query time for large buffers (like space invaders)
         Args:  
             spaces[dict] - Contains the items to be aggregated and their shape (scalar)
             continuous[bool] - if the action space is continuous, otherwise assume int8
@@ -124,7 +120,6 @@ class ListBuffer(object):
         """
         Aggregate expert samples to the dataset
         """
-        # Use a 
         # Auto removes if we're over the max stored values
         if self.robot:
             self.buffer['goal'].append(state['desired_goal'])

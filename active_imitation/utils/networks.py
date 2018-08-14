@@ -43,14 +43,5 @@ def concreteNet(inputs, layer_sizes, wd, dd,  name=""):
                                                     dropout_regularizer=dd, 
                                                     trainable=True)(inputs, training=True)
         return inputs
-        
-        
-# if __name__ == "__main__":
-#     # import ipdb; ipdb.set_trace()
-#     x = tf.placeholder(tf.float32, [None,1])
-#     net_output = denseNet(x, [8, 16, 32, 1], reuse=False, name='main')
-#     sess = tf.Session()
-#     sess.run(tf.global_variables_initializer())
-#     out = sess.run(net_output, feed_dict={x:[[12.]]})
-#     print(out)
+
     
